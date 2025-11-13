@@ -74,13 +74,13 @@ export const siteConfig = {
     rss: '/rss.xml',
   },
   github: {
-    repo: 'jamongsalguclub/wookhyung.dev',
+    repo: 'hyungwookchoi/wookhyung.dev',
     repoId: 'R_kgDOPIIAEQ',
     category: 'Comments',
     categoryId: 'DIC_kwDOPIIAEc4CtkB_',
   },
   social: {
-    github: 'https://github.com/jamongsalguclub',
+    github: 'https://github.com/hyungwookchoi',
     email: 'hyungwookchoi.dev@gmail.com',
   },
 };
