@@ -17,6 +17,10 @@ export interface Book {
 
 export const CONCERTS: Link[] = [
   {
+    title: '백예린 2025 단독 콘서트 〈Flash and Core〉',
+    link: 'https://tickets.interpark.com/goods/25013780',
+  },
+  {
     title: '2024 Wave to Earth 단독공연 [play with earth! Seoul]',
     link: 'https://tickets.interpark.com/goods/24015393',
   },
