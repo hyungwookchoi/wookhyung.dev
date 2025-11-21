@@ -72,6 +72,16 @@ export const INTERESTS: InterestItem[] = [
 export const BOOKS_BY_YEAR: Record<number, Book[]> = {
   2025: [
     {
+      title: '처음 만나는 양자의 세계',
+      author: '채은미',
+      link: 'https://product.kyobobook.co.kr/detail/S000217556025',
+    },
+    {
+      title: '먼저 온 미래',
+      author: '장강명',
+      link: 'https://product.kyobobook.co.kr/detail/S000216885989',
+    },
+    {
       title: '결혼ㆍ여름',
       author: '알베르 카뮈',
       link: 'https://product.kyobobook.co.kr/detail/S000203197818',
