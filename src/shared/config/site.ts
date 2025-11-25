@@ -81,6 +81,7 @@ export const siteConfig = {
   },
   social: {
     github: 'https://github.com/hyungwookchoi',
+    linkedin: 'https://www.linkedin.com/in/hyungwookchoi',
     email: 'hyungwookchoi.dev@gmail.com',
   },
 };

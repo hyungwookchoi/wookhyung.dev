@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { siteConfig } from '@/shared/config/site';
 import { EmailIcon } from '@/shared/icon/email-icon';
 import { GithubIcon } from '@/shared/icon/github-icon';
+import { LinkedinIcon } from '@/shared/icon/linkedin-icon';
 import { cn } from '@/shared/lib/tailwind-merge';
 import { openGraph, twitter } from '@/shared/util/seo';
 
@@ -48,6 +49,15 @@ export default function AboutPage() {
             aria-label="GitHub"
           >
             <GithubIcon className="w-6 h-6" />
+          </a>
+          <a
+            href={siteConfig.social.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center w-12 h-12 rounded-full bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+            aria-label="LinkedIn"
+          >
+            <LinkedinIcon className="w-6 h-6 text-gray-700" />
           </a>
           <a
             href={`mailto:${siteConfig.social.email}`}
@@ -216,6 +226,16 @@ export default function AboutPage() {
                 className="text-blue-600 hover:underline"
               >
                 GitHub: {siteConfig.author.name}
+              </a>
+            </li>
+            <li>
+              <a
+                href={siteConfig.social.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                LinkedIn: hyungwookchoi
               </a>
             </li>
             <li>
