@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { isValidLocale,type Locale } from '@/i18n/config';
+import { isValidLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/get-dictionary';
 import { siteConfig } from '@/shared/config/site';
 import { openGraph, twitter } from '@/shared/util/seo';

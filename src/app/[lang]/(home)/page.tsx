@@ -1,4 +1,4 @@
-import { isValidLocale,type Locale } from '@/i18n/config';
+import { isValidLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/get-dictionary';
 
 import { HomeContent } from './ui/home-content';
