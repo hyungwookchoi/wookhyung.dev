@@ -1,13 +1,15 @@
 'use client';
 
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Globe } from 'lucide-react';
 import type { Variants } from 'motion/react';
 import * as motion from 'motion/react-client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import type { Locale } from '@/i18n/config';
+import type { Dictionary } from '@/i18n/get-dictionary';
 import { cn } from '@/shared/lib/tailwind-merge';
 
 interface SubMenuItem {
@@ -21,18 +23,20 @@ interface NavigationItem {
   subItems?: SubMenuItem[];
 }
 
-const navigation: NavigationItem[] = [
-  { name: 'Home', href: '/' },
-  {
-    name: 'Dev',
-    subItems: [
-      { name: 'Tech', href: '/tech' },
-      { name: 'Feed', href: '/feed' },
-    ],
-  },
-  { name: 'Notes', href: '/notes' },
-  { name: 'About', href: '/about' },
-] as const;
+function getNavigation(dict: Dictionary, lang: Locale): NavigationItem[] {
+  return [
+    { name: dict.navigation.home, href: `/${lang}` },
+    {
+      name: dict.navigation.dev,
+      subItems: [
+        { name: dict.navigation.tech, href: `/${lang}/tech` },
+        { name: dict.navigation.feed, href: `/${lang}/feed` },
+      ],
+    },
+    { name: dict.navigation.notes, href: `/${lang}/notes` },
+    { name: dict.navigation.about, href: `/${lang}/about` },
+  ];
+}
 
 const sidebarVariants: Variants = {
   open: () => {
@@ -120,15 +124,21 @@ const Path = (props: PathProps) => (
   />
 );
 
-const MenuToggle = ({ toggle }: { toggle: () => void }) => (
+const MenuToggle = ({
+  toggle,
+  ariaLabel,
+}: {
+  toggle: () => void;
+  ariaLabel: string;
+}) => (
   <button
     type="button"
     onClick={toggle}
     className="md:hidden p-2 text-gray-800 hover:text-gray-900 focus:outline-none relative z-50"
-    aria-label="메뉴 토글"
+    aria-label={ariaLabel}
   >
     <svg width="20" height="20" viewBox="0 0 20 20">
-      <title>메뉴</title>
+      <title>Menu</title>
       <Path
         variants={{
           closed: { d: 'M 2 2.5 L 18 2.5' },
@@ -153,13 +163,14 @@ const MenuToggle = ({ toggle }: { toggle: () => void }) => (
   </button>
 );
 
-// 드롭다운 컴포넌트
 const DropdownMenu = ({
   item,
   pathname,
+  lang,
 }: {
   item: NavigationItem;
   pathname: string;
+  lang: Locale;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -177,10 +188,14 @@ const DropdownMenu = ({
     }, 100);
   };
 
-  const isAnySubItemActive = item.subItems?.some(
-    (subItem) =>
-      pathname === subItem.href || pathname.startsWith(`${subItem.href}/`),
-  );
+  const isAnySubItemActive = item.subItems?.some((subItem) => {
+    const hrefWithoutLang = subItem.href.replace(`/${lang}`, '');
+    const pathnameWithoutLang = pathname.replace(`/${lang}`, '');
+    return (
+      pathnameWithoutLang === hrefWithoutLang ||
+      pathnameWithoutLang.startsWith(`${hrefWithoutLang}/`)
+    );
+  });
 
   return (
     <div
@@ -208,9 +223,11 @@ const DropdownMenu = ({
       {isOpen && item.subItems && (
         <div className="absolute top-full left-0 mt-1 py-2 bg-white border border-gray-200 rounded-md shadow-lg min-w-[120px] z-50">
           {item.subItems.map((subItem) => {
+            const hrefWithoutLang = subItem.href.replace(`/${lang}`, '');
+            const pathnameWithoutLang = pathname.replace(`/${lang}`, '');
             const isSubItemActive =
-              pathname === subItem.href ||
-              pathname.startsWith(`${subItem.href}/`);
+              pathnameWithoutLang === hrefWithoutLang ||
+              pathnameWithoutLang.startsWith(`${hrefWithoutLang}/`);
             return (
               <Link
                 key={subItem.name}
@@ -230,12 +247,85 @@ const DropdownMenu = ({
   );
 };
 
-export const Header = () => {
+const LanguageSwitcher = ({ lang }: { lang: Locale }) => {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 100);
+  };
+
+  const switchLanguage = (newLang: Locale) => {
+    const newPathname = pathname.replace(`/${lang}`, `/${newLang}`);
+    router.push(newPathname);
+    setIsOpen(false);
+  };
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <button
+        className="flex items-center gap-1 text-sm font-medium text-gray-800 hover:text-gray-900 transition-colors"
+        aria-label="Switch language"
+      >
+        <Globe className="w-4 h-4" />
+        <span className="uppercase">{lang}</span>
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full right-0 mt-1 py-2 bg-white border border-gray-200 rounded-md shadow-lg min-w-[80px] z-50">
+          <button
+            onClick={() => switchLanguage('ko')}
+            className={cn(
+              'block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors',
+              lang === 'ko' && 'bg-gray-100 text-gray-900 font-medium',
+            )}
+          >
+            한국어
+          </button>
+          <button
+            onClick={() => switchLanguage('en')}
+            className={cn(
+              'block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors',
+              lang === 'en' && 'bg-gray-100 text-gray-900 font-medium',
+            )}
+          >
+            English
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface HeaderProps {
+  lang: Locale;
+  dict: Dictionary;
+}
+
+export const Header = ({ lang, dict }: HeaderProps) => {
+  const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(
     null,
   );
+
+  const navigation = getNavigation(dict, lang);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -244,6 +334,12 @@ export const Header = () => {
 
   const toggleMobileDropdown = (itemName: string) => {
     setOpenMobileDropdown(openMobileDropdown === itemName ? null : itemName);
+  };
+
+  const switchLanguage = (newLang: Locale) => {
+    const newPathname = pathname.replace(`/${lang}`, `/${newLang}`);
+    router.push(newPathname);
+    setIsMobileMenuOpen(false);
   };
 
   useEffect(() => {
@@ -258,12 +354,22 @@ export const Header = () => {
     };
   }, [isMobileMenuOpen]);
 
+  const isActiveLink = (href: string) => {
+    const hrefWithoutLang = href.replace(`/${lang}`, '') || '/';
+    const pathnameWithoutLang = pathname.replace(`/${lang}`, '') || '/';
+    return (
+      pathnameWithoutLang === hrefWithoutLang ||
+      (hrefWithoutLang !== '/' &&
+        pathnameWithoutLang.startsWith(`${hrefWithoutLang}/`))
+    );
+  };
+
   return (
     <>
       <header className="z-50 sticky top-0 bg-gray-100/50 px-4 py-3 backdrop-blur-md">
         <nav className="flex items-center justify-between">
           <Link
-            href="/"
+            href={`/${lang}`}
             className="text-xl font-semibold text-gray-900 hover:text-gray-600 transition-colors"
             onClick={() => setIsMobileMenuOpen(false)}
           >
@@ -283,12 +389,12 @@ export const Header = () => {
                     key={item.name}
                     item={item}
                     pathname={pathname}
+                    lang={lang}
                   />
                 );
               }
 
-              const isActive =
-                pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const isActive = isActiveLink(item.href!);
 
               return (
                 <Link
@@ -304,15 +410,18 @@ export const Header = () => {
                 </Link>
               );
             })}
+            <LanguageSwitcher lang={lang} />
           </div>
 
-          {/* Mobile Navigation Container */}
           <motion.nav
             initial={false}
             animate={isMobileMenuOpen ? 'open' : 'closed'}
             className="md:hidden"
           >
-            <MenuToggle toggle={toggleMobileMenu} />
+            <MenuToggle
+              toggle={toggleMobileMenu}
+              ariaLabel={dict.common.menuToggle}
+            />
           </motion.nav>
         </nav>
       </header>
@@ -333,7 +442,7 @@ export const Header = () => {
           }}
           role="button"
           tabIndex={0}
-          aria-label="메뉴 닫기"
+          aria-label={dict.common.closeMenu}
         />
 
         <div className="fixed top-0 left-0 right-0 h-screen">
@@ -348,10 +457,8 @@ export const Header = () => {
             <motion.div className="px-6 py-4 space-y-1" variants={menuVariants}>
               {navigation.map((item) => {
                 if (item.subItems) {
-                  const isAnySubItemActive = item.subItems.some(
-                    (subItem) =>
-                      pathname === subItem.href ||
-                      pathname.startsWith(`${subItem.href}/`),
+                  const isAnySubItemActive = item.subItems.some((subItem) =>
+                    isActiveLink(subItem.href),
                   );
                   const isDropdownOpen = openMobileDropdown === item.name;
 
@@ -376,9 +483,7 @@ export const Header = () => {
                       {isDropdownOpen && (
                         <div className="ml-4 mt-1 space-y-1">
                           {item.subItems.map((subItem) => {
-                            const isSubItemActive =
-                              pathname === subItem.href ||
-                              pathname.startsWith(`${subItem.href}/`);
+                            const isSubItemActive = isActiveLink(subItem.href);
                             return (
                               <Link
                                 key={subItem.name}
@@ -400,9 +505,7 @@ export const Header = () => {
                   );
                 }
 
-                const isActive =
-                  pathname === item.href ||
-                  pathname.startsWith(`${item.href}/`);
+                const isActive = isActiveLink(item.href!);
 
                 return (
                   <motion.div key={item.name} variants={itemVariants}>
@@ -419,6 +522,37 @@ export const Header = () => {
                   </motion.div>
                 );
               })}
+
+              {/* Mobile Language Switcher */}
+              <motion.div variants={itemVariants}>
+                <div className="px-4 py-3">
+                  <p className="text-sm text-gray-500 mb-2">Language</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => switchLanguage('ko')}
+                      className={cn(
+                        'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                        lang === 'ko'
+                          ? 'bg-gray-900 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                      )}
+                    >
+                      한국어
+                    </button>
+                    <button
+                      onClick={() => switchLanguage('en')}
+                      className={cn(
+                        'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                        lang === 'en'
+                          ? 'bg-gray-900 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                      )}
+                    >
+                      English
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { ArrowUpRightIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 
+import type { Locale } from '@/i18n/config';
 import { cn } from '@/shared/lib/tailwind-merge';
 
 interface Post {
@@ -16,6 +17,7 @@ interface Post {
 
 interface TechPostListProps {
   posts: Post[];
+  lang: Locale;
 }
 
 const STAGGER_DELAY = 0.06;
@@ -26,7 +28,18 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
 };
 
-export function TechPostList({ posts }: TechPostListProps) {
+export function TechPostList({ posts, lang }: TechPostListProps) {
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString(
+      lang === 'ko' ? 'ko-KR' : 'en-US',
+      {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      },
+    );
+  };
+
   return (
     <div className="flex flex-col">
       {posts.map((post, index) => (
@@ -42,7 +55,7 @@ export function TechPostList({ posts }: TechPostListProps) {
           }}
         >
           <Link
-            href={`/tech/${post.slug}`}
+            href={`/${lang}/tech/${post.slug}`}
             className={cn(
               'group flex items-start justify-between gap-4',
               'py-4 -mx-2 px-2 rounded-lg',
@@ -52,11 +65,7 @@ export function TechPostList({ posts }: TechPostListProps) {
           >
             <div className="flex-1 min-w-0">
               <time className="text-xs text-gray-400 mb-1 block">
-                {new Date(post.date).toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
+                {formatDate(post.date)}
               </time>
               <h2 className="font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors">
                 {post.title}

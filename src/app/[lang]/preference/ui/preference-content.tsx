@@ -2,6 +2,8 @@
 
 import { motion } from 'motion/react';
 
+import type { Dictionary } from '@/i18n/get-dictionary';
+
 import type { Book, InterestItem, Link } from '../const/preference';
 
 interface PreferenceContentProps {
@@ -14,6 +16,7 @@ interface PreferenceContentProps {
     >
   >;
   interests: readonly InterestItem[];
+  dict: Dictionary;
 }
 
 const STAGGER_DELAY = 0.08;
@@ -29,6 +32,7 @@ export function PreferenceContent({
   booksByYear,
   movies,
   interests,
+  dict,
 }: PreferenceContentProps) {
   let sectionIndex = 0;
 
@@ -45,11 +49,11 @@ export function PreferenceContent({
       >
         <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
           <span className="w-2 h-2 bg-rose-500 rounded-full" />
-          Music
+          {dict.preference.music}
         </h2>
         <div className="mb-6">
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-            Concert
+            {dict.preference.concert}
           </h3>
           <ul className="space-y-2">
             {concerts.map((concert) => (
@@ -79,7 +83,7 @@ export function PreferenceContent({
       >
         <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
           <span className="w-2 h-2 bg-amber-500 rounded-full" />
-          Book
+          {dict.preference.book}
         </h2>
         {Object.entries(booksByYear)
           .sort(([a], [b]) => Number(b) - Number(a))
@@ -118,7 +122,7 @@ export function PreferenceContent({
       >
         <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
           <span className="w-2 h-2 bg-sky-500 rounded-full" />
-          Movie
+          {dict.preference.movie}
         </h2>
         {Object.entries(movies)
           .sort(([a], [b]) => Number(b) - Number(a))
@@ -150,7 +154,7 @@ export function PreferenceContent({
       >
         <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
           <span className="w-2 h-2 bg-emerald-500 rounded-full" />
-          Interest
+          {dict.preference.interest}
         </h2>
         <ul className="space-y-2">
           {interests.map((interest) => (

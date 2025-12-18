@@ -1,10 +1,11 @@
 import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { enUS, ko } from 'date-fns/locale';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getMDXComponent } from 'next-contentlayer2/hooks';
 import serialize from 'serialize-javascript';
 
+import { isValidLocale, locales } from '@/i18n/config';
 import { siteConfig } from '@/shared/config/site';
 import { BackButton } from '@/shared/ui/back-button';
 import { notesPosts } from '@/shared/util/post';
@@ -16,29 +17,42 @@ import ScrollToTop from './ui/scroll-to-top';
 
 interface Props {
   params: Promise<{
+    lang: string;
     slug: string;
   }>;
 }
 
-export const generateStaticParams = () =>
-  notesPosts.map((post) => ({ slug: post.slug }));
+export const generateStaticParams = () => {
+  const params: { lang: string; slug: string }[] = [];
+  for (const lang of locales) {
+    for (const post of notesPosts) {
+      params.push({ lang, slug: post.slug });
+    }
+  }
+  return params;
+};
 
 export const generateMetadata = async ({ params }: Props) => {
-  const { slug } = await params;
+  const { lang, slug } = await params;
   const post = notesPosts.find((post) => post.slug === slug);
 
-  if (!post) {
-    throw new Error(`Post not found for slug: ${slug}`);
+  if (!post || !isValidLocale(lang)) {
+    return {};
   }
 
   return {
     title: post.title,
     description: post.summary,
     alternates: {
-      canonical: `${siteConfig.url}/notes/${slug}`,
+      canonical: `${siteConfig.url}/${lang}/notes/${slug}`,
+      languages: {
+        ko: `${siteConfig.url}/ko/notes/${slug}`,
+        en: `${siteConfig.url}/en/notes/${slug}`,
+      },
     },
     openGraph: openGraph({
       title: post.title,
+      locale: lang === 'ko' ? 'ko_KR' : 'en_US',
     }),
     twitter: twitter({
       title: post.title,
@@ -47,7 +61,12 @@ export const generateMetadata = async ({ params }: Props) => {
 };
 
 export default async function Page({ params }: Props) {
-  const { slug } = await params;
+  const { lang, slug } = await params;
+
+  if (!isValidLocale(lang)) {
+    notFound();
+  }
+
   const post = notesPosts.find((post) => post.slug === slug);
 
   if (!post) {
@@ -59,7 +78,7 @@ export default async function Page({ params }: Props) {
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.summary,
-    url: `${siteConfig.url}/notes/${slug}`,
+    url: `${siteConfig.url}/${lang}/notes/${slug}`,
     datePublished: post.date,
     dateModified: post.date,
     author: {
@@ -68,17 +87,20 @@ export default async function Page({ params }: Props) {
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `${siteConfig.url}/notes/${slug}`,
+      '@id': `${siteConfig.url}/${lang}/notes/${slug}`,
     },
+    inLanguage: lang === 'ko' ? 'ko-KR' : 'en-US',
   };
 
   const Content = getMDXComponent(post.body.code);
+  const dateLocale = lang === 'ko' ? ko : enUS;
+  const dateFormat = lang === 'ko' ? 'yyyy년 M월 d일' : 'MMM d, yyyy';
 
   return (
     <>
       <div className="flex flex-col gap-6 pb-40">
         <ProgressBar />
-        <BackButton className="self-start" />
+        <BackButton className="self-start" lang={lang} />
         <article className="py-6 prose max-w-none break-words">
           <h1>{post.title}</h1>
           {post.summary && (
@@ -89,7 +111,7 @@ export default async function Page({ params }: Props) {
               dateTime={post.date}
               className="text-sm text-gray-500 font-medium"
             >
-              {format(new Date(post.date), 'yyyy년 M월 d일', { locale: ko })}
+              {format(new Date(post.date), dateFormat, { locale: dateLocale })}
             </time>
           </div>
           <hr />

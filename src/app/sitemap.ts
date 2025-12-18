@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 
+import { locales } from '@/i18n/config';
 import { siteConfig } from '@/shared/config/site';
 import {
   notesPosts as notesPostsData,
@@ -7,58 +8,51 @@ import {
 } from '@/shared/util/post';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const techPosts = techPostsData.map((post) => ({
-    url: `${siteConfig.url}/tech/${post.slug}`,
-    lastModified: post.date,
-    changeFrequency: 'daily' as const,
-    priority: 0.7,
-  }));
+  const staticPages = ['', '/about', '/tech', '/feed', '/notes', '/preference'];
 
-  const notesPosts = notesPostsData.map((post) => ({
-    url: `${siteConfig.url}/notes/${post.slug}`,
-    lastModified: post.date,
-    changeFrequency: 'daily' as const,
-    priority: 0.7,
-  }));
+  const staticEntries = locales.flatMap((lang) =>
+    staticPages.map((page) => ({
+      url: `${siteConfig.url}/${lang}${page}`,
+      lastModified: new Date(),
+      changeFrequency: (page === '' ? 'yearly' : 'weekly') as
+        | 'yearly'
+        | 'weekly',
+      priority: page === '' ? 1 : page === '/about' ? 0.8 : 0.5,
+      alternates: {
+        languages: Object.fromEntries(
+          locales.map((l) => [l, `${siteConfig.url}/${l}${page}`]),
+        ),
+      },
+    })),
+  );
 
-  return [
-    {
-      url: siteConfig.url,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 1,
-    },
-    {
-      url: `${siteConfig.url}/about`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${siteConfig.url}/tech`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.5,
-    },
-    {
-      url: `${siteConfig.url}/feed`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.5,
-    },
-    {
-      url: `${siteConfig.url}/notes`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.5,
-    },
-    {
-      url: `${siteConfig.url}/preference`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.5,
-    },
-    ...techPosts,
-    ...notesPosts,
-  ];
+  const techPosts = locales.flatMap((lang) =>
+    techPostsData.map((post) => ({
+      url: `${siteConfig.url}/${lang}/tech/${post.slug}`,
+      lastModified: post.date,
+      changeFrequency: 'daily' as const,
+      priority: 0.7,
+      alternates: {
+        languages: Object.fromEntries(
+          locales.map((l) => [l, `${siteConfig.url}/${l}/tech/${post.slug}`]),
+        ),
+      },
+    })),
+  );
+
+  const notesPosts = locales.flatMap((lang) =>
+    notesPostsData.map((post) => ({
+      url: `${siteConfig.url}/${lang}/notes/${post.slug}`,
+      lastModified: post.date,
+      changeFrequency: 'daily' as const,
+      priority: 0.7,
+      alternates: {
+        languages: Object.fromEntries(
+          locales.map((l) => [l, `${siteConfig.url}/${l}/notes/${post.slug}`]),
+        ),
+      },
+    })),
+  );
+
+  return [...staticEntries, ...techPosts, ...notesPosts];
 }

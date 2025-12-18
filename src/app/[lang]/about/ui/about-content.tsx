@@ -10,6 +10,8 @@ import { motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import type { Locale } from '@/i18n/config';
+import type { Dictionary } from '@/i18n/get-dictionary';
 import { siteConfig } from '@/shared/config/site';
 import { EmailIcon } from '@/shared/icon/email-icon';
 import { GithubIcon } from '@/shared/icon/github-icon';
@@ -64,21 +66,35 @@ const projects = [
   {
     title: 'wookhyung.dev',
     link: 'https://github.com/hyungwookchoi/wookhyung.dev',
-    description: '개인 블로그, 25.07 - 현재',
+    description: {
+      ko: '개인 블로그, 25.07 - 현재',
+      en: 'Personal blog, Jul 2025 - Present',
+    },
   },
   {
     title: 'Google Chat Webhook Action',
     link: 'https://github.com/hyungwookchoi/google-chat-webhook-action',
-    description: 'GitHub Action for Google Chat, 25.06 - 25.07',
+    description: {
+      ko: 'GitHub Action for Google Chat, 25.06 - 25.07',
+      en: 'GitHub Action for Google Chat, Jun 2025 - Jul 2025',
+    },
   },
   {
     title: 'nowoo',
     link: 'https://github.com/thoupe/nowoo',
-    description: '메이플랜드 아이템 검색 사이트, 24.01 - 24.02',
+    description: {
+      ko: '메이플랜드 아이템 검색 사이트, 24.01 - 24.02',
+      en: 'Mapleland item search site, Jan 2024 - Feb 2024',
+    },
   },
 ];
 
-export function AboutContent() {
+interface AboutContentProps {
+  lang: Locale;
+  dict: Dictionary;
+}
+
+export function AboutContent({ lang, dict }: AboutContentProps) {
   let sectionIndex = 0;
 
   return (
@@ -101,8 +117,10 @@ export function AboutContent() {
         </div>
 
         <div className="space-y-2 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">최형욱</h1>
-          <p className="text-lg text-gray-500">WOOKHYUNG</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {dict.about.name}
+          </h1>
+          <p className="text-lg text-gray-500">{dict.about.subName}</p>
         </div>
 
         <div className="flex space-x-3">
@@ -155,10 +173,10 @@ export function AboutContent() {
         >
           <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
             <span className="w-2 h-2 bg-blue-500 rounded-full" />
-            Experience
+            {dict.about.experience}
           </h2>
           <ul className="space-y-2 text-gray-700">
-            <li>프론트엔드 개발자 (22.12 - 현재)</li>
+            <li>{dict.about.experienceDesc}</li>
           </ul>
         </motion.section>
 
@@ -173,10 +191,10 @@ export function AboutContent() {
         >
           <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
             <span className="w-2 h-2 bg-emerald-500 rounded-full" />
-            Tech Stack
+            {dict.about.techStack}
           </h2>
           <ul className="space-y-2 text-gray-700">
-            <li>TypeScript, React, TanStack Router(Start), Next.js</li>
+            <li>{dict.about.techStackDesc}</li>
           </ul>
         </motion.section>
 
@@ -191,7 +209,7 @@ export function AboutContent() {
         >
           <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
             <span className="w-2 h-2 bg-violet-500 rounded-full" />
-            Open Source Contribution
+            {dict.about.openSource}
           </h2>
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
             <a
@@ -249,7 +267,7 @@ export function AboutContent() {
         >
           <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
             <span className="w-2 h-2 bg-amber-500 rounded-full" />
-            Project
+            {dict.about.project}
           </h2>
           <ul className="space-y-2">
             {projects.map(({ title, link, description }) => (
@@ -262,7 +280,7 @@ export function AboutContent() {
                 >
                   {title}
                 </a>
-                <span className="text-gray-400"> ({description})</span>
+                <span className="text-gray-400"> ({description[lang]})</span>
               </li>
             ))}
           </ul>
@@ -279,10 +297,10 @@ export function AboutContent() {
         >
           <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
             <span className="w-2 h-2 bg-rose-500 rounded-full" />
-            Education
+            {dict.about.education}
           </h2>
           <ul className="space-y-2 text-gray-700">
-            <li>방송통신대학교 컴퓨터과학과 (25.09 - 현재)</li>
+            <li>{dict.about.educationDesc}</li>
           </ul>
         </motion.section>
 
@@ -297,7 +315,7 @@ export function AboutContent() {
         >
           <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
             <span className="w-2 h-2 bg-sky-500 rounded-full" />
-            Contact
+            {dict.about.contact}
           </h2>
           <ul className="space-y-2">
             <li>
@@ -342,7 +360,7 @@ export function AboutContent() {
         >
           <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
             <span className="w-2 h-2 bg-cyan-500 rounded-full" />
-            What I&apos;m interested in recently...
+            {dict.about.interests}
           </h2>
           <ul className="space-y-2">
             <li>
@@ -369,7 +387,7 @@ export function AboutContent() {
           }}
         >
           <Link
-            href="/preference"
+            href={`/${lang}/preference`}
             className={cn(
               'group flex items-center justify-between',
               'p-5 rounded-xl',
@@ -379,9 +397,13 @@ export function AboutContent() {
             )}
           >
             <div>
-              <p className="text-sm text-gray-400 mb-1">더 알아보기</p>
+              <p className="text-sm text-gray-400 mb-1">
+                {dict.home.learnMore}
+              </p>
               <p className="font-semibold text-gray-900 group-hover:text-rose-600 transition-colors">
-                음악, 책, 영화, 관심사
+                {lang === 'ko'
+                  ? '음악, 책, 영화, 관심사'
+                  : 'Music, Books, Movies, Interests'}
               </p>
             </div>
             <ArrowRightIcon className="w-5 h-5 text-gray-300 group-hover:text-rose-500 group-hover:translate-x-1 transition-all" />

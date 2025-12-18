@@ -5,16 +5,18 @@ import { siteConfig } from '@/shared/config/site';
 export const openGraph = ({
   title = siteConfig.title.default,
   description = siteConfig.description,
+  locale = siteConfig.locale,
 }: {
   title?: string;
   description?: string;
+  locale?: string;
 }): Metadata['openGraph'] => {
   return {
     title,
     description,
     siteName: siteConfig.siteName,
     url: siteConfig.url,
-    locale: siteConfig.locale,
+    locale,
     type: 'website',
     images: [
       {

@@ -5,6 +5,8 @@ import { motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import type { Locale } from '@/i18n/config';
+import type { Dictionary } from '@/i18n/get-dictionary';
 import { siteConfig } from '@/shared/config/site';
 import { GithubIcon } from '@/shared/icon/github-icon';
 import { LinkedinIcon } from '@/shared/icon/linkedin-icon';
@@ -19,8 +21,24 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
 };
 
-export default function Page() {
+interface HomeContentProps {
+  lang: Locale;
+  dict: Dictionary;
+}
+
+export function HomeContent({ lang, dict }: HomeContentProps) {
   const recentPosts = techPosts.slice(0, 5);
+
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString(
+      lang === 'ko' ? 'ko-KR' : 'en-US',
+      {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      },
+    );
+  };
 
   return (
     <div className="flex flex-col gap-16 py-4">
@@ -62,10 +80,10 @@ export default function Page() {
             </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                최형욱
+                {dict.home.name}
               </h1>
               <p className="text-sm text-gray-500 tracking-wide uppercase">
-                Frontend Developer
+                {dict.home.role}
               </p>
             </div>
           </motion.div>
@@ -79,11 +97,9 @@ export default function Page() {
             transition={{ duration: 0.6, delay: INITIAL_DELAY + STAGGER_DELAY }}
           >
             <p className="text-lg text-gray-700 leading-relaxed">
-              사용자 경험과 코드 품질에 관심이 많은 프론트엔드 개발자입니다.
+              {dict.home.bio}
               <br />
-              <span className="text-gray-500">
-                TypeScript, React, TanStack 생태계를 즐겨 사용합니다.
-              </span>
+              <span className="text-gray-500">{dict.home.bioSub}</span>
             </p>
           </motion.div>
 
@@ -127,14 +143,14 @@ export default function Page() {
               LinkedIn
             </a>
             <Link
-              href="/about"
+              href={`/${lang}/about`}
               className={cn(
                 'flex items-center gap-1 px-4 py-2',
                 'text-gray-600 text-sm font-medium',
                 'hover:text-gray-900 transition-colors',
               )}
             >
-              더 알아보기
+              {dict.home.learnMore}
               <ArrowRightIcon className="w-4 h-4" />
             </Link>
           </motion.div>
@@ -163,14 +179,14 @@ export default function Page() {
         >
           <div>
             <h2 className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-1">
-              Recent Posts
+              {dict.home.recentPostsLabel}
             </h2>
             <p className="text-2xl font-bold tracking-tight text-gray-900">
-              최근 작성한 글
+              {dict.home.recentPostsTitle}
             </p>
           </div>
           <Link
-            href="/tech"
+            href={`/${lang}/tech`}
             className={cn(
               'flex items-center gap-1',
               'text-sm text-gray-500',
@@ -178,7 +194,7 @@ export default function Page() {
               'group',
             )}
           >
-            전체보기
+            {dict.home.viewAll}
             <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </motion.div>
@@ -196,7 +212,7 @@ export default function Page() {
               }}
             >
               <Link
-                href={`/tech/${post.slug}`}
+                href={`/${lang}/tech/${post.slug}`}
                 className={cn(
                   'group flex items-start justify-between gap-4',
                   'py-5 -mx-3 px-3 rounded-lg',
@@ -210,11 +226,7 @@ export default function Page() {
                       Tech
                     </span>
                     <time className="text-xs text-gray-400">
-                      {new Date(post.date).toLocaleDateString('ko-KR', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
+                      {formatDate(post.date)}
                     </time>
                   </div>
                   <h3 className="font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors line-clamp-1">
@@ -243,7 +255,7 @@ export default function Page() {
           }}
         >
           <Link
-            href="/tech"
+            href={`/${lang}/tech`}
             className={cn(
               'flex items-center justify-center gap-2',
               'mt-6 py-4 px-6',
@@ -253,7 +265,7 @@ export default function Page() {
               'group',
             )}
           >
-            Tech 포스트 전체보기
+            {dict.home.viewAllTech}
             <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>

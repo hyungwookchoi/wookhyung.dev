@@ -1,0 +1,67 @@
+{
+  "metadata": {
+    "siteTitle": "WOOKHYUNG",
+    "siteDescription": "Blog of frontend developer Hyungwook Choi. Writing about frontend development and personal thoughts."
+  },
+  "navigation": {
+    "home": "Home",
+    "dev": "Dev",
+    "tech": "Tech",
+    "feed": "Feed",
+    "personal": "Personal",
+    "notes": "Notes",
+    "preference": "Preference",
+    "about": "About"
+  },
+  "home": {
+    "name": "Hyungwook Choi",
+    "role": "Frontend Developer",
+    "bio": "A frontend developer who cares about user experience and code quality.",
+    "bioSub": "I enjoy working with TypeScript, React, and the TanStack ecosystem.",
+    "learnMore": "Learn more",
+    "recentPostsLabel": "Recent Posts",
+    "recentPostsTitle": "Latest Articles",
+    "viewAll": "View all",
+    "viewAllTech": "View all Tech posts"
+  },
+  "about": {
+    "name": "Hyungwook Choi",
+    "subName": "WOOKHYUNG",
+    "experience": "Experience",
+    "experienceDesc": "Frontend Developer (Dec 2022 - Present)",
+    "techStack": "Tech Stack",
+    "techStackDesc": "TypeScript, React, TanStack Router(Start), Next.js",
+    "openSource": "Open Source Contribution",
+    "project": "Project",
+    "education": "Education",
+    "educationDesc": "Korea National Open University, Computer Science (Sep 2025 - Present)",
+    "contact": "Contact",
+    "interests": "What I'm interested in recently..."
+  },
+  "tech": {
+    "title": "Tech",
+    "viewPrevBlog": "View previous blog"
+  },
+  "notes": {
+    "title": "Notes"
+  },
+  "feed": {
+    "title": "Feed (Beta)"
+  },
+  "preference": {
+    "title": "Preference",
+    "music": "Music",
+    "concert": "Concert",
+    "book": "Book",
+    "movie": "Movie",
+    "interest": "Interest"
+  },
+  "common": {
+    "backButton": "Go back",
+    "menuToggle": "Toggle menu",
+    "closeMenu": "Close menu"
+  },
+  "date": {
+    "format": "MMM d, yyyy"
+  }
+}
