@@ -41,7 +41,7 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
   };
 
   return (
-    <div className="flex flex-col gap-16 py-4">
+    <div className="flex flex-col gap-10 sm:gap-16 py-2 sm:py-4">
       {/* Hero Section */}
       <section className="relative">
         {/* Decorative grid background */}
@@ -56,17 +56,17 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
           }}
         />
 
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-6 sm:gap-8">
           {/* Profile + Name */}
           <motion.div
-            className="flex items-center gap-5"
+            className="flex items-center gap-4 sm:gap-5"
             variants={fadeInUp}
             initial="initial"
             animate="animate"
             transition={{ duration: 0.6, delay: INITIAL_DELAY }}
           >
             <div className="relative">
-              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-300 bg-gray-200">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-gray-300 bg-gray-200">
                 <Image
                   src="/wookhyung.png"
                   width={80}
@@ -76,13 +76,13 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
                 />
               </div>
               {/* Status indicator */}
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-4 border-gray-100" />
+              <div className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 w-5 h-5 sm:w-6 sm:h-6 bg-emerald-500 rounded-full border-[3px] sm:border-4 border-gray-100" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
                 {dict.home.name}
               </h1>
-              <p className="text-sm text-gray-500 tracking-wide uppercase">
+              <p className="text-xs sm:text-sm text-gray-500 tracking-wide">
                 {dict.home.role}
               </p>
             </div>
@@ -96,7 +96,7 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
             animate="animate"
             transition={{ duration: 0.6, delay: INITIAL_DELAY + STAGGER_DELAY }}
           >
-            <p className="text-lg text-gray-700 leading-relaxed">
+            <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
               {dict.home.bio}
               <br />
               <span className="text-gray-500">{dict.home.bioSub}</span>
@@ -105,7 +105,7 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
 
           {/* Social Links */}
           <motion.div
-            className="flex items-center gap-3"
+            className="flex flex-wrap items-center gap-2 sm:gap-3"
             variants={fadeInUp}
             initial="initial"
             animate="animate"
@@ -119,9 +119,9 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                'flex items-center gap-2 px-4 py-2',
+                'flex items-center gap-2 px-3 sm:px-4 py-2',
                 'bg-gray-900 text-gray-100 rounded-full',
-                'text-sm font-medium',
+                'text-xs sm:text-sm font-medium',
                 'hover:bg-gray-800 transition-colors',
               )}
             >
@@ -133,9 +133,9 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                'flex items-center gap-2 px-4 py-2',
+                'flex items-center gap-2 px-3 sm:px-4 py-2',
                 'bg-white text-gray-700 rounded-full',
-                'text-sm font-medium border border-gray-300',
+                'text-xs sm:text-sm font-medium border border-gray-300',
                 'hover:bg-gray-50 hover:border-gray-400 transition-colors',
               )}
             >
@@ -145,8 +145,8 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
             <Link
               href={`/${lang}/about`}
               className={cn(
-                'flex items-center gap-1 px-4 py-2',
-                'text-gray-600 text-sm font-medium',
+                'flex items-center gap-1 px-3 sm:px-4 py-2',
+                'text-gray-600 text-xs sm:text-sm font-medium',
                 'hover:text-gray-900 transition-colors',
               )}
             >
@@ -168,7 +168,7 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
       {/* Recent Posts Section */}
       <section>
         <motion.div
-          className="flex items-baseline justify-between mb-8"
+          className="flex items-baseline justify-between mb-6 sm:mb-8"
           variants={fadeInUp}
           initial="initial"
           animate="animate"
@@ -178,10 +178,10 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
           }}
         >
           <div>
-            <h2 className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-1">
+            <h2 className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-widest mb-1">
               {dict.home.recentPostsLabel}
             </h2>
-            <p className="text-2xl font-bold tracking-tight text-gray-900">
+            <p className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">
               {dict.home.recentPostsTitle}
             </p>
           </div>
@@ -189,13 +189,13 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
             href={`/${lang}/tech`}
             className={cn(
               'flex items-center gap-1',
-              'text-sm text-gray-500',
+              'text-xs sm:text-sm text-gray-500',
               'hover:text-gray-900 transition-colors',
               'group',
             )}
           >
             {dict.home.viewAll}
-            <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRightIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </motion.div>
 
@@ -214,31 +214,31 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
               <Link
                 href={`/${lang}/tech/${post.slug}`}
                 className={cn(
-                  'group flex items-start justify-between gap-4',
-                  'py-5 -mx-3 px-3 rounded-lg',
+                  'group flex items-start justify-between gap-3 sm:gap-4',
+                  'py-4 sm:py-5 -mx-2 sm:-mx-3 px-2 sm:px-3 rounded-lg',
                   'hover:bg-white/60 transition-all duration-200',
                   'border-b border-gray-200/60 last:border-0',
                 )}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                  <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
+                    <span className="text-[10px] sm:text-xs font-medium text-emerald-600 bg-emerald-50 px-1.5 sm:px-2 py-0.5 rounded">
                       Tech
                     </span>
-                    <time className="text-xs text-gray-400">
+                    <time className="text-[10px] sm:text-xs text-gray-400">
                       {formatDate(post.date)}
                     </time>
                   </div>
-                  <h3 className="font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors line-clamp-1">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors line-clamp-2 sm:line-clamp-1">
                     {post.title}
                   </h3>
                   {post.summary && (
-                    <p className="mt-1 text-sm text-gray-500 line-clamp-1">
+                    <p className="hidden sm:block mt-1 text-sm text-gray-500 line-clamp-1">
                       {post.summary}
                     </p>
                   )}
                 </div>
-                <ArrowUpRightIcon className="w-5 h-5 text-gray-300 group-hover:text-emerald-600 transition-colors shrink-0 mt-1" />
+                <ArrowUpRightIcon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300 group-hover:text-emerald-600 transition-colors shrink-0 mt-0.5 sm:mt-1" />
               </Link>
             </motion.div>
           ))}
@@ -258,9 +258,9 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
             href={`/${lang}/tech`}
             className={cn(
               'flex items-center justify-center gap-2',
-              'mt-6 py-4 px-6',
+              'mt-4 sm:mt-6 py-3 sm:py-4 px-4 sm:px-6',
               'bg-gray-900 text-gray-100 rounded-xl',
-              'font-medium',
+              'text-sm sm:text-base font-medium',
               'hover:bg-gray-800 transition-colors',
               'group',
             )}
