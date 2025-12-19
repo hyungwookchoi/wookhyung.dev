@@ -5,10 +5,10 @@ import { notFound } from 'next/navigation';
 import { getMDXComponent } from 'next-contentlayer2/hooks';
 import serialize from 'serialize-javascript';
 
-import { isValidLocale, locales } from '@/i18n/config';
+import { isValidLocale, Locale } from '@/i18n/config';
 import { siteConfig } from '@/shared/config/site';
 import { BackButton } from '@/shared/ui/back-button';
-import { notesPosts } from '@/shared/util/post';
+import { getNotesPostBySlugAndLocale, notesPosts } from '@/shared/util/post';
 import { openGraph, twitter } from '@/shared/util/seo';
 
 import { Comments } from './ui/comments';
@@ -24,19 +24,22 @@ interface Props {
 
 export const generateStaticParams = () => {
   const params: { lang: string; slug: string }[] = [];
-  for (const lang of locales) {
-    for (const post of notesPosts) {
-      params.push({ lang, slug: post.slug });
-    }
+  for (const post of notesPosts) {
+    params.push({ lang: post.locale, slug: post.slug });
   }
   return params;
 };
 
 export const generateMetadata = async ({ params }: Props) => {
   const { lang, slug } = await params;
-  const post = notesPosts.find((post) => post.slug === slug);
 
-  if (!post || !isValidLocale(lang)) {
+  if (!isValidLocale(lang)) {
+    return {};
+  }
+
+  const post = getNotesPostBySlugAndLocale(slug, lang as Locale);
+
+  if (!post) {
     return {};
   }
 
@@ -67,7 +70,7 @@ export default async function Page({ params }: Props) {
     notFound();
   }
 
-  const post = notesPosts.find((post) => post.slug === slug);
+  const post = getNotesPostBySlugAndLocale(slug, lang as Locale);
 
   if (!post) {
     notFound();

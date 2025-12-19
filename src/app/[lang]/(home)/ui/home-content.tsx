@@ -11,7 +11,7 @@ import { siteConfig } from '@/shared/config/site';
 import { GithubIcon } from '@/shared/icon/github-icon';
 import { LinkedinIcon } from '@/shared/icon/linkedin-icon';
 import { cn } from '@/shared/lib/tailwind-merge';
-import { techPosts } from '@/shared/util/post';
+import { getTechPostsByLocale } from '@/shared/util/post';
 
 const STAGGER_DELAY = 0.08;
 const INITIAL_DELAY = 0.2;
@@ -27,7 +27,7 @@ interface HomeContentProps {
 }
 
 export function HomeContent({ lang, dict }: HomeContentProps) {
-  const recentPosts = techPosts.slice(0, 5);
+  const recentPosts = getTechPostsByLocale(lang).slice(0, 5);
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString(

@@ -5,7 +5,7 @@ import { isValidLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/get-dictionary';
 import { siteConfig } from '@/shared/config/site';
 import { PageTitle } from '@/shared/ui/page-title';
-import { notesPosts } from '@/shared/util/post';
+import { getNotesPostsByLocale } from '@/shared/util/post';
 import { openGraph, twitter } from '@/shared/util/seo';
 
 import { NotesPostList } from './ui/notes-post-list';
@@ -62,11 +62,13 @@ export default async function Page({ params }: Props) {
     },
   };
 
+  const posts = getNotesPostsByLocale(lang as Locale);
+
   return (
     <>
       <div>
         <PageTitle title={dict.notes.title} />
-        <NotesPostList posts={notesPosts} lang={lang as Locale} />
+        <NotesPostList posts={posts} lang={lang as Locale} />
       </div>
       <script
         type="application/ld+json"

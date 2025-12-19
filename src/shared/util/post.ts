@@ -21,7 +21,9 @@ export const getNotesPostsByLocale = (locale: Locale) =>
   notesPosts.filter((post) => post.locale === locale);
 
 export const getTechPostBySlugAndLocale = (slug: string, locale: Locale) =>
-  techPosts.find((post) => post.slug === slug && post.locale === locale);
+  techPosts.find((post) => post.slug === slug && post.locale === locale) ??
+  techPosts.find((post) => post.slug === slug && post.locale === 'ko');
 
 export const getNotesPostBySlugAndLocale = (slug: string, locale: Locale) =>
-  notesPosts.find((post) => post.slug === slug && post.locale === locale);
+  notesPosts.find((post) => post.slug === slug && post.locale === locale) ??
+  notesPosts.find((post) => post.slug === slug && post.locale === 'ko');

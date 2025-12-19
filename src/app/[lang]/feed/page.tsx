@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { isValidLocale } from '@/i18n/config';
+import { isValidLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/get-dictionary';
 import { siteConfig } from '@/shared/config/site';
 import { PageTitle } from '@/shared/ui/page-title';
@@ -57,7 +57,7 @@ export default async function FeedPage({ params }: Props) {
   return (
     <div>
       <PageTitle title={dict.feed.title} />
-      <FeedList items={rssItems} />
+      <FeedList items={rssItems} lang={lang as Locale} />
     </div>
   );
 }

@@ -1,11 +1,12 @@
 'use client';
 
 import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { enUS, ko } from 'date-fns/locale';
 import { ArrowUpRightIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useMemo, useState } from 'react';
 
+import type { Locale } from '@/i18n/config';
 import { cn } from '@/shared/lib/tailwind-merge';
 
 interface FeedItem {
@@ -18,6 +19,7 @@ interface FeedItem {
 
 interface FeedListProps {
   items: FeedItem[];
+  lang: Locale;
 }
 
 const STAGGER_DELAY = 0.03;
@@ -29,7 +31,7 @@ const fadeInUp = {
   exit: { opacity: 0, y: -8 },
 };
 
-export function FeedList({ items }: FeedListProps) {
+export function FeedList({ items, lang }: FeedListProps) {
   const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
 
   const authors = useMemo(() => {
@@ -41,6 +43,9 @@ export function FeedList({ items }: FeedListProps) {
     if (!selectedAuthor) return items;
     return items.filter((item) => item.feedName === selectedAuthor);
   }, [items, selectedAuthor]);
+
+  const dateLocale = lang === 'ko' ? ko : enUS;
+  const dateFormat = lang === 'ko' ? 'yyyy년 M월 d일' : 'MMM d, yyyy';
 
   return (
     <div className="flex flex-col gap-6">
@@ -54,14 +59,14 @@ export function FeedList({ items }: FeedListProps) {
         <button
           onClick={() => setSelectedAuthor(null)}
           className={cn(
-            'px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200',
+            'px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all duration-200 border',
             !selectedAuthor
-              ? 'bg-gray-900 text-white'
-              : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50',
+              ? 'bg-emerald-400 text-[#0a0a0b] border-emerald-400'
+              : 'bg-transparent text-neutral-400 border-neutral-700 hover:text-neutral-100 hover:border-neutral-500',
           )}
         >
           All
-          <span className="ml-1.5 text-xs opacity-60">{items.length}</span>
+          <span className="ml-1.5 opacity-60">{items.length}</span>
         </button>
         {authors.map((author) => {
           const count = items.filter((item) => item.feedName === author).length;
@@ -72,14 +77,14 @@ export function FeedList({ items }: FeedListProps) {
               key={author}
               onClick={() => setSelectedAuthor(isSelected ? null : author)}
               className={cn(
-                'px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200',
+                'px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all duration-200 border',
                 isSelected
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700',
+                  ? 'bg-emerald-400 text-[#0a0a0b] border-emerald-400'
+                  : 'bg-transparent text-neutral-400 border-neutral-700 hover:text-emerald-400 hover:border-emerald-400/50',
               )}
             >
               {author}
-              <span className="ml-1.5 text-xs opacity-60">{count}</span>
+              <span className="ml-1.5 opacity-60">{count}</span>
             </button>
           );
         })}
@@ -108,27 +113,27 @@ export function FeedList({ items }: FeedListProps) {
                 rel="noopener noreferrer"
                 className={cn(
                   'group flex items-start justify-between gap-4',
-                  'py-4 -mx-2 px-2 rounded-lg',
-                  'hover:bg-white/60 transition-all duration-200',
-                  'border-b border-gray-200/60 last:border-0',
+                  'py-4 sm:py-5 -mx-2 sm:-mx-3 px-2 sm:px-3',
+                  'hover:bg-neutral-900/50 transition-all duration-200',
+                  'border-b border-neutral-800 last:border-0',
                 )}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
+                  <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
+                    <span className="text-[10px] uppercase tracking-wider text-emerald-400 bg-emerald-400/10 px-2 py-0.5">
                       {item.feedName}
                     </span>
-                    <time className="text-xs text-gray-400">
-                      {format(new Date(item.pubDate), 'yyyy년 MM월 dd일', {
-                        locale: ko,
+                    <time className="text-[10px] text-neutral-600 uppercase tracking-wider">
+                      {format(new Date(item.pubDate), dateFormat, {
+                        locale: dateLocale,
                       })}
                     </time>
                   </div>
-                  <h2 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors line-clamp-2">
+                  <h2 className="text-sm sm:text-base font-normal text-neutral-200 group-hover:text-emerald-400 transition-colors line-clamp-2 sm:line-clamp-1">
                     {item.title}
                   </h2>
                 </div>
-                <ArrowUpRightIcon className="w-5 h-5 text-gray-300 group-hover:text-blue-600 transition-colors shrink-0 mt-1" />
+                <ArrowUpRightIcon className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-600 group-hover:text-emerald-400 transition-colors shrink-0 mt-0.5 sm:mt-1" />
               </a>
             </motion.div>
           ))}
@@ -137,11 +142,13 @@ export function FeedList({ items }: FeedListProps) {
         {/* Empty State */}
         {filteredItems.length === 0 && (
           <motion.div
-            className="py-12 text-center text-gray-400"
+            className="py-12 text-center text-neutral-500 font-mono text-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            선택한 작성자의 피드가 없습니다.
+            {lang === 'ko'
+              ? '선택한 작성자의 피드가 없습니다.'
+              : 'No feeds from selected author.'}
           </motion.div>
         )}
       </div>

@@ -6,7 +6,7 @@ import { isValidLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/get-dictionary';
 import { siteConfig } from '@/shared/config/site';
 import { PageTitle } from '@/shared/ui/page-title';
-import { techPosts } from '@/shared/util/post';
+import { getTechPostsByLocale } from '@/shared/util/post';
 import { openGraph, twitter } from '@/shared/util/seo';
 
 import { TechPostList } from './ui/tech-post-list';
@@ -63,11 +63,13 @@ export default async function Page({ params }: Props) {
     },
   };
 
+  const posts = getTechPostsByLocale(lang as Locale);
+
   return (
     <>
       <div>
         <PageTitle title={dict.tech.title} />
-        <TechPostList posts={techPosts} lang={lang as Locale} />
+        <TechPostList posts={posts} lang={lang as Locale} />
 
         <div className="mt-6 text-end">
           <a
