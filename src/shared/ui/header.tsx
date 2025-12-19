@@ -134,7 +134,7 @@ const MenuToggle = ({
   <button
     type="button"
     onClick={toggle}
-    className="md:hidden p-2 text-gray-800 hover:text-gray-900 focus:outline-none relative z-50"
+    className="md:hidden p-2 text-neutral-400 hover:text-emerald-400 focus:outline-none relative z-50"
     aria-label={ariaLabel}
   >
     <svg width="20" height="20" viewBox="0 0 20 20">
@@ -205,9 +205,8 @@ const DropdownMenu = ({
     >
       <button
         className={cn(
-          'text-sm font-medium transition-colors text-gray-800 hover:text-gray-900 flex items-center gap-1',
-          isAnySubItemActive &&
-            'underline underline-offset-4 decoration-gray-800 decoration-2',
+          'text-sm font-medium transition-colors text-neutral-400 hover:text-emerald-400 flex items-center gap-1',
+          isAnySubItemActive && 'text-emerald-400',
         )}
         aria-expanded={isOpen}
       >
@@ -221,7 +220,7 @@ const DropdownMenu = ({
       </button>
 
       {isOpen && item.subItems && (
-        <div className="absolute top-full left-0 mt-1 py-2 bg-white border border-gray-200 rounded-md shadow-lg min-w-[120px] z-50">
+        <div className="absolute top-full left-0 mt-1 py-2 bg-neutral-900 border border-neutral-800 min-w-[120px] z-50">
           {item.subItems.map((subItem) => {
             const hrefWithoutLang = subItem.href.replace(`/${lang}`, '');
             const pathnameWithoutLang = pathname.replace(`/${lang}`, '');
@@ -233,8 +232,8 @@ const DropdownMenu = ({
                 key={subItem.name}
                 href={subItem.href}
                 className={cn(
-                  'block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors',
-                  isSubItemActive && 'bg-gray-100 text-gray-900 font-medium',
+                  'block px-4 py-2 text-sm text-neutral-400 hover:bg-neutral-800 hover:text-emerald-400 transition-colors',
+                  isSubItemActive && 'bg-neutral-800 text-emerald-400',
                 )}
               >
                 {subItem.name}
@@ -279,7 +278,7 @@ const LanguageSwitcher = ({ lang }: { lang: Locale }) => {
       onMouseLeave={handleMouseLeave}
     >
       <button
-        className="flex items-center gap-1 text-sm font-medium text-gray-800 hover:text-gray-900 transition-colors"
+        className="flex items-center gap-1 text-sm font-medium text-neutral-400 hover:text-emerald-400 transition-colors"
         aria-label="Switch language"
       >
         <Globe className="w-4 h-4" />
@@ -287,12 +286,12 @@ const LanguageSwitcher = ({ lang }: { lang: Locale }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-1 py-2 bg-white border border-gray-200 rounded-md shadow-lg min-w-[80px] z-50">
+        <div className="absolute top-full right-0 mt-1 py-2 bg-neutral-900 border border-neutral-800 min-w-[80px] z-50">
           <button
             onClick={() => switchLanguage('ko')}
             className={cn(
-              'block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors',
-              lang === 'ko' && 'bg-gray-100 text-gray-900 font-medium',
+              'block w-full px-4 py-2 text-sm text-left text-neutral-400 hover:bg-neutral-800 hover:text-emerald-400 transition-colors',
+              lang === 'ko' && 'bg-neutral-800 text-emerald-400',
             )}
           >
             한국어
@@ -300,8 +299,8 @@ const LanguageSwitcher = ({ lang }: { lang: Locale }) => {
           <button
             onClick={() => switchLanguage('en')}
             className={cn(
-              'block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors',
-              lang === 'en' && 'bg-gray-100 text-gray-900 font-medium',
+              'block w-full px-4 py-2 text-sm text-left text-neutral-400 hover:bg-neutral-800 hover:text-emerald-400 transition-colors',
+              lang === 'en' && 'bg-neutral-800 text-emerald-400',
             )}
           >
             English
@@ -366,11 +365,11 @@ export const Header = ({ lang, dict }: HeaderProps) => {
 
   return (
     <>
-      <header className="z-50 sticky top-0 bg-gray-100/50 px-4 py-3 backdrop-blur-md">
+      <header className="z-50 sticky top-0 bg-[#0a0a0b]/80 px-4 py-3 backdrop-blur-md border-b border-neutral-800">
         <nav className="flex items-center justify-between">
           <Link
             href={`/${lang}`}
-            className="text-xl font-semibold text-gray-900 hover:text-gray-600 transition-colors"
+            className="text-xl font-semibold text-neutral-100 hover:text-emerald-400 transition-colors"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <Image
@@ -401,9 +400,8 @@ export const Header = ({ lang, dict }: HeaderProps) => {
                   key={item.name}
                   href={item.href!}
                   className={cn(
-                    'text-sm font-medium transition-colors text-gray-800 hover:text-gray-900',
-                    isActive &&
-                      'underline underline-offset-4 decoration-gray-800 decoration-2',
+                    'text-sm font-medium transition-colors text-neutral-400 hover:text-emerald-400',
+                    isActive && 'text-emerald-400',
                   )}
                 >
                   {item.name}
@@ -433,7 +431,7 @@ export const Header = ({ lang, dict }: HeaderProps) => {
         variants={backdropVariants}
       >
         <div
-          className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
           onClick={() => setIsMobileMenuOpen(false)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -447,12 +445,12 @@ export const Header = ({ lang, dict }: HeaderProps) => {
 
         <div className="fixed top-0 left-0 right-0 h-screen">
           <motion.div
-            className="absolute top-0 left-0 right-0 bg-gray-100 shadow-lg h-full"
+            className="absolute top-0 left-0 right-0 bg-[#0a0a0b] h-full"
             variants={sidebarVariants}
           />
 
           <div className="relative h-full">
-            <div className="h-14 bg-gray-100" />
+            <div className="h-14 bg-[#0a0a0b]" />
 
             <motion.div className="px-6 py-4 space-y-1" variants={menuVariants}>
               {navigation.map((item) => {
@@ -467,8 +465,9 @@ export const Header = ({ lang, dict }: HeaderProps) => {
                       <button
                         onClick={() => toggleMobileDropdown(item.name)}
                         className={cn(
-                          'w-full flex items-center justify-between px-4 py-3 text-lg font-medium text-gray-800 hover:text-gray-900 hover:bg-gray-200 rounded-lg transition-colors',
-                          isAnySubItemActive && 'bg-gray-200 text-gray-900',
+                          'w-full flex items-center justify-between px-4 py-3 text-lg font-medium text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800 transition-colors',
+                          isAnySubItemActive &&
+                            'bg-neutral-800 text-emerald-400',
                         )}
                       >
                         {item.name}
@@ -490,9 +489,9 @@ export const Header = ({ lang, dict }: HeaderProps) => {
                                 href={subItem.href}
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={cn(
-                                  'block px-4 py-2 text-base text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded-lg transition-colors',
+                                  'block px-4 py-2 text-base text-neutral-500 hover:text-emerald-400 hover:bg-neutral-800 transition-colors',
                                   isSubItemActive &&
-                                    'bg-gray-200 text-gray-900 font-medium',
+                                    'bg-neutral-800 text-emerald-400',
                                 )}
                               >
                                 {subItem.name}
@@ -513,8 +512,8 @@ export const Header = ({ lang, dict }: HeaderProps) => {
                       href={item.href!}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={cn(
-                        'block px-4 py-3 text-lg font-medium text-gray-800 hover:text-gray-900 hover:bg-gray-200 rounded-lg transition-colors',
-                        isActive && 'bg-gray-200 text-gray-900',
+                        'block px-4 py-3 text-lg font-medium text-neutral-400 hover:text-emerald-400 hover:bg-neutral-800 transition-colors',
+                        isActive && 'bg-neutral-800 text-emerald-400',
                       )}
                     >
                       {item.name}
@@ -526,15 +525,17 @@ export const Header = ({ lang, dict }: HeaderProps) => {
               {/* Mobile Language Switcher */}
               <motion.div variants={itemVariants}>
                 <div className="px-4 py-3">
-                  <p className="text-sm text-gray-500 mb-2">Language</p>
+                  <p className="text-[10px] text-neutral-500 uppercase tracking-[0.15em] mb-2">
+                    Language
+                  </p>
                   <div className="flex gap-2">
                     <button
                       onClick={() => switchLanguage('ko')}
                       className={cn(
-                        'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                        'px-4 py-2 text-sm font-medium transition-colors',
                         lang === 'ko'
-                          ? 'bg-gray-900 text-white'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                          ? 'bg-emerald-400 text-[#0a0a0b]'
+                          : 'bg-neutral-800 text-neutral-400 hover:text-emerald-400',
                       )}
                     >
                       한국어
@@ -542,10 +543,10 @@ export const Header = ({ lang, dict }: HeaderProps) => {
                     <button
                       onClick={() => switchLanguage('en')}
                       className={cn(
-                        'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                        'px-4 py-2 text-sm font-medium transition-colors',
                         lang === 'en'
-                          ? 'bg-gray-900 text-white'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                          ? 'bg-emerald-400 text-[#0a0a0b]'
+                          : 'bg-neutral-800 text-neutral-400 hover:text-emerald-400',
                       )}
                     >
                       English

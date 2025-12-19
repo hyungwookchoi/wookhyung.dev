@@ -31,7 +31,7 @@ export function useSlotTimer(): SlotTimerState & SlotTimerControls {
 
   const startTimeRef = useRef<number>(performance.now());
   const pausedAtRef = useRef<number | null>(null);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
   const speedRef = useRef<number>(1);
   const virtualTimeRef = useRef<number>(0);
   const lastUpdateRef = useRef<number>(performance.now());

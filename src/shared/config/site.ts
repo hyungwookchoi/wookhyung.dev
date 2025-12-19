@@ -64,8 +64,9 @@ export const siteConfig = {
     },
   },
   theme: {
-    color: '#f3f4f6',
-    background: '#f3f4f6',
+    color: '#0a0a0b',
+    background: '#0a0a0b',
+    accent: '#34d399',
   },
   verification: {
     naver: 'b0cbc49b310075ca17a6a6868dd4a9ed0ee4b99d',

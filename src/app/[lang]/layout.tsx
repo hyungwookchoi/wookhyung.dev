@@ -94,7 +94,14 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   return (
     <html lang={lang}>
-      <body className="max-w-3xl mx-auto min-h-dvh flex flex-col bg-gray-100 font-mono">
+      <body className="max-w-3xl mx-auto min-h-dvh flex flex-col bg-[#0a0a0b] font-mono text-neutral-100 relative">
+        {/* Noise texture overlay */}
+        <div
+          className="fixed inset-0 pointer-events-none opacity-[0.015] z-50"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          }}
+        />
         <Providers>
           <Header lang={lang as Locale} dict={dict} />
           <main className="flex-1 flex flex-col py-6 px-4">{children}</main>

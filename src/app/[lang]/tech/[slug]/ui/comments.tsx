@@ -24,7 +24,7 @@ export const Comments = () => {
     scriptElem.setAttribute('data-reactions-enabled', '1');
     scriptElem.setAttribute('data-emit-metadata', '0');
     scriptElem.setAttribute('data-input-position', 'bottom');
-    scriptElem.setAttribute('data-theme', 'light');
+    scriptElem.setAttribute('data-theme', 'dark_dimmed');
     scriptElem.setAttribute('data-lang', 'ko');
 
     ref.current.appendChild(scriptElem);
@@ -36,7 +36,7 @@ export const Comments = () => {
       'iframe.giscus-frame',
     );
     iframe?.contentWindow?.postMessage(
-      { giscus: { setConfig: { theme: 'light' } } },
+      { giscus: { setConfig: { theme: 'dark_dimmed' } } },
       'https://giscus.app',
     );
   }, []);

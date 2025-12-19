@@ -107,7 +107,7 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
         animate="animate"
         transition={{ duration: 0.5, delay: INITIAL_DELAY }}
       >
-        <div className="relative rounded-full overflow-hidden border-2 border-gray-300 mb-6">
+        <div className="relative overflow-hidden border border-neutral-700 bg-neutral-200 mb-6">
           <Image
             src="/wookhyung.png"
             width={128}
@@ -117,10 +117,12 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
         </div>
 
         <div className="space-y-2 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-light text-neutral-100">
             {dict.about.name}
           </h1>
-          <p className="text-lg text-gray-500">{dict.about.subName}</p>
+          <p className="text-sm text-neutral-500 uppercase tracking-[0.15em]">
+            {dict.about.subName}
+          </p>
         </div>
 
         <div className="flex space-x-3">
@@ -128,7 +130,7 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             href={siteConfig.social.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center w-11 h-11 rounded-full bg-gray-900 text-white hover:bg-gray-800 transition-colors"
+            className="flex items-center justify-center w-11 h-11 bg-emerald-400 text-[#0a0a0b] hover:bg-emerald-300 transition-colors"
             aria-label="GitHub"
           >
             <GithubIcon className="w-5 h-5" />
@@ -137,14 +139,14 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             href={siteConfig.social.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center w-11 h-11 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center w-11 h-11 bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-emerald-400 transition-colors"
             aria-label="LinkedIn"
           >
             <LinkedinIcon className="w-5 h-5" />
           </a>
           <a
             href={`mailto:${siteConfig.social.email}`}
-            className="flex items-center justify-center w-11 h-11 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center w-11 h-11 bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-emerald-400 transition-colors"
             aria-label="Email"
           >
             <EmailIcon className="w-5 h-5" />
@@ -153,7 +155,7 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             href={siteConfig.feeds.rss}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center w-11 h-11 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-center w-11 h-11 bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-emerald-400 transition-colors"
             aria-label="RSS"
           >
             <RssIcon className="w-5 h-5" />
@@ -171,11 +173,11 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 bg-blue-500 rounded-full" />
+          <h2 className="text-sm font-normal text-neutral-200 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+            <span className="w-2 h-2 bg-emerald-400" />
             {dict.about.experience}
           </h2>
-          <ul className="space-y-2 text-gray-700">
+          <ul className="space-y-2 text-neutral-400">
             <li>{dict.about.experienceDesc}</li>
           </ul>
         </motion.section>
@@ -189,11 +191,11 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+          <h2 className="text-sm font-normal text-neutral-200 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+            <span className="w-2 h-2 bg-emerald-400" />
             {dict.about.techStack}
           </h2>
-          <ul className="space-y-2 text-gray-700">
+          <ul className="space-y-2 text-neutral-400">
             <li>{dict.about.techStackDesc}</li>
           </ul>
         </motion.section>
@@ -207,16 +209,16 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 bg-violet-500 rounded-full" />
+          <h2 className="text-sm font-normal text-neutral-200 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+            <span className="w-2 h-2 bg-emerald-400" />
             {dict.about.openSource}
           </h2>
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+          <h3 className="text-[10px] font-normal text-neutral-500 uppercase tracking-[0.15em] mb-3">
             <a
               href="https://github.com/TanStack/router"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-violet-600 transition-colors"
+              className="hover:text-emerald-400 transition-colors"
             >
               TanStack Router(Start)
             </a>
@@ -227,10 +229,10 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
                 <div className="flex items-center gap-2">
                   <div
                     className={cn(
-                      'flex items-center gap-1 text-white rounded-full px-2 py-0.5 text-xs',
+                      'flex items-center gap-1 text-[#0a0a0b] px-2 py-0.5 text-xs',
                       {
-                        'bg-violet-600': status === 'merged',
-                        'bg-emerald-600': status === 'open',
+                        'bg-emerald-400': status === 'merged',
+                        'bg-neutral-400': status === 'open',
                       },
                     )}
                   >
@@ -246,7 +248,7 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-700 hover:text-violet-600 transition-colors line-clamp-1"
+                    className="text-neutral-400 hover:text-emerald-400 transition-colors line-clamp-1"
                   >
                     {title}
                   </a>
@@ -265,22 +267,22 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 bg-amber-500 rounded-full" />
+          <h2 className="text-sm font-normal text-neutral-200 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+            <span className="w-2 h-2 bg-emerald-400" />
             {dict.about.project}
           </h2>
           <ul className="space-y-2">
             {projects.map(({ title, link, description }) => (
-              <li key={title} className="text-gray-700">
+              <li key={title} className="text-neutral-400">
                 <a
                   href={link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-amber-600 transition-colors"
+                  className="hover:text-emerald-400 transition-colors"
                 >
                   {title}
                 </a>
-                <span className="text-gray-400"> ({description[lang]})</span>
+                <span className="text-neutral-600"> ({description[lang]})</span>
               </li>
             ))}
           </ul>
@@ -295,11 +297,11 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 bg-rose-500 rounded-full" />
+          <h2 className="text-sm font-normal text-neutral-200 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+            <span className="w-2 h-2 bg-emerald-400" />
             {dict.about.education}
           </h2>
-          <ul className="space-y-2 text-gray-700">
+          <ul className="space-y-2 text-neutral-400">
             <li>{dict.about.educationDesc}</li>
           </ul>
         </motion.section>
@@ -313,8 +315,8 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 bg-sky-500 rounded-full" />
+          <h2 className="text-sm font-normal text-neutral-200 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+            <span className="w-2 h-2 bg-emerald-400" />
             {dict.about.contact}
           </h2>
           <ul className="space-y-2">
@@ -323,7 +325,7 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
                 href={siteConfig.social.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-700 hover:text-sky-600 transition-colors"
+                className="text-neutral-400 hover:text-emerald-400 transition-colors"
               >
                 GitHub: {siteConfig.author.name}
               </a>
@@ -333,7 +335,7 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
                 href={siteConfig.social.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-700 hover:text-sky-600 transition-colors"
+                className="text-neutral-400 hover:text-emerald-400 transition-colors"
               >
                 LinkedIn: hyungwookchoi
               </a>
@@ -341,7 +343,7 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             <li>
               <a
                 href={`mailto:${siteConfig.social.email}`}
-                className="text-gray-700 hover:text-sky-600 transition-colors"
+                className="text-neutral-400 hover:text-emerald-400 transition-colors"
               >
                 Email: {siteConfig.social.email}
               </a>
@@ -358,8 +360,8 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 bg-cyan-500 rounded-full" />
+          <h2 className="text-sm font-normal text-neutral-200 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+            <span className="w-2 h-2 bg-emerald-400" />
             {dict.about.interests}
           </h2>
           <ul className="space-y-2">
@@ -368,7 +370,7 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
                 href="https://www.anthropic.com/claude-code"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-700 hover:text-cyan-600 transition-colors"
+                className="text-neutral-400 hover:text-emerald-400 transition-colors"
               >
                 Claude Code
               </a>
@@ -390,23 +392,23 @@ export function AboutContent({ lang, dict }: AboutContentProps) {
             href={`/${lang}/preference`}
             className={cn(
               'group flex items-center justify-between',
-              'p-5 rounded-xl',
-              'bg-white/60 border border-gray-200',
-              'hover:bg-white hover:border-gray-300 hover:shadow-sm',
+              'p-5',
+              'bg-neutral-900/50 border border-neutral-800',
+              'hover:bg-neutral-800/50 hover:border-neutral-700',
               'transition-all duration-200',
             )}
           >
             <div>
-              <p className="text-sm text-gray-400 mb-1">
+              <p className="text-[10px] text-neutral-500 uppercase tracking-[0.15em] mb-1">
                 {dict.home.learnMore}
               </p>
-              <p className="font-semibold text-gray-900 group-hover:text-rose-600 transition-colors">
+              <p className="font-normal text-neutral-200 group-hover:text-emerald-400 transition-colors">
                 {lang === 'ko'
                   ? '음악, 책, 영화, 관심사'
                   : 'Music, Books, Movies, Interests'}
               </p>
             </div>
-            <ArrowRightIcon className="w-5 h-5 text-gray-300 group-hover:text-rose-500 group-hover:translate-x-1 transition-all" />
+            <ArrowRightIcon className="w-5 h-5 text-neutral-600 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
           </Link>
         </motion.div>
       </div>

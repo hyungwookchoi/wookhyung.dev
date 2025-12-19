@@ -6,7 +6,7 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <ProgressProvider
       height="4px"
-      color="#799EFF"
+      color="#34d399"
       options={{
         showSpinner: false,
       }}

@@ -102,20 +102,22 @@ export default async function Page({ params }: Props) {
       <div className="flex flex-col gap-6 pb-40">
         <ProgressBar />
         <BackButton className="self-start" lang={lang} />
-        <article className="py-6 prose max-w-none break-words">
-          <h1>{post.title}</h1>
+        <article className="py-6 prose prose-invert max-w-none break-words">
+          <h1 className="text-neutral-100">{post.title}</h1>
           {post.summary && (
-            <p className="text-xl mt-0 text-slate-700">{post.summary}</p>
+            <p className="text-lg mt-0 text-neutral-400 font-light">
+              {post.summary}
+            </p>
           )}
           <div className="flex items-center gap-2 mt-2 mb-4 not-prose">
             <time
               dateTime={post.date}
-              className="text-sm text-gray-500 font-medium"
+              className="text-[10px] text-neutral-500 uppercase tracking-[0.15em]"
             >
               {format(new Date(post.date), dateFormat, { locale: dateLocale })}
             </time>
           </div>
-          <hr />
+          <hr className="border-neutral-800" />
           <Content
             components={{
               Image,
