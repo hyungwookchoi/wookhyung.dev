@@ -31,6 +31,34 @@ export const translations = {
         ejectionWarning: '잔고가 16 ETH 미만이 되면 강제 퇴장됩니다',
       },
     },
+    epochSimulator: {
+      slotStatus: {
+        pending: '대기중',
+        proposed: '제안됨',
+        justified: '정당화됨',
+        finalized: '최종확정',
+      },
+      events: {
+        slotProposed: '슬롯 {slot}: 블록 제안됨',
+        epochCheckpoint: '에포크 {epoch}: 체크포인트 생성',
+        epochJustified: '에포크 {epoch}: 정당화 완료',
+        epochFinalized: '에포크 {epoch}: 최종 확정',
+        rewardDistributed: '보상 분배: +{amount} ETH',
+        randaoUpdated: '새 에포크 시드 생성됨',
+      },
+      settlement: {
+        calculating: '검증인 수익 정산 중...',
+        completed: '정산 완료',
+        expectedReward: '예상 보상',
+        cumulative: '누적 보상',
+      },
+      randao: {
+        title: 'RANDAO 시드',
+        newSeed: '새 에포크 시드 생성됨',
+        description:
+          '각 에포크마다 검증인들의 입력으로 새로운 시드가 생성됩니다.',
+      },
+    },
   },
   en: {
     playground: {
@@ -61,6 +89,34 @@ export const translations = {
         validatorBalance: 'Validator Balance',
         ejectionWarning:
           'Forced ejection occurs when balance falls below 16 ETH',
+      },
+    },
+    epochSimulator: {
+      slotStatus: {
+        pending: 'Pending',
+        proposed: 'Proposed',
+        justified: 'Justified',
+        finalized: 'Finalized',
+      },
+      events: {
+        slotProposed: 'Slot {slot}: Block Proposed',
+        epochCheckpoint: 'Epoch {epoch}: Checkpoint Created',
+        epochJustified: 'Epoch {epoch}: Justified',
+        epochFinalized: 'Epoch {epoch}: Finalized',
+        rewardDistributed: 'Rewards: +{amount} ETH',
+        randaoUpdated: 'New Epoch Seed Generated',
+      },
+      settlement: {
+        calculating: 'Calculating validator rewards...',
+        completed: 'Settlement Complete',
+        expectedReward: 'Expected Reward',
+        cumulative: 'Cumulative',
+      },
+      randao: {
+        title: 'RANDAO Seed',
+        newSeed: 'New Epoch Seed Generated',
+        description:
+          'A new seed is generated each epoch from validator inputs.',
       },
     },
   },

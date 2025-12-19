@@ -1,14 +1,25 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { SLOT_CONFIG } from '../constants/ethereum';
+import type {
+  EpochStatus,
+  EpochTransitionState,
+  SlotData,
+  SlotStatus,
+} from '../types/slot';
 
 interface SlotTimerState {
   currentSlot: number;
   currentEpoch: number;
-  isFinalized: boolean;
+  previousEpoch: number;
   progress: number;
   isRunning: boolean;
   speed: number;
+  slots: SlotData[];
+  epochStatus: EpochStatus;
+  previousEpochStatus: EpochStatus;
+  randaoSeed: string;
+  transition: EpochTransitionState;
 }
 
 interface SlotTimerControls {
@@ -19,22 +30,118 @@ interface SlotTimerControls {
   skipSlots: (count: number) => void;
 }
 
+function generateRandaoSeed(): string {
+  return (
+    '0x' +
+    Array.from({ length: 64 }, () =>
+      Math.floor(Math.random() * 16).toString(16),
+    ).join('')
+  );
+}
+
+function createInitialSlots(): SlotData[] {
+  return Array.from({ length: SLOT_CONFIG.slotsPerEpoch }, (_, i) => ({
+    index: i,
+    status: 'pending' as SlotStatus,
+  }));
+}
+
 export function useSlotTimer(): SlotTimerState & SlotTimerControls {
   const [state, setState] = useState<SlotTimerState>({
     currentSlot: 0,
     currentEpoch: 0,
-    isFinalized: false,
+    previousEpoch: -1,
     progress: 0,
     isRunning: true,
     speed: 1,
+    slots: createInitialSlots(),
+    epochStatus: 'active',
+    previousEpochStatus: 'active',
+    randaoSeed: generateRandaoSeed(),
+    transition: {
+      isCheckpointing: false,
+      isJustifying: false,
+      isFinalizing: false,
+      isSettling: false,
+    },
   });
 
-  const startTimeRef = useRef<number>(performance.now());
   const pausedAtRef = useRef<number | null>(null);
   const animationFrameRef = useRef<number | undefined>(undefined);
   const speedRef = useRef<number>(1);
   const virtualTimeRef = useRef<number>(0);
   const lastUpdateRef = useRef<number>(performance.now());
+  const lastEpochRef = useRef<number>(-1);
+  const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const triggerEpochTransition = useCallback((newEpoch: number) => {
+    // 이전 타임아웃 클리어
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+    }
+
+    // 1. Checkpoint 생성 (0ms)
+    setState((prev) => ({
+      ...prev,
+      transition: {
+        ...prev.transition,
+        isCheckpointing: true,
+      },
+    }));
+
+    // 2. Justified (500ms 후)
+    transitionTimeoutRef.current = setTimeout(() => {
+      setState((prev) => ({
+        ...prev,
+        transition: {
+          ...prev.transition,
+          isCheckpointing: false,
+          isJustifying: true,
+        },
+        previousEpochStatus: 'finalized',
+        epochStatus: 'justified',
+      }));
+
+      // 3. Finalized (1000ms 후)
+      transitionTimeoutRef.current = setTimeout(() => {
+        setState((prev) => ({
+          ...prev,
+          transition: {
+            ...prev.transition,
+            isJustifying: false,
+            isFinalizing: true,
+          },
+          randaoSeed: generateRandaoSeed(),
+        }));
+
+        // 4. 정산 시작 (1500ms 후)
+        transitionTimeoutRef.current = setTimeout(() => {
+          setState((prev) => ({
+            ...prev,
+            transition: {
+              ...prev.transition,
+              isFinalizing: false,
+              isSettling: true,
+            },
+          }));
+
+          // 5. 정산 완료 (3000ms 후) - epochStatus를 active로 리셋
+          transitionTimeoutRef.current = setTimeout(() => {
+            setState((prev) => ({
+              ...prev,
+              epochStatus: 'active',
+              transition: {
+                isCheckpointing: false,
+                isJustifying: false,
+                isFinalizing: false,
+                isSettling: false,
+              },
+            }));
+          }, 1500);
+        }, 500);
+      }, 500);
+    }, 500);
+  }, []);
 
   const updateTimer = useCallback(() => {
     if (pausedAtRef.current !== null) return;
@@ -52,19 +159,38 @@ export function useSlotTimer(): SlotTimerState & SlotTimerControls {
     const slotProgress =
       (elapsed % SLOT_CONFIG.durationMs) / SLOT_CONFIG.durationMs;
 
-    const wasFinalized =
-      currentSlot === 0 && totalSlots > 0 && slotProgress < 0.1;
+    // 에포크 전환 감지
+    const epochChanged = currentEpoch > lastEpochRef.current;
+    if (epochChanged && lastEpochRef.current >= 0) {
+      triggerEpochTransition(currentEpoch);
+    }
+    lastEpochRef.current = currentEpoch;
+
+    // 슬롯 상태 업데이트
+    const newSlots = Array.from(
+      { length: SLOT_CONFIG.slotsPerEpoch },
+      (_, i) => ({
+        index: i,
+        status: (i < currentSlot
+          ? 'proposed'
+          : i === currentSlot
+            ? 'proposed'
+            : 'pending') as SlotStatus,
+        timestamp: i <= currentSlot ? Date.now() : undefined,
+      }),
+    );
 
     setState((prev) => ({
       ...prev,
       currentSlot,
       currentEpoch,
-      isFinalized: wasFinalized,
+      previousEpoch: currentEpoch > 0 ? currentEpoch - 1 : -1,
       progress: slotProgress,
+      slots: newSlots,
     }));
 
     animationFrameRef.current = requestAnimationFrame(updateTimer);
-  }, []);
+  }, [triggerEpochTransition]);
 
   const start = useCallback(() => {
     if (pausedAtRef.current !== null) {
@@ -87,13 +213,29 @@ export function useSlotTimer(): SlotTimerState & SlotTimerControls {
     virtualTimeRef.current = 0;
     lastUpdateRef.current = performance.now();
     pausedAtRef.current = null;
+    lastEpochRef.current = -1;
+
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+    }
+
     setState((prev) => ({
       currentSlot: 0,
       currentEpoch: 0,
-      isFinalized: false,
+      previousEpoch: -1,
       progress: 0,
       isRunning: true,
       speed: prev.speed,
+      slots: createInitialSlots(),
+      epochStatus: 'active',
+      previousEpochStatus: 'active',
+      randaoSeed: generateRandaoSeed(),
+      transition: {
+        isCheckpointing: false,
+        isJustifying: false,
+        isFinalizing: false,
+        isSettling: false,
+      },
     }));
   }, []);
 
@@ -111,6 +253,9 @@ export function useSlotTimer(): SlotTimerState & SlotTimerControls {
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+      }
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
       }
     };
   }, [updateTimer]);
