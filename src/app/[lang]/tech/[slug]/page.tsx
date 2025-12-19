@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { getMDXComponent } from 'next-contentlayer2/hooks';
 import serialize from 'serialize-javascript';
 
+import { EthereumPosPlayground } from '@/features/ethereum-pos';
 import { isValidLocale, locales } from '@/i18n/config';
 import { siteConfig } from '@/shared/config/site';
 import { BackButton } from '@/shared/ui/back-button';
@@ -118,6 +119,7 @@ export default async function Page({ params }: Props) {
           <Content
             components={{
               Image,
+              EthereumPosPlayground,
             }}
           />
         </article>
