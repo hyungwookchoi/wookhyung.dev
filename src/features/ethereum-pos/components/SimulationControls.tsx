@@ -5,14 +5,35 @@ import { useState } from 'react';
 
 type SimulationMode = 'none' | 'attack' | 'offline';
 
+interface SimulationTranslations {
+  description: string;
+  attack: {
+    title: string;
+    description: string;
+    highlight: string;
+    suffix: string;
+    networkHalted: string;
+  };
+  offline: {
+    title: string;
+    description: string;
+    highlight: string;
+    suffix: string;
+    validatorBalance: string;
+    ejectionWarning: string;
+  };
+}
+
 interface SimulationControlsProps {
   haltCost: string;
   stakedAmount: number;
+  translations: SimulationTranslations;
 }
 
 export function SimulationControls({
   haltCost,
   stakedAmount,
+  translations: t,
 }: SimulationControlsProps) {
   const [activeSimulation, setActiveSimulation] =
     useState<SimulationMode>('none');
@@ -26,7 +47,7 @@ export function SimulationControls({
           Simulation
         </span>
         <span className="font-mono text-[10px] text-neutral-600">
-          공격 시나리오와 페널티를 시뮬레이션합니다
+          {t.description}
         </span>
       </div>
 
@@ -73,14 +94,14 @@ export function SimulationControls({
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-red-500 animate-pulse" />
                 <span className="font-mono text-xs text-red-400">
-                  33% Attack Scenario
+                  {t.attack.title}
                 </span>
               </div>
 
               <p className="font-mono text-[11px] text-neutral-400 leading-relaxed">
-                공격자가 예치된 ETH의 33% 이상을 확보하면 최종화를 방해하여{' '}
-                <span className="text-red-400">네트워크를 정지</span>시킬 수
-                있습니다.
+                {t.attack.description}{' '}
+                <span className="text-red-400">{t.attack.highlight}</span>
+                {t.attack.suffix}
               </p>
 
               <div className="grid grid-cols-2 gap-px bg-neutral-800">
@@ -110,7 +131,7 @@ export function SimulationControls({
                   className="h-px bg-red-500 origin-left"
                 />
                 <p className="font-mono text-[9px] text-neutral-600 text-center tracking-wider">
-                  NETWORK HALTED
+                  {t.attack.networkHalted}
                 </p>
               </div>
             </div>
@@ -128,20 +149,21 @@ export function SimulationControls({
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-amber-500 animate-pulse" />
                 <span className="font-mono text-xs text-amber-400">
-                  Offline Penalty
+                  {t.offline.title}
                 </span>
               </div>
 
               <p className="font-mono text-[11px] text-neutral-400 leading-relaxed">
-                검증인이 오프라인 상태가 되면 얻을 수 있었던 보상과 거의 같은
-                비율로 페널티를 받습니다.{' '}
-                <span className="text-amber-400">비활성 누출 페널티</span>가
-                적용됩니다.
+                {t.offline.description}{' '}
+                <span className="text-amber-400">{t.offline.highlight}</span>
+                {t.offline.suffix}
               </p>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between font-mono text-xs">
-                  <span className="text-neutral-500">Validator Balance</span>
+                  <span className="text-neutral-500">
+                    {t.offline.validatorBalance}
+                  </span>
                   <motion.span
                     initial={{ opacity: 1 }}
                     animate={{ opacity: [1, 0.4, 1] }}
@@ -162,7 +184,7 @@ export function SimulationControls({
               </div>
 
               <p className="font-mono text-[9px] text-neutral-600 leading-relaxed">
-                잔고가 16 ETH 미만이 되면 강제 퇴장됩니다
+                {t.offline.ejectionWarning}
               </p>
             </div>
           </motion.div>

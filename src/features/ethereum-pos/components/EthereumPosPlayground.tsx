@@ -3,7 +3,10 @@
 import { motion } from 'motion/react';
 import { useState } from 'react';
 
+import { useLocale } from '@/i18n/context';
+
 import { STAKING_RANGE } from '../constants/ethereum';
+import { getTranslations } from '../constants/translations';
 import { useSlotTimer } from '../hooks/useSlotTimer';
 import { useStakingCalculations } from '../hooks/useStakingCalculations';
 import { MetricsCards } from './MetricsCards';
@@ -12,6 +15,8 @@ import { SlotEpochGrid } from './SlotEpochGrid';
 import { StakingSlider } from './StakingSlider';
 
 export function EthereumPosPlayground() {
+  const locale = useLocale();
+  const t = getTranslations(locale);
   const [stakedAmount, setStakedAmount] = useState<number>(
     STAKING_RANGE.default,
   );
@@ -46,7 +51,7 @@ export function EthereumPosPlayground() {
             Ethereum PoS
           </h2>
           <p className="font-mono text-xs text-neutral-500 max-w-md leading-relaxed">
-            전체 예치량을 조절하여 네트워크 보안과 수익률의 변화를 확인하세요
+            {t.playground.subtitle}
           </p>
         </header>
 
@@ -56,6 +61,7 @@ export function EthereumPosPlayground() {
           apr={calculations.aprFormatted}
           haltCost={calculations.haltAttackCostFormatted}
           manipulateCost={calculations.manipulateAttackCostFormatted}
+          translations={t.metrics}
         />
 
         <div className="h-px bg-neutral-800" />
@@ -79,6 +85,7 @@ export function EthereumPosPlayground() {
         <SimulationControls
           haltCost={calculations.haltAttackCostFormatted}
           stakedAmount={stakedAmount}
+          translations={t.simulation}
         />
 
         {/* Footer */}

@@ -2,10 +2,17 @@
 
 import { motion } from 'motion/react';
 
+interface MetricsTranslations {
+  apr: string;
+  haltCost: string;
+  manipulateCost: string;
+}
+
 interface MetricsCardsProps {
   apr: string;
   haltCost: string;
   manipulateCost: string;
+  translations: MetricsTranslations;
 }
 
 interface MetricCardProps {
@@ -47,20 +54,26 @@ export function MetricsCards({
   apr,
   haltCost,
   manipulateCost,
+  translations,
 }: MetricsCardsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-neutral-800">
-      <MetricCard label="APR" value={apr} sublabel="연간 수익률" delay={0} />
+      <MetricCard
+        label="APR"
+        value={apr}
+        sublabel={translations.apr}
+        delay={0}
+      />
       <MetricCard
         label="33% Attack"
         value={haltCost}
-        sublabel="네트워크 정지 비용"
+        sublabel={translations.haltCost}
         delay={0.05}
       />
       <MetricCard
         label="67% Attack"
         value={manipulateCost}
-        sublabel="기록 조작 비용"
+        sublabel={translations.manipulateCost}
         delay={0.1}
       />
     </div>

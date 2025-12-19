@@ -6,10 +6,11 @@ import { getMDXComponent } from 'next-contentlayer2/hooks';
 import serialize from 'serialize-javascript';
 
 import { EthereumPosPlayground } from '@/features/ethereum-pos';
-import { isValidLocale, locales } from '@/i18n/config';
+import { isValidLocale, Locale } from '@/i18n/config';
+import { LocaleProvider } from '@/i18n/context';
 import { siteConfig } from '@/shared/config/site';
 import { BackButton } from '@/shared/ui/back-button';
-import { techPosts } from '@/shared/util/post';
+import { getTechPostBySlugAndLocale, techPosts } from '@/shared/util/post';
 import { openGraph, twitter } from '@/shared/util/seo';
 
 import { Comments } from './ui/comments';
@@ -25,19 +26,22 @@ interface Props {
 
 export const generateStaticParams = () => {
   const params: { lang: string; slug: string }[] = [];
-  for (const lang of locales) {
-    for (const post of techPosts) {
-      params.push({ lang, slug: post.slug });
-    }
+  for (const post of techPosts) {
+    params.push({ lang: post.locale, slug: post.slug });
   }
   return params;
 };
 
 export const generateMetadata = async ({ params }: Props) => {
   const { lang, slug } = await params;
-  const post = techPosts.find((post) => post.slug === slug);
 
-  if (!post || !isValidLocale(lang)) {
+  if (!isValidLocale(lang)) {
+    return {};
+  }
+
+  const post = getTechPostBySlugAndLocale(slug, lang as Locale);
+
+  if (!post) {
     return {};
   }
 
@@ -68,7 +72,7 @@ export default async function Page({ params }: Props) {
     notFound();
   }
 
-  const post = techPosts.find((post) => post.slug === slug);
+  const post = getTechPostBySlugAndLocale(slug, lang as Locale);
 
   if (!post) {
     notFound();
@@ -118,12 +122,14 @@ export default async function Page({ params }: Props) {
             </time>
           </div>
           <hr className="border-neutral-800" />
-          <Content
-            components={{
-              Image,
-              EthereumPosPlayground,
-            }}
-          />
+          <LocaleProvider locale={lang as Locale}>
+            <Content
+              components={{
+                Image,
+                EthereumPosPlayground,
+              }}
+            />
+          </LocaleProvider>
         </article>
         <Comments />
         <ScrollToTop />

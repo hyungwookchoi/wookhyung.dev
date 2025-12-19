@@ -1,0 +1,100 @@
+---
+title: 'How Ethereum Proof of Stake Works: Consensus Algorithm and Economic Model'
+summary: Learn Ethereum's Proof of Stake consensus mechanism through interactive simulation
+date: '2025-12-19'
+tags: ['Ethereum', 'Blockchain', 'PoS']
+draft: false
+---
+
+## 1. Introduction: A New Era for Ethereum
+
+In September 2022, Ethereum successfully transitioned from Proof of Work (PoW) to Proof of Stake (PoS) through "The Merge." This not only reduced Ethereum's energy consumption by over 99.95%, but also fundamentally transformed its security model from one dependent on hardware computational power to a stake-based model backed by economic assets (ETH).
+
+---
+
+## 2. Temporal Foundations of Consensus: Slots and Epochs
+
+The Ethereum PoS network divides time into strict units to ensure that validators worldwide can maintain a consistent state.
+
+- Slot: The minimum unit for block production, with one slot every 12 seconds. Each slot has one designated block proposer.
+- Epoch: A unit consisting of 32 slots, taking approximately 6.4 minutes (12 seconds × 32). Epochs serve as reference points for aggregating validator votes and determining finality.
+
+---
+
+## 3. Validator Requirements
+
+To participate in Ethereum PoS, you must become a validator. The requirements are as follows:
+
+- Minimum Deposit: You must stake 32 ETH in the Deposit Contract. This stake is subject to slashing for dishonest behavior.
+- Three Software Components: You must run an Execution Client, Consensus Client, and Validator Client together.
+- Activation Queue: To maintain network stability, the rate at which new validators can join is limited. After depositing, you wait in the activation queue before becoming an active validator.
+
+---
+
+## 4. Block Production and Consensus Process
+
+### A. RANDAO: Ensuring Fair Randomness
+
+For network security, it must be impossible to predict who will create the next block. Ethereum uses the RANDAO (Random Beacon) mechanism.
+
+- How it works: Numbers submitted by validators are mixed using a "Commit-Reveal" scheme to generate a single random number.
+- Significance: This fundamentally prevents any entity from monopolizing block production or identifying the next proposer in advance for targeted attacks.
+
+### B. Committees and Attestations
+
+Having hundreds of thousands of validators communicate simultaneously would be inefficient. Therefore, the network randomly divides validators into small groups called committees.
+
+- Attestation: Committee members review the proposed block's validity and submit a digital signature, staking their deposit to vouch that the block is valid. This process serves as a vote guaranteeing the block's trustworthiness.
+
+### C. Fork Choice Rule: LMD-GHOST
+
+Network latency or malicious behavior can cause multiple forks (branches). LMD-GHOST (Latest Message Driven - Greedy Heaviest Observed SubTree) is the algorithm that decides which chain to select as the canonical chain.
+
+- How it works: Based on each validator's most recent attestation, it selects the fork with the greatest accumulated vote weight.
+- Significance: Rather than simply choosing the longest chain, it selects the chain with the most stake supporting it.
+
+Ethereum's actual consensus algorithm is called Gasper, which combines Casper FFG (responsible for finality) and LMD-GHOST (responsible for fork choice).
+
+---
+
+## 5. Interactive Simulator
+
+<EthereumPosPlayground />
+
+---
+
+## 6. Economic Incentive System
+
+The Ethereum protocol operates a clear reward system to incentivize validators to act honestly.
+
+- Reward Components: Block proposal rewards, accurate attestation rewards, priority fees paid by users, and MEV revenue.
+- Yield Formula: For total staked amount (n), the yield follows approximately this inverse relationship:
+
+```
+APR(%) = 166 / √n
+```
+
+This model encourages participation with high yields when the staked amount is low, and suppresses excessive inflation by lowering yields when it becomes sufficiently large.
+
+---
+
+## 7. Security Maintenance and Deterrence Mechanisms
+
+### A. Finality
+
+Ethereum permanently fixes records through the Casper FFG algorithm. Blocks agreed upon by more than 2/3 of the total stake become "finalized," and reversing them would require an attacker to accept massive capital losses.
+
+### B. Penalties and Slashing
+
+Severe economic sanctions are imposed for protocol violations.
+
+- Inactivity Leak: If a validator goes offline and fails to participate in consensus, their stake is gradually reduced.
+- Slashing: If malicious manipulation such as double voting is detected, between 1% and up to 100% of the deposit can be burned according to the correlation penalty. Slashed validators are forcibly ejected from the network over 36 days.
+
+---
+
+## 8. Conclusion: Decentralized Trust Based on Game Theory
+
+Ethereum's Proof of Stake is a crystallization of cryptographic technology and sophisticated economic models. Validators act honestly to earn rewards, and the system maintains security by collateralizing assets—this virtuous cycle is what makes Ethereum one of the most secure blockchains today.
+
+For more details, refer to the [official Ethereum documentation](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/).
