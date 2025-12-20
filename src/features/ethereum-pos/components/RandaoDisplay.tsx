@@ -49,7 +49,10 @@ export function RandaoDisplay({ seed, isUpdating }: RandaoDisplayProps) {
         iteration++;
       }, 80);
 
-      return () => clearInterval(interval);
+      return () => {
+        clearInterval(interval);
+        setIsScrambling(false);
+      };
     }
   }, [seed, isUpdating]);
 
