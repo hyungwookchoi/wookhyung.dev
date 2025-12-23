@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 import type { Locale } from '@/i18n/config';
 import { cn } from '@/shared/lib/tailwind-merge';
+import { WithClaudeBadge } from '@/shared/ui/with-claude-badge';
 
 interface Post {
   _id: string;
@@ -13,6 +14,7 @@ interface Post {
   title: string;
   date: string;
   summary?: string;
+  withClaude?: boolean;
 }
 
 interface TechPostListProps {
@@ -67,8 +69,9 @@ export function TechPostList({ posts, lang }: TechPostListProps) {
               <time className="text-[10px] text-neutral-600 uppercase tracking-wider mb-1 block">
                 {formatDate(post.date)}
               </time>
-              <h2 className="font-normal text-neutral-200 group-hover:text-emerald-400 transition-colors">
+              <h2 className="font-normal text-neutral-200 group-hover:text-emerald-400 transition-colors flex items-center gap-2 flex-wrap">
                 {post.title}
+                {post.withClaude && <WithClaudeBadge />}
               </h2>
               {post.summary && (
                 <p className="mt-1 text-sm text-neutral-500 line-clamp-1">

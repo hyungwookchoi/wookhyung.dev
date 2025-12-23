@@ -11,6 +11,7 @@ import { siteConfig } from '@/shared/config/site';
 import { GithubIcon } from '@/shared/icon/github-icon';
 import { LinkedinIcon } from '@/shared/icon/linkedin-icon';
 import { cn } from '@/shared/lib/tailwind-merge';
+import { WithClaudeBadge } from '@/shared/ui/with-claude-badge';
 import { getTechPostsByLocale } from '@/shared/util/post';
 
 const STAGGER_DELAY = 0.08;
@@ -221,13 +222,14 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
                 )}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
+                  <div className="flex items-center gap-2 mb-1 sm:mb-1.5 flex-wrap">
                     <span className="text-[10px] uppercase tracking-wider text-emerald-400 bg-emerald-400/10 px-2 py-0.5">
                       Tech
                     </span>
                     <time className="text-[10px] text-neutral-600 uppercase tracking-wider">
                       {formatDate(post.date)}
                     </time>
+                    {post.withClaude && <WithClaudeBadge />}
                   </div>
                   <h3 className="text-sm sm:text-base font-normal text-neutral-200 group-hover:text-emerald-400 transition-colors line-clamp-2 sm:line-clamp-1">
                     {post.title}

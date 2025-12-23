@@ -33,6 +33,11 @@ export const TechPost = defineDocumentType(() => ({
       description: 'draft of the post',
       required: false,
     },
+    withClaude: {
+      type: 'boolean',
+      description: 'post created with Claude AI',
+      required: false,
+    },
   },
   computedFields: {
     url: {
@@ -93,6 +98,11 @@ export const NotesPost = defineDocumentType(() => ({
     draft: {
       type: 'boolean',
       description: 'draft of the post',
+      required: false,
+    },
+    withClaude: {
+      type: 'boolean',
+      description: 'post created with Claude AI',
       required: false,
     },
   },
