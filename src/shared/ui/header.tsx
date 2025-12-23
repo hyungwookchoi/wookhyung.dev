@@ -32,6 +32,7 @@ function getNavigation(dict: Dictionary, lang: Locale): NavigationItem[] {
       subItems: [
         { name: dict.navigation.tech, href: `/${lang}/tech` },
         { name: dict.navigation.feed, href: `/${lang}/feed` },
+        { name: dict.navigation.playground, href: `/${lang}/playground` },
       ],
     },
     { name: dict.navigation.notes, href: `/${lang}/notes` },
