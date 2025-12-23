@@ -47,14 +47,14 @@ export function FinalizationOverlay({
     if (transition.isCheckpointing) return 'text-amber-400';
     if (transition.isJustifying) return 'text-cyan-400';
     if (transition.isFinalizing) return 'text-emerald-400';
-    return 'text-neutral-400';
+    return 'text-muted-foreground';
   };
 
   const getBorderColor = () => {
     if (transition.isCheckpointing) return 'border-amber-400/50';
     if (transition.isJustifying) return 'border-cyan-400/50';
     if (transition.isFinalizing) return 'border-emerald-400/50';
-    return 'border-neutral-400/50';
+    return 'border-muted-foreground/50';
   };
 
   return (
@@ -65,7 +65,7 @@ export function FinalizationOverlay({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="absolute inset-0 flex items-center justify-center bg-[#0a0a0b]/80 backdrop-blur-sm z-10"
+          className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-10"
         >
           {/* Glow 효과 */}
           <motion.div
@@ -73,7 +73,7 @@ export function FinalizationOverlay({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             className={`
-              px-6 py-4 border-2 ${getBorderColor()} bg-neutral-900/90
+              px-6 py-4 border-2 ${getBorderColor()} bg-muted/90
               ${transition.isFinalizing ? 'shadow-lg shadow-emerald-400/20' : ''}
             `}
           >
@@ -106,7 +106,7 @@ export function FinalizationOverlay({
               {/* 프로그레스 바 */}
               {transition.isCheckpointing && (
                 <motion.div
-                  className="w-32 h-0.5 bg-neutral-800 overflow-hidden"
+                  className="w-32 h-0.5 bg-border overflow-hidden"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >

@@ -183,17 +183,17 @@ export function SlashingPenaltyDemo() {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-red-400" />
         <div>
-          <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-300">
+          <h3 className="text-sm font-mono uppercase tracking-wider text-foreground">
             {t.title}
           </h3>
-          <p className="text-xs text-neutral-500">{t.subtitle}</p>
+          <p className="text-xs text-muted-foreground">{t.subtitle}</p>
         </div>
       </div>
 
-      <div className="bg-neutral-950 border border-neutral-800 p-6 space-y-6">
+      <div className="bg-card border border-border p-6 space-y-6">
         {/* Scenario Selection */}
         <div className="space-y-3">
-          <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
+          <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
             {t.scenario}
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
@@ -209,7 +209,7 @@ export function SlashingPenaltyDemo() {
                       ? s === 'inactivity'
                         ? 'bg-amber-400/10 border-2 border-amber-400/50'
                         : 'bg-red-400/10 border-2 border-red-400/50'
-                      : 'bg-neutral-900/50 border border-neutral-800 hover:border-neutral-700'
+                      : 'bg-muted/50 border border-border hover:border-border'
                   }
                   disabled:opacity-50
                 `}
@@ -220,12 +220,12 @@ export function SlashingPenaltyDemo() {
                       ? s === 'inactivity'
                         ? 'text-amber-400'
                         : 'text-red-400'
-                      : 'text-neutral-400'
+                      : 'text-muted-foreground'
                   }`}
                 >
                   {t.scenarios[s].name}
                 </div>
-                <div className="text-[10px] text-neutral-500 mt-1">
+                <div className="text-[10px] text-muted-foreground mt-1">
                   {t.scenarios[s].desc}
                 </div>
               </button>
@@ -243,13 +243,13 @@ export function SlashingPenaltyDemo() {
               className="overflow-hidden"
             >
               <div className="p-4 bg-red-400/5 border border-red-400/20 space-y-4">
-                <div className="text-[10px] font-mono text-neutral-500">
+                <div className="text-[10px] font-mono text-muted-foreground">
                   {t.correlationDesc}
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-[10px] font-mono">
-                    <span className="text-neutral-500">
+                    <span className="text-muted-foreground">
                       {t.slashedValidators}
                     </span>
                     <span className="text-red-400">
@@ -264,12 +264,12 @@ export function SlashingPenaltyDemo() {
                     value={slashedCount}
                     onChange={(e) => setSlashedCount(Number(e.target.value))}
                     disabled={isSimulating}
-                    className="w-full h-2 bg-neutral-800 appearance-none cursor-pointer
+                    className="w-full h-2 bg-border appearance-none cursor-pointer
                              [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4
                              [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-red-400
                              [&::-webkit-slider-thumb]:cursor-pointer"
                   />
-                  <div className="flex justify-between text-[9px] font-mono text-neutral-600">
+                  <div className="flex justify-between text-[9px] font-mono text-muted-foreground/60">
                     <span>1 ({t.minPenalty}: 1%)</span>
                     <span>100k+ ({t.maxPenalty}: 100%)</span>
                   </div>
@@ -282,16 +282,18 @@ export function SlashingPenaltyDemo() {
         {/* Balance Visualization */}
         <div className="space-y-3">
           <div className="flex justify-between items-baseline">
-            <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
+            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
               {t.balance}
             </span>
             <div className="flex items-baseline gap-2">
-              <span className="font-mono text-2xl text-neutral-100">
+              <span className="font-mono text-2xl text-foreground">
                 {balance.toFixed(2)}
               </span>
-              <span className="font-mono text-sm text-neutral-500">ETH</span>
+              <span className="font-mono text-sm text-muted-foreground">
+                ETH
+              </span>
               {currentDay > 0 && (
-                <span className="font-mono text-xs text-neutral-600">
+                <span className="font-mono text-xs text-muted-foreground/60">
                   ({t.day} {currentDay})
                 </span>
               )}
@@ -299,7 +301,7 @@ export function SlashingPenaltyDemo() {
           </div>
 
           {/* Balance Bar */}
-          <div className="relative h-8 bg-neutral-900 border border-neutral-800">
+          <div className="relative h-8 bg-muted border border-border">
             {/* Current balance */}
             <motion.div
               className={`absolute left-0 top-0 bottom-0 ${
@@ -329,11 +331,11 @@ export function SlashingPenaltyDemo() {
             </div>
 
             {/* Initial marker */}
-            <div className="absolute right-0 top-0 bottom-0 w-0.5 bg-neutral-600" />
+            <div className="absolute right-0 top-0 bottom-0 w-0.5 bg-muted-foreground/60" />
           </div>
 
           {/* Labels */}
-          <div className="flex justify-between text-[9px] font-mono text-neutral-600 pt-4">
+          <div className="flex justify-between text-[9px] font-mono text-muted-foreground/60 pt-4">
             <span>0 ETH</span>
             <span>
               {INITIAL_BALANCE} ETH ({t.initial})
@@ -343,14 +345,16 @@ export function SlashingPenaltyDemo() {
 
         {/* Penalty Summary */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="p-3 bg-neutral-900/50 border border-neutral-800">
-            <div className="text-[9px] font-mono text-neutral-500 uppercase">
+          <div className="p-3 bg-muted/50 border border-border">
+            <div className="text-[9px] font-mono text-muted-foreground uppercase">
               {t.initial}
             </div>
-            <div className="font-mono text-lg text-neutral-400">32 ETH</div>
+            <div className="font-mono text-lg text-muted-foreground">
+              32 ETH
+            </div>
           </div>
           <div className="p-3 bg-red-400/10 border border-red-400/30">
-            <div className="text-[9px] font-mono text-neutral-500 uppercase">
+            <div className="text-[9px] font-mono text-muted-foreground uppercase">
               {t.penalty}
             </div>
             <div className="font-mono text-lg text-red-400">
@@ -361,14 +365,14 @@ export function SlashingPenaltyDemo() {
             className={`p-3 border ${
               isEjected
                 ? 'bg-red-400/20 border-red-400/50'
-                : 'bg-neutral-900/50 border-neutral-800'
+                : 'bg-muted/50 border-border'
             }`}
           >
-            <div className="text-[9px] font-mono text-neutral-500 uppercase">
+            <div className="text-[9px] font-mono text-muted-foreground uppercase">
               Status
             </div>
             <div
-              className={`font-mono text-sm ${isEjected ? 'text-red-400' : 'text-neutral-400'}`}
+              className={`font-mono text-sm ${isEjected ? 'text-red-400' : 'text-muted-foreground'}`}
             >
               {isEjected ? t.ejected : 'Active'}
             </div>
@@ -383,11 +387,11 @@ export function SlashingPenaltyDemo() {
               animate={{ opacity: 1, y: 0 }}
               className="p-4 bg-red-400/10 border border-red-400/30"
             >
-              <div className="text-[10px] font-mono text-neutral-500 mb-2">
+              <div className="text-[10px] font-mono text-muted-foreground mb-2">
                 {t.exitQueue}
               </div>
               <div className="flex items-center gap-4">
-                <div className="flex-1 h-2 bg-neutral-800 relative">
+                <div className="flex-1 h-2 bg-border relative">
                   <motion.div
                     className="h-full bg-red-400"
                     initial={{ width: 0 }}
@@ -398,7 +402,7 @@ export function SlashingPenaltyDemo() {
                   {[0, 18, 36].map((day) => (
                     <div
                       key={day}
-                      className="absolute top-3 text-[8px] font-mono text-neutral-600"
+                      className="absolute top-3 text-[8px] font-mono text-muted-foreground/60"
                       style={{
                         left: `${(day / 36) * 100}%`,
                         transform: 'translateX(-50%)',
@@ -409,7 +413,7 @@ export function SlashingPenaltyDemo() {
                   ))}
                 </div>
               </div>
-              <p className="text-[9px] font-mono text-neutral-500 mt-4">
+              <p className="text-[9px] font-mono text-muted-foreground mt-4">
                 {t.exitQueueDesc}
               </p>
             </motion.div>
@@ -427,14 +431,14 @@ export function SlashingPenaltyDemo() {
                          ? 'bg-amber-500 hover:bg-amber-400'
                          : 'bg-red-500 hover:bg-red-400'
                      }
-                     text-neutral-950 disabled:bg-neutral-700 disabled:text-neutral-500`}
+                     text-background disabled:bg-muted disabled:text-muted-foreground`}
           >
             {isSimulating ? t.simulating : t.simulate}
           </button>
           <button
             onClick={handleReset}
             className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     border border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:border-neutral-500 transition-colors"
+                     border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
           >
             {t.reset}
           </button>

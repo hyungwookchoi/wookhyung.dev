@@ -61,8 +61,8 @@ export function FeedList({ items, lang }: FeedListProps) {
           className={cn(
             'px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all duration-200 border',
             !selectedAuthor
-              ? 'bg-emerald-400 text-[#0a0a0b] border-emerald-400'
-              : 'bg-transparent text-neutral-400 border-neutral-700 hover:text-neutral-100 hover:border-neutral-500',
+              ? 'bg-primary text-primary-foreground border-primary'
+              : 'bg-transparent text-muted-foreground border-border hover:text-foreground hover:border-muted-foreground',
           )}
         >
           All
@@ -79,8 +79,8 @@ export function FeedList({ items, lang }: FeedListProps) {
               className={cn(
                 'px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all duration-200 border',
                 isSelected
-                  ? 'bg-emerald-400 text-[#0a0a0b] border-emerald-400'
-                  : 'bg-transparent text-neutral-400 border-neutral-700 hover:text-emerald-400 hover:border-emerald-400/50',
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-transparent text-muted-foreground border-border hover:text-primary hover:border-primary/50',
               )}
             >
               {author}
@@ -114,26 +114,26 @@ export function FeedList({ items, lang }: FeedListProps) {
                 className={cn(
                   'group flex items-start justify-between gap-4',
                   'py-4 sm:py-5 -mx-2 sm:-mx-3 px-2 sm:px-3',
-                  'hover:bg-neutral-900/50 transition-all duration-200',
-                  'border-b border-neutral-800 last:border-0',
+                  'hover:bg-muted/50 transition-all duration-200',
+                  'border-b border-border last:border-0',
                 )}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 sm:mb-1.5">
-                    <span className="text-[10px] uppercase tracking-wider text-emerald-400 bg-emerald-400/10 px-2 py-0.5">
+                    <span className="text-[10px] uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5">
                       {item.feedName}
                     </span>
-                    <time className="text-[10px] text-neutral-600 uppercase tracking-wider">
+                    <time className="text-[10px] text-muted-foreground/60 uppercase tracking-wider">
                       {format(new Date(item.pubDate), dateFormat, {
                         locale: dateLocale,
                       })}
                     </time>
                   </div>
-                  <h2 className="text-sm sm:text-base font-normal text-neutral-200 group-hover:text-emerald-400 transition-colors line-clamp-2 sm:line-clamp-1">
+                  <h2 className="text-sm sm:text-base font-normal text-foreground group-hover:text-primary transition-colors line-clamp-2 sm:line-clamp-1">
                     {item.title}
                   </h2>
                 </div>
-                <ArrowUpRightIcon className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-600 group-hover:text-emerald-400 transition-colors shrink-0 mt-0.5 sm:mt-1" />
+                <ArrowUpRightIcon className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-0.5 sm:mt-1" />
               </a>
             </motion.div>
           ))}
@@ -142,7 +142,7 @@ export function FeedList({ items, lang }: FeedListProps) {
         {/* Empty State */}
         {filteredItems.length === 0 && (
           <motion.div
-            className="py-12 text-center text-neutral-500 font-mono text-sm"
+            className="py-12 text-center text-muted-foreground font-mono text-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >

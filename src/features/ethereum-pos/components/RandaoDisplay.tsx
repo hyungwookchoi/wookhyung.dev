@@ -82,7 +82,7 @@ export function RandaoDisplay({ seed, isUpdating }: RandaoDisplayProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-purple-400">⚡</span>
-          <span className="font-mono text-[10px] tracking-[0.15em] text-neutral-500 uppercase">
+          <span className="font-mono text-[10px] tracking-[0.15em] text-muted-foreground uppercase">
             RANDAO Seed
           </span>
         </div>
@@ -101,14 +101,16 @@ export function RandaoDisplay({ seed, isUpdating }: RandaoDisplayProps) {
       </div>
 
       {/* 시드 표시 */}
-      <div className="p-3 bg-neutral-900/50 border border-neutral-800">
-        <div className="font-mono text-[9px] text-neutral-600 mb-1">0x</div>
+      <div className="p-3 bg-muted/50 border border-border">
+        <div className="font-mono text-[9px] text-muted-foreground/60 mb-1">
+          0x
+        </div>
         <div className="space-y-0.5">
           {seedParts.map((part, idx) => (
             <motion.div
               key={idx}
               className={`font-mono text-[10px] tracking-wider ${
-                isScrambling ? 'text-purple-400' : 'text-neutral-400'
+                isScrambling ? 'text-purple-400' : 'text-muted-foreground'
               }`}
               animate={{
                 opacity: isScrambling ? [0.5, 1, 0.5] : 1,
@@ -126,7 +128,7 @@ export function RandaoDisplay({ seed, isUpdating }: RandaoDisplayProps) {
       </div>
 
       {/* 설명 */}
-      <p className="font-mono text-[9px] text-neutral-600 leading-relaxed">
+      <p className="font-mono text-[9px] text-muted-foreground/60 leading-relaxed">
         {locale === 'ko'
           ? '각 에포크마다 검증인들의 입력으로 새로운 시드가 생성됩니다.'
           : 'A new seed is generated each epoch from validator inputs.'}

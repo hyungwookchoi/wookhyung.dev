@@ -147,16 +147,16 @@ export function AttestationSimulator() {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-amber-400" />
         <div>
-          <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-300">
+          <h3 className="text-sm font-mono uppercase tracking-wider text-foreground">
             {t.title}
           </h3>
-          <p className="text-xs text-neutral-500">{t.subtitle}</p>
+          <p className="text-xs text-muted-foreground">{t.subtitle}</p>
         </div>
       </div>
 
-      <div className="bg-neutral-950 border border-neutral-800 p-6 space-y-6">
+      <div className="bg-card border border-border p-6 space-y-6">
         {/* Status Bar */}
-        <div className="flex items-center justify-between p-3 bg-neutral-900/50 border border-neutral-800">
+        <div className="flex items-center justify-between p-3 bg-muted/50 border border-border">
           <div className="flex items-center gap-2">
             <div
               className={`w-2 h-2 rounded-full ${
@@ -164,15 +164,15 @@ export function AttestationSimulator() {
                   ? 'bg-emerald-400'
                   : phase === 'attesting'
                     ? 'bg-amber-400 animate-pulse'
-                    : 'bg-neutral-600'
+                    : 'bg-muted-foreground/60'
               }`}
             />
-            <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
               {t.status[phase === 'shuffled' ? 'waiting' : phase]}
             </span>
           </div>
           {phase !== 'idle' && (
-            <div className="text-[10px] font-mono text-neutral-500">
+            <div className="text-[10px] font-mono text-muted-foreground">
               {t.votes}: {attestationCount}/{COMMITTEE_SIZE - 1} ({t.threshold}:{' '}
               {THRESHOLD - 1})
             </div>
@@ -181,7 +181,7 @@ export function AttestationSimulator() {
 
         {/* Validator Grid */}
         <div className="space-y-4">
-          <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
+          <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
             {t.validators} ({TOTAL_VALIDATORS})
           </div>
           <div className="grid grid-cols-8 gap-2">
@@ -198,7 +198,7 @@ export function AttestationSimulator() {
                         ? 'bg-emerald-400/20 border border-emerald-400/50 text-emerald-400'
                         : v.isCommitteeMember
                           ? 'bg-cyan-400/10 border border-cyan-400/30 text-cyan-400'
-                          : 'bg-neutral-900/50 border border-neutral-800 text-neutral-600'
+                          : 'bg-muted/50 border border-border text-muted-foreground/60'
                   }
                 `}
                 animate={
@@ -216,7 +216,7 @@ export function AttestationSimulator() {
           </div>
 
           {/* Legend */}
-          <div className="flex flex-wrap gap-4 text-[9px] font-mono text-neutral-500">
+          <div className="flex flex-wrap gap-4 text-[9px] font-mono text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 bg-amber-400/20 border-2 border-amber-400" />
               <span>{t.proposer}</span>
@@ -241,9 +241,9 @@ export function AttestationSimulator() {
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
-              <div className="p-4 bg-neutral-900/30 border border-neutral-800 space-y-4">
+              <div className="p-4 bg-muted/30 border border-border space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
                     {t.committee} ({committee.length})
                   </span>
                   {proposer && (
@@ -263,7 +263,7 @@ export function AttestationSimulator() {
                           V{proposer?.id}
                         </span>
                       </div>
-                      <span className="text-[8px] font-mono text-neutral-500">
+                      <span className="text-[8px] font-mono text-muted-foreground">
                         {t.proposer}
                       </span>
                     </div>
@@ -303,7 +303,7 @@ export function AttestationSimulator() {
                             className={`w-6 h-6 flex items-center justify-center font-mono text-[9px] transition-colors ${
                               v.hasAttested
                                 ? 'bg-emerald-400/20 border border-emerald-400/50 text-emerald-400'
-                                : 'bg-neutral-800 border border-neutral-700 text-neutral-500'
+                                : 'bg-border border border-border text-muted-foreground'
                             }`}
                           >
                             {v.id}
@@ -316,13 +316,13 @@ export function AttestationSimulator() {
                 {/* Progress Bar */}
                 {phase === 'attesting' || phase === 'justified' ? (
                   <div className="space-y-2">
-                    <div className="flex justify-between text-[9px] font-mono text-neutral-500">
+                    <div className="flex justify-between text-[9px] font-mono text-muted-foreground">
                       <span>{t.attestation}</span>
                       <span>
                         {attestationCount}/{COMMITTEE_SIZE - 1}
                       </span>
                     </div>
-                    <div className="h-2 bg-neutral-800 relative overflow-hidden">
+                    <div className="h-2 bg-border relative overflow-hidden">
                       <motion.div
                         className="h-full bg-emerald-400"
                         initial={{ width: 0 }}
@@ -381,8 +381,8 @@ export function AttestationSimulator() {
             onClick={shuffleCommittee}
             disabled={phase === 'attesting'}
             className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     bg-cyan-500 text-neutral-950 hover:bg-cyan-400
-                     disabled:bg-neutral-700 disabled:text-neutral-500 transition-colors"
+                     bg-cyan-500 text-background hover:bg-cyan-400
+                     disabled:bg-muted disabled:text-muted-foreground transition-colors"
           >
             {t.shuffleCommittee}
           </button>
@@ -390,8 +390,8 @@ export function AttestationSimulator() {
             onClick={proposeBlock}
             disabled={phase !== 'shuffled'}
             className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     bg-amber-500 text-neutral-950 hover:bg-amber-400
-                     disabled:bg-neutral-700 disabled:text-neutral-500 transition-colors"
+                     bg-amber-500 text-background hover:bg-amber-400
+                     disabled:bg-muted disabled:text-muted-foreground transition-colors"
           >
             {t.proposeBlock}
           </button>
@@ -399,15 +399,15 @@ export function AttestationSimulator() {
             onClick={collectAttestations}
             disabled={phase !== 'proposed'}
             className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     bg-emerald-500 text-neutral-950 hover:bg-emerald-400
-                     disabled:bg-neutral-700 disabled:text-neutral-500 transition-colors"
+                     bg-emerald-500 text-background hover:bg-emerald-400
+                     disabled:bg-muted disabled:text-muted-foreground transition-colors"
           >
             {t.collectAttestations}
           </button>
           <button
             onClick={reset}
             className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     border border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:border-neutral-500 transition-colors"
+                     border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
           >
             {t.reset}
           </button>

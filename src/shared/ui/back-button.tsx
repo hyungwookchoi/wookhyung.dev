@@ -23,7 +23,7 @@ export function BackButton({ className = '', lang = 'ko' }: BackButtonProps) {
     <button
       type="button"
       onClick={handleBack}
-      className={`inline-flex items-center justify-center p-2 text-neutral-400 hover:text-emerald-400 transition-colors duration-200 hover:bg-neutral-800 ${className}`}
+      className={`inline-flex items-center justify-center p-2 text-muted-foreground hover:text-primary transition-colors duration-200 hover:bg-muted ${className}`}
       aria-label={ariaLabel}
     >
       <ArrowLeftIcon className="w-5 h-5" />

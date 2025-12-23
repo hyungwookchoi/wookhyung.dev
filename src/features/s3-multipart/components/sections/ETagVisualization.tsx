@@ -36,29 +36,29 @@ export function ETagVisualization() {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-amber-400" />
         <div>
-          <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-300">
+          <h3 className="text-sm font-mono uppercase tracking-wider text-foreground">
             {t.title}
           </h3>
-          <p className="text-xs text-neutral-500">{t.subtitle}</p>
+          <p className="text-xs text-muted-foreground">{t.subtitle}</p>
         </div>
       </div>
 
       {/* Main visualization */}
-      <div className="bg-neutral-950 border border-neutral-800 overflow-hidden">
+      <div className="bg-card border border-border overflow-hidden">
         {/* Step indicators */}
-        <div className="grid grid-cols-4 border-b border-neutral-800">
+        <div className="grid grid-cols-4 border-b border-border">
           {[1, 2, 3, 4].map((s) => (
             <div
               key={s}
               className={`py-2 px-3 text-center transition-colors ${
                 step >= s
                   ? 'bg-amber-500/10 border-b-2 border-amber-400'
-                  : 'bg-neutral-900/50'
+                  : 'bg-muted/50'
               }`}
             >
               <div
                 className={`text-[9px] font-mono ${
-                  step >= s ? 'text-amber-400' : 'text-neutral-600'
+                  step >= s ? 'text-amber-400' : 'text-muted-foreground/60'
                 }`}
               >
                 {s === 1 && t.step1}
@@ -75,7 +75,7 @@ export function ETagVisualization() {
           <div className="flex flex-col gap-6">
             {/* Step 1: Part hashes */}
             <div className="flex flex-col gap-2">
-              <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider mb-2">
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-2">
                 {t.partHash}
               </div>
               <div className="grid gap-2">
@@ -97,12 +97,14 @@ export function ETagVisualization() {
                     >
                       P{part.id}
                     </div>
-                    <div className="text-neutral-600 text-xs">MD5 =</div>
+                    <div className="text-muted-foreground/60 text-xs">
+                      MD5 =
+                    </div>
                     <div
-                      className={`font-mono text-[10px] px-2 py-1 bg-neutral-900 border transition-colors ${
+                      className={`font-mono text-[10px] px-2 py-1 bg-muted border transition-colors ${
                         step >= 1
                           ? 'text-cyan-400 border-cyan-500/30'
-                          : 'text-neutral-600 border-neutral-800'
+                          : 'text-muted-foreground/60 border-border'
                       }`}
                     >
                       {part.hash}
@@ -119,7 +121,7 @@ export function ETagVisualization() {
               className="flex items-center justify-center"
             >
               <svg
-                className="w-6 h-6 text-neutral-600"
+                className="w-6 h-6 text-muted-foreground/60"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -139,14 +141,14 @@ export function ETagVisualization() {
               animate={{ opacity: step >= 2 ? 1 : 0.2 }}
               className="flex flex-col items-center"
             >
-              <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider mb-2">
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-2">
                 {t.concatenate} (Binary)
               </div>
               <div
-                className={`font-mono text-[10px] px-3 py-2 bg-neutral-900 border transition-colors ${
+                className={`font-mono text-[10px] px-3 py-2 bg-muted border transition-colors ${
                   step >= 2
                     ? 'text-amber-400 border-amber-500/30'
-                    : 'text-neutral-600 border-neutral-800'
+                    : 'text-muted-foreground/60 border-border'
                 }`}
               >
                 {concatenatedHash}
@@ -160,7 +162,7 @@ export function ETagVisualization() {
               className="flex items-center justify-center"
             >
               <svg
-                className="w-6 h-6 text-neutral-600"
+                className="w-6 h-6 text-muted-foreground/60"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -180,14 +182,14 @@ export function ETagVisualization() {
               animate={{ opacity: step >= 3 ? 1 : 0.2 }}
               className="flex flex-col items-center"
             >
-              <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider mb-2">
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-2">
                 {t.finalHash}
               </div>
               <div
-                className={`font-mono text-[10px] px-3 py-2 bg-neutral-900 border transition-colors ${
+                className={`font-mono text-[10px] px-3 py-2 bg-muted border transition-colors ${
                   step >= 3
                     ? 'text-emerald-400 border-emerald-500/30'
-                    : 'text-neutral-600 border-neutral-800'
+                    : 'text-muted-foreground/60 border-border'
                 }`}
               >
                 {finalMd5}
@@ -201,7 +203,7 @@ export function ETagVisualization() {
               className="flex items-center justify-center"
             >
               <svg
-                className="w-6 h-6 text-neutral-600"
+                className="w-6 h-6 text-muted-foreground/60"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -224,14 +226,14 @@ export function ETagVisualization() {
               }}
               className="flex flex-col items-center"
             >
-              <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider mb-2">
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-2">
                 {t.finalEtag}
               </div>
               <div
                 className={`font-mono text-sm px-4 py-3 transition-colors ${
                   step >= 4
                     ? 'bg-emerald-500/10 border-2 border-emerald-500/50 text-emerald-400'
-                    : 'bg-neutral-900 border border-neutral-800 text-neutral-600'
+                    : 'bg-muted border border-border text-muted-foreground/60'
                 }`}
               >
                 &quot;{finalEtag}&quot;
@@ -241,7 +243,7 @@ export function ETagVisualization() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="mt-2 text-[10px] text-neutral-500"
+                  className="mt-2 text-[10px] text-muted-foreground"
                 >
                   <span className="text-emerald-400">-3</span> = {t.partCount}
                 </motion.div>
@@ -251,15 +253,17 @@ export function ETagVisualization() {
         </div>
 
         {/* Note */}
-        <div className="px-6 py-3 bg-neutral-900/50 border-t border-neutral-800">
-          <p className="text-[10px] text-neutral-500 font-mono">{t.note}</p>
+        <div className="px-6 py-3 bg-muted/50 border-t border-border">
+          <p className="text-[10px] text-muted-foreground font-mono">
+            {t.note}
+          </p>
         </div>
 
         {/* Control button */}
-        <div className="border-t border-neutral-800 p-4 flex justify-center">
+        <div className="border-t border-border p-4 flex justify-center">
           <button
             onClick={handleAnimate}
-            className="px-6 py-2 bg-amber-500 text-neutral-950 font-mono text-sm uppercase tracking-wider
+            className="px-6 py-2 bg-amber-500 text-background font-mono text-sm uppercase tracking-wider
                      hover:bg-amber-400 transition-colors"
           >
             {step === 0

@@ -134,19 +134,19 @@ export function EthereumPosPlayground() {
         }}
       />
 
-      <div className="relative space-y-8 bg-[#0a0a0b] p-6 sm:p-8 border border-neutral-800">
+      <div className="relative space-y-8 bg-card p-6 sm:p-8 border border-border">
         {/* Header */}
         <header className="space-y-3">
           <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-emerald-400" />
-            <span className="font-mono text-[10px] tracking-[0.2em] text-neutral-500 uppercase">
+            <div className="w-2 h-2 bg-primary" />
+            <span className="font-mono text-[10px] tracking-[0.2em] text-muted-foreground uppercase">
               Interactive Simulator
             </span>
           </div>
-          <h2 className="font-mono text-2xl sm:text-3xl font-light text-neutral-100 tracking-tight">
+          <h2 className="font-mono text-2xl sm:text-3xl font-light text-foreground tracking-tight">
             Ethereum PoS
           </h2>
-          <p className="font-mono text-xs text-neutral-500 max-w-md leading-relaxed">
+          <p className="font-mono text-xs text-muted-foreground max-w-md leading-relaxed">
             {t.playground.subtitle}
           </p>
         </header>
@@ -160,7 +160,7 @@ export function EthereumPosPlayground() {
           translations={t.metrics}
         />
 
-        <div className="h-px bg-neutral-800" />
+        <div className="h-px bg-border" />
 
         {/* Main Grid + Event Log Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -191,7 +191,7 @@ export function EthereumPosPlayground() {
         </div>
 
         {/* RANDAO Display */}
-        <div className="h-px bg-neutral-800" />
+        <div className="h-px bg-border" />
         <RandaoDisplay
           seed={slotTimer.randaoSeed}
           isUpdating={slotTimer.transition.isFinalizing}
@@ -205,7 +205,7 @@ export function EthereumPosPlayground() {
           currentEpoch={slotTimer.currentEpoch}
         />
 
-        <div className="h-px bg-neutral-800" />
+        <div className="h-px bg-border" />
 
         <SimulationControls
           haltCost={calculations.haltAttackCostFormatted}
@@ -214,8 +214,8 @@ export function EthereumPosPlayground() {
         />
 
         {/* Footer */}
-        <footer className="pt-4 border-t border-neutral-800/50">
-          <p className="font-mono text-[10px] text-neutral-600 tracking-wide">
+        <footer className="pt-4 border-t border-border/50">
+          <p className="font-mono text-[10px] text-muted-foreground tracking-wide">
             ETH = $2,500 USD &nbsp;·&nbsp; APR = 166 / √n &nbsp;·&nbsp;{' '}
             {locale === 'ko' ? '누적 보상' : 'Rewards'}:{' '}
             {rewards.cumulativeRewardFormatted}

@@ -71,7 +71,7 @@ export function RewardSettlement({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3 }}
-          className="border border-neutral-800 bg-neutral-900/80 p-4"
+          className="border border-border bg-muted/80 p-4"
         >
           {isSettling ? (
             // 정산 중 UI
@@ -80,17 +80,17 @@ export function RewardSettlement({
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                className="w-6 h-6 border-2 border-neutral-700 border-t-emerald-400 rounded-full"
+                className="w-6 h-6 border-2 border-border border-t-emerald-400 rounded-full"
               />
 
               <div className="flex-1">
-                <span className="font-mono text-sm text-neutral-300">
+                <span className="font-mono text-sm text-foreground">
                   {locale === 'ko'
                     ? '검증인 수익 정산 중...'
                     : 'Calculating validator rewards...'}
                 </span>
                 <motion.div
-                  className="mt-2 h-1 bg-neutral-800 overflow-hidden rounded-full"
+                  className="mt-2 h-1 bg-border overflow-hidden rounded-full"
                   initial={{ width: '100%' }}
                 >
                   <motion.div
@@ -117,7 +117,7 @@ export function RewardSettlement({
                   <span className="text-emerald-400">◎</span>
                 </motion.div>
                 <div>
-                  <div className="font-mono text-[10px] text-neutral-500 uppercase tracking-wider">
+                  <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
                     {locale === 'ko'
                       ? `에포크 ${currentEpoch - 1} 정산 완료`
                       : `Epoch ${currentEpoch - 1} Settlement`}
@@ -133,10 +133,10 @@ export function RewardSettlement({
               </div>
 
               <div className="text-right">
-                <div className="font-mono text-[9px] text-neutral-600 uppercase">
+                <div className="font-mono text-[9px] text-muted-foreground/60 uppercase">
                   {locale === 'ko' ? '누적 보상' : 'Cumulative'}
                 </div>
-                <div className="font-mono text-sm text-neutral-400">
+                <div className="font-mono text-sm text-muted-foreground">
                   {cumulativeReward.toFixed(6)} ETH
                 </div>
               </div>

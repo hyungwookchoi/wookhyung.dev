@@ -158,12 +158,12 @@ export function RandaoVisualization() {
     const currentIndex = phases.indexOf(phase);
     const targetIndex = phases.indexOf(targetPhase);
 
-    if (phase === 'idle') return 'text-neutral-600 border-neutral-800';
+    if (phase === 'idle') return 'text-muted-foreground/60 border-border';
     if (targetIndex < currentIndex)
       return 'text-emerald-400 border-emerald-400/30';
     if (targetIndex === currentIndex)
       return 'text-amber-400 border-amber-400/50';
-    return 'text-neutral-600 border-neutral-800';
+    return 'text-muted-foreground/60 border-border';
   };
 
   return (
@@ -172,14 +172,14 @@ export function RandaoVisualization() {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-purple-400" />
         <div>
-          <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-300">
+          <h3 className="text-sm font-mono uppercase tracking-wider text-foreground">
             {t.title}
           </h3>
-          <p className="text-xs text-neutral-500">{t.subtitle}</p>
+          <p className="text-xs text-muted-foreground">{t.subtitle}</p>
         </div>
       </div>
 
-      <div className="bg-neutral-950 border border-neutral-800 p-6 space-y-6">
+      <div className="bg-card border border-border p-6 space-y-6">
         {/* Phase Indicators */}
         <div className="grid grid-cols-4 gap-2">
           {[
@@ -193,14 +193,14 @@ export function RandaoVisualization() {
               className={`p-3 border transition-colors ${getPhaseColor(step.key)}`}
             >
               <div className="flex items-center gap-2 mb-1">
-                <span className="w-5 h-5 flex items-center justify-center bg-neutral-900 text-[10px] font-mono">
+                <span className="w-5 h-5 flex items-center justify-center bg-muted text-[10px] font-mono">
                   {idx + 1}
                 </span>
                 <span className="text-[10px] font-mono uppercase tracking-wider">
                   {step.title}
                 </span>
               </div>
-              <p className="text-[9px] text-neutral-500 leading-relaxed">
+              <p className="text-[9px] text-muted-foreground leading-relaxed">
                 {step.desc}
               </p>
             </div>
@@ -212,7 +212,7 @@ export function RandaoVisualization() {
           {validators.map((v) => (
             <motion.div
               key={v.id}
-              className="flex items-center gap-4 p-3 bg-neutral-900/50 border border-neutral-800"
+              className="flex items-center gap-4 p-3 bg-muted/50 border border-border"
               animate={{
                 borderColor:
                   (phase === 'commit' && v.committed && !v.revealed) ||
@@ -228,14 +228,14 @@ export function RandaoVisualization() {
                     V{v.id}
                   </span>
                 </div>
-                <span className="text-[9px] font-mono text-neutral-500">
+                <span className="text-[9px] font-mono text-muted-foreground">
                   {t.validator} {v.id}
                 </span>
               </div>
 
               {/* Secret */}
               <div className="flex-1 flex items-center gap-2">
-                <span className="text-[9px] font-mono text-neutral-600 w-12">
+                <span className="text-[9px] font-mono text-muted-foreground/60 w-12">
                   {t.secret}:
                 </span>
                 <AnimatePresence mode="wait">
@@ -251,7 +251,7 @@ export function RandaoVisualization() {
                     <motion.span
                       initial={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="font-mono text-xs text-neutral-600"
+                      className="font-mono text-xs text-muted-foreground/60"
                     >
                       ????????
                     </motion.span>
@@ -261,11 +261,11 @@ export function RandaoVisualization() {
 
               {/* Hash/Commit Status */}
               <div className="flex items-center gap-2">
-                <span className="text-[9px] font-mono text-neutral-600">
+                <span className="text-[9px] font-mono text-muted-foreground/60">
                   {t.hash}:
                 </span>
                 <span
-                  className={`font-mono text-[10px] ${v.committed ? 'text-cyan-400' : 'text-neutral-700'}`}
+                  className={`font-mono text-[10px] ${v.committed ? 'text-cyan-400' : 'text-muted-foreground/40'}`}
                 >
                   {v.committed ? `0x${v.hash.slice(0, 8)}...` : '––––––––'}
                 </span>
@@ -318,7 +318,7 @@ export function RandaoVisualization() {
                       </div>
                     ))}
                   </div>
-                  <span className="text-neutral-600">=</span>
+                  <span className="text-muted-foreground/60">=</span>
                   <motion.div
                     className="px-4 py-2 bg-emerald-400/10 border border-emerald-400/30"
                     animate={phase === 'mix' ? { opacity: [0.5, 1] } : {}}
@@ -345,13 +345,13 @@ export function RandaoVisualization() {
               animate={{ opacity: 1, y: 0 }}
               className="p-4 bg-emerald-400/10 border border-emerald-400/30 text-center"
             >
-              <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider mb-2">
+              <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-2">
                 {t.resultTitle}
               </div>
               <div className="font-mono text-lg text-emerald-400">
                 0x{finalRandom}
               </div>
-              <p className="text-[10px] text-neutral-500 mt-2">
+              <p className="text-[10px] text-muted-foreground mt-2">
                 {t.resultDesc}
               </p>
             </motion.div>
@@ -364,15 +364,15 @@ export function RandaoVisualization() {
             onClick={runSimulation}
             disabled={phase !== 'idle' && phase !== 'done'}
             className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     bg-purple-500 text-neutral-950 hover:bg-purple-400
-                     disabled:bg-neutral-700 disabled:text-neutral-500 transition-colors"
+                     bg-purple-500 text-background hover:bg-purple-400
+                     disabled:bg-muted disabled:text-muted-foreground transition-colors"
           >
             {phase !== 'idle' && phase !== 'done' ? t.running : t.run}
           </button>
           <button
             onClick={handleReset}
             className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     border border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:border-neutral-500 transition-colors"
+                     border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
           >
             {t.reset}
           </button>

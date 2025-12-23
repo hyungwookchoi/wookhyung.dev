@@ -36,7 +36,7 @@ export function SlotCell({
     if (isCurrent) {
       return 'border-emerald-400';
     }
-    return 'bg-neutral-900/30 border-neutral-800';
+    return 'bg-muted/30 border-border';
   };
 
   // 상태 텍스트
@@ -57,7 +57,7 @@ export function SlotCell({
       `}
     >
       {/* 슬롯 번호 */}
-      <span className="absolute top-0.5 left-1 font-mono text-[8px] text-neutral-600">
+      <span className="absolute top-0.5 left-1 font-mono text-[8px] text-muted-foreground/60">
         {slot.index + 1}
       </span>
 
@@ -72,7 +72,7 @@ export function SlotCell({
                 : isProposed
                   ? 'text-emerald-400/70'
                   : isPending
-                    ? 'text-neutral-700'
+                    ? 'text-muted-foreground/30'
                     : 'text-emerald-400'
           }`}
         >

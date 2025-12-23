@@ -93,8 +93,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   };
 
   return (
-    <html lang={lang}>
-      <body className="max-w-3xl mx-auto min-h-dvh flex flex-col bg-[#0a0a0b] font-mono text-neutral-100 relative">
+    <html lang={lang} suppressHydrationWarning>
+      <body className="max-w-3xl mx-auto min-h-dvh flex flex-col bg-background font-mono text-foreground relative">
         {/* Noise texture overlay */}
         <div
           className="fixed inset-0 pointer-events-none opacity-[0.015] z-50"

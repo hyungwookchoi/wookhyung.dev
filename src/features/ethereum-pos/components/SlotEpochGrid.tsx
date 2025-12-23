@@ -63,7 +63,7 @@ export function SlotEpochGrid({
       );
     }
     return (
-      <span className="px-2 py-0.5 bg-neutral-800 border border-neutral-700 text-neutral-500 text-[9px] font-mono uppercase">
+      <span className="px-2 py-0.5 bg-muted border border-border text-muted-foreground text-[9px] font-mono uppercase">
         Active
       </span>
     );
@@ -74,24 +74,24 @@ export function SlotEpochGrid({
       {/* Header */}
       <div className="flex items-baseline justify-between">
         <div className="space-y-1">
-          <span className="font-mono text-[10px] tracking-[0.15em] text-neutral-500 uppercase block">
+          <span className="font-mono text-[10px] tracking-[0.15em] text-muted-foreground uppercase block">
             Slot & Epoch
           </span>
-          <span className="font-mono text-[10px] text-neutral-600">
+          <span className="font-mono text-[10px] text-muted-foreground/60">
             32 slots = 1 epoch
           </span>
         </div>
-        <div className="font-mono text-sm text-neutral-400 flex items-center gap-4">
+        <div className="font-mono text-sm text-muted-foreground flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span>
-              E<span className="text-neutral-100 ml-1">{currentEpoch}</span>
+              E<span className="text-foreground ml-1">{currentEpoch}</span>
             </span>
             {getEpochBadge()}
           </div>
-          <span className="text-neutral-700">·</span>
+          <span className="text-border">·</span>
           <span>
-            S<span className="text-neutral-100 ml-1">{currentSlot + 1}</span>
-            <span className="text-neutral-600">/32</span>
+            S<span className="text-foreground ml-1">{currentSlot + 1}</span>
+            <span className="text-muted-foreground/60">/32</span>
           </span>
         </div>
       </div>
@@ -126,9 +126,9 @@ export function SlotEpochGrid({
       </div>
 
       {/* Slot Legend */}
-      <div className="flex items-center gap-4 text-[9px] font-mono text-neutral-600">
+      <div className="flex items-center gap-4 text-[9px] font-mono text-muted-foreground/60">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 bg-neutral-900/30 border border-neutral-800" />
+          <div className="w-3 h-3 bg-muted/30 border border-border" />
           <span>Pending</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -149,28 +149,28 @@ export function SlotEpochGrid({
       <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={isRunning ? onPause : onStart}
-          className="font-mono text-[10px] tracking-[0.1em] uppercase px-3 py-2 border border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:border-neutral-500 transition-colors"
+          className="font-mono text-[10px] tracking-[0.1em] uppercase px-3 py-2 border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
         >
           {isRunning ? 'Pause' : 'Play'}
         </button>
         <button
           onClick={onReset}
-          className="font-mono text-[10px] tracking-[0.1em] uppercase px-3 py-2 border border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:border-neutral-500 transition-colors"
+          className="font-mono text-[10px] tracking-[0.1em] uppercase px-3 py-2 border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
         >
           Reset
         </button>
 
-        <div className="w-px h-4 bg-neutral-800 mx-2" />
+        <div className="w-px h-4 bg-border mx-2" />
 
-        <div className="flex items-center border border-neutral-800">
+        <div className="flex items-center border border-border">
           {SPEED_OPTIONS.map((s) => (
             <button
               key={s}
               onClick={() => onSetSpeed(s)}
               className={`font-mono text-[10px] px-3 py-2 transition-colors ${
                 speed === s
-                  ? 'bg-neutral-800 text-neutral-100'
-                  : 'text-neutral-500 hover:text-neutral-300'
+                  ? 'bg-muted text-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {s}×
@@ -178,18 +178,18 @@ export function SlotEpochGrid({
           ))}
         </div>
 
-        <div className="w-px h-4 bg-neutral-800 mx-2" />
+        <div className="w-px h-4 bg-border mx-2" />
 
         <button
           onClick={() => onSkipSlots(1)}
-          className="font-mono text-[10px] px-3 py-2 border border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:border-neutral-500 transition-colors"
+          className="font-mono text-[10px] px-3 py-2 border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
           title="+1 slot"
         >
           +1
         </button>
         <button
           onClick={() => onSkipSlots(8)}
-          className="font-mono text-[10px] px-3 py-2 border border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:border-neutral-500 transition-colors"
+          className="font-mono text-[10px] px-3 py-2 border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
           title="+8 slots"
         >
           +8

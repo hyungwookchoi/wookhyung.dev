@@ -22,7 +22,7 @@ export function StakingSlider({
   return (
     <div className="space-y-4">
       <div className="flex items-baseline justify-between">
-        <span className="font-mono text-[10px] tracking-[0.15em] text-neutral-500 uppercase">
+        <span className="font-mono text-[10px] tracking-[0.15em] text-muted-foreground uppercase">
           Total Staked
         </span>
         <div className="flex items-baseline gap-1">
@@ -30,21 +30,21 @@ export function StakingSlider({
             key={value}
             initial={{ opacity: 0.5, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            className="font-mono text-3xl font-light text-neutral-100 tabular-nums"
+            className="font-mono text-3xl font-light text-foreground tabular-nums"
           >
             {value}
           </motion.span>
-          <span className="font-mono text-sm text-neutral-500">M ETH</span>
+          <span className="font-mono text-sm text-muted-foreground">M ETH</span>
         </div>
       </div>
 
       <div className="relative h-8 flex items-center">
         {/* Track background */}
-        <div className="absolute inset-x-0 h-[2px] bg-neutral-800" />
+        <div className="absolute inset-x-0 h-[2px] bg-border" />
 
         {/* Active track */}
         <motion.div
-          className="absolute h-[2px] bg-emerald-400"
+          className="absolute h-[2px] bg-primary"
           style={{ width: `${percentage}%` }}
           transition={{ duration: 0.1 }}
         />
@@ -55,7 +55,7 @@ export function StakingSlider({
             <div
               key={tick}
               className={`w-px h-2 ${
-                percentage >= tick ? 'bg-emerald-400/50' : 'bg-neutral-700'
+                percentage >= tick ? 'bg-primary/50' : 'bg-border'
               }`}
             />
           ))}
@@ -72,20 +72,20 @@ export function StakingSlider({
             [&::-webkit-slider-thumb]:appearance-none
             [&::-webkit-slider-thumb]:w-4
             [&::-webkit-slider-thumb]:h-4
-            [&::-webkit-slider-thumb]:bg-emerald-400
+            [&::-webkit-slider-thumb]:bg-primary
             [&::-webkit-slider-thumb]:border-0
             [&::-webkit-slider-thumb]:cursor-pointer
             [&::-webkit-slider-thumb]:transition-transform
             [&::-webkit-slider-thumb]:hover:scale-125
             [&::-moz-range-thumb]:w-4
             [&::-moz-range-thumb]:h-4
-            [&::-moz-range-thumb]:bg-emerald-400
+            [&::-moz-range-thumb]:bg-primary
             [&::-moz-range-thumb]:border-0
             [&::-moz-range-thumb]:cursor-pointer"
         />
       </div>
 
-      <div className="flex justify-between font-mono text-[10px] text-neutral-600">
+      <div className="flex justify-between font-mono text-[10px] text-muted-foreground/60">
         <span>{STAKING_RANGE.min}M</span>
         <span>{STAKING_RANGE.max}M</span>
       </div>

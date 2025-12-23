@@ -47,12 +47,12 @@ export function PreferenceContent({
           delay: INITIAL_DELAY + STAGGER_DELAY * sectionIndex++,
         }}
       >
-        <h2 className="text-sm font-normal text-neutral-200 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
-          <span className="w-2 h-2 bg-emerald-400" />
+        <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+          <span className="w-2 h-2 bg-primary" />
           {dict.preference.music}
         </h2>
         <div className="mb-6">
-          <h3 className="text-[10px] font-normal text-neutral-500 uppercase tracking-[0.15em] mb-3">
+          <h3 className="text-[10px] font-normal text-muted-foreground uppercase tracking-[0.15em] mb-3">
             {dict.preference.concert}
           </h3>
           <ul className="space-y-2">
@@ -62,7 +62,7 @@ export function PreferenceContent({
                   href={concert.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-neutral-400 hover:text-emerald-400 transition-colors inline-flex items-center gap-1"
+                  className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1"
                 >
                   {concert.title}
                 </a>
@@ -81,15 +81,15 @@ export function PreferenceContent({
           delay: INITIAL_DELAY + STAGGER_DELAY * sectionIndex++,
         }}
       >
-        <h2 className="text-sm font-normal text-neutral-200 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
-          <span className="w-2 h-2 bg-emerald-400" />
+        <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+          <span className="w-2 h-2 bg-primary" />
           {dict.preference.book}
         </h2>
         {Object.entries(booksByYear)
           .sort(([a], [b]) => Number(b) - Number(a))
           .map(([year, books]) => (
             <div key={year} className="mb-6">
-              <h3 className="text-[10px] font-normal text-neutral-500 uppercase tracking-[0.15em] mb-3">
+              <h3 className="text-[10px] font-normal text-muted-foreground uppercase tracking-[0.15em] mb-3">
                 {year}
               </h3>
               <ul className="space-y-2">
@@ -99,10 +99,12 @@ export function PreferenceContent({
                       href={book.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-neutral-400 hover:text-emerald-400 transition-colors"
+                      className="text-muted-foreground hover:text-primary transition-colors"
                     >
                       {book.title}{' '}
-                      <span className="text-neutral-600">({book.author})</span>
+                      <span className="text-muted-foreground/60">
+                        ({book.author})
+                      </span>
                     </a>
                   </li>
                 ))}
@@ -120,22 +122,24 @@ export function PreferenceContent({
           delay: INITIAL_DELAY + STAGGER_DELAY * sectionIndex++,
         }}
       >
-        <h2 className="text-sm font-normal text-neutral-200 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
-          <span className="w-2 h-2 bg-emerald-400" />
+        <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+          <span className="w-2 h-2 bg-primary" />
           {dict.preference.movie}
         </h2>
         {Object.entries(movies)
           .sort(([a], [b]) => Number(b) - Number(a))
           .map(([year, movieList]) => (
             <div key={year} className="mb-6">
-              <h3 className="text-[10px] font-normal text-neutral-500 uppercase tracking-[0.15em] mb-3">
+              <h3 className="text-[10px] font-normal text-muted-foreground uppercase tracking-[0.15em] mb-3">
                 {year}
               </h3>
               <ul className="space-y-2">
                 {movieList.map((movie) => (
-                  <li key={movie.title} className="text-neutral-400">
+                  <li key={movie.title} className="text-muted-foreground">
                     {movie.title}{' '}
-                    <span className="text-neutral-600">({movie.director})</span>
+                    <span className="text-muted-foreground/60">
+                      ({movie.director})
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -152,13 +156,13 @@ export function PreferenceContent({
           delay: INITIAL_DELAY + STAGGER_DELAY * sectionIndex++,
         }}
       >
-        <h2 className="text-sm font-normal text-neutral-200 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
-          <span className="w-2 h-2 bg-emerald-400" />
+        <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+          <span className="w-2 h-2 bg-primary" />
           {dict.preference.interest}
         </h2>
         <ul className="space-y-2">
           {interests.map((interest) => (
-            <li key={interest.title} className="text-neutral-400">
+            <li key={interest.title} className="text-muted-foreground">
               {interest.title}
               {interest.link && interest.linkText && (
                 <>
@@ -167,7 +171,7 @@ export function PreferenceContent({
                     href={interest.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                    className="text-primary hover:text-primary/80 transition-colors"
                   >
                     {interest.linkText}
                   </a>

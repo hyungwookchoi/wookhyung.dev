@@ -119,14 +119,14 @@ export function MultipartVerifier() {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-rose-400" />
         <div>
-          <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-300">
+          <h3 className="text-sm font-mono uppercase tracking-wider text-foreground">
             {t.title}
           </h3>
-          <p className="text-xs text-neutral-500">{t.subtitle}</p>
+          <p className="text-xs text-muted-foreground">{t.subtitle}</p>
         </div>
       </div>
 
-      <div className="bg-neutral-950 border border-neutral-800 overflow-hidden">
+      <div className="bg-card border border-border overflow-hidden">
         {/* File selection or info */}
         {!file ? (
           <div
@@ -138,7 +138,7 @@ export function MultipartVerifier() {
             onDragLeave={() => setIsDragging(false)}
             onClick={() => fileInputRef.current?.click()}
             className={`p-6 cursor-pointer transition-colors ${
-              isDragging ? 'bg-rose-500/10' : 'hover:bg-neutral-900'
+              isDragging ? 'bg-rose-500/10' : 'hover:bg-muted'
             }`}
           >
             <input
@@ -153,11 +153,11 @@ export function MultipartVerifier() {
             <div className="flex items-center justify-center gap-4">
               <div
                 className={`w-12 h-12 border-2 border-dashed flex items-center justify-center transition-colors ${
-                  isDragging ? 'border-rose-400' : 'border-neutral-700'
+                  isDragging ? 'border-rose-400' : 'border-border'
                 }`}
               >
                 <svg
-                  className={`w-6 h-6 ${isDragging ? 'text-rose-400' : 'text-neutral-600'}`}
+                  className={`w-6 h-6 ${isDragging ? 'text-rose-400' : 'text-muted-foreground/60'}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -170,26 +170,28 @@ export function MultipartVerifier() {
                   />
                 </svg>
               </div>
-              <div className="text-sm text-neutral-400">{t.selectFile}</div>
+              <div className="text-sm text-muted-foreground">
+                {t.selectFile}
+              </div>
             </div>
           </div>
         ) : (
           <>
             {/* File info and controls */}
-            <div className="p-4 border-b border-neutral-800">
+            <div className="p-4 border-b border-border">
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 {/* File info */}
                 <div className="flex items-center gap-3 flex-1">
-                  <div className="w-10 h-12 bg-neutral-900 border border-neutral-700 flex items-center justify-center">
-                    <span className="text-[8px] font-mono text-neutral-500 uppercase">
+                  <div className="w-10 h-12 bg-muted border border-border flex items-center justify-center">
+                    <span className="text-[8px] font-mono text-muted-foreground uppercase">
                       {file.name.split('.').pop()?.slice(0, 4) || 'FILE'}
                     </span>
                   </div>
                   <div>
-                    <div className="text-sm text-neutral-300 font-mono truncate max-w-[200px]">
+                    <div className="text-sm text-foreground font-mono truncate max-w-[200px]">
                       {file.name}
                     </div>
-                    <div className="text-xs text-neutral-500">
+                    <div className="text-xs text-muted-foreground">
                       {formatBytes(file.size)}
                     </div>
                   </div>
@@ -197,7 +199,7 @@ export function MultipartVerifier() {
 
                 {/* Part count selector */}
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-mono text-neutral-500 uppercase">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase">
                     {t.partCount}
                   </span>
                   <div className="flex items-center gap-1">
@@ -211,8 +213,8 @@ export function MultipartVerifier() {
                         disabled={isVerifying}
                         className={`w-8 h-8 font-mono text-sm transition-colors ${
                           partCount === n
-                            ? 'bg-rose-500 text-neutral-950'
-                            : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
+                            ? 'bg-rose-500 text-background'
+                            : 'bg-border text-muted-foreground hover:bg-muted'
                         } disabled:opacity-50`}
                       >
                         {n}
@@ -225,8 +227,8 @@ export function MultipartVerifier() {
                 <button
                   onClick={verify}
                   disabled={isVerifying}
-                  className="px-6 py-2 bg-rose-500 text-neutral-950 font-mono text-sm uppercase tracking-wider
-                           hover:bg-rose-400 disabled:bg-neutral-700 disabled:text-neutral-500 transition-colors"
+                  className="px-6 py-2 bg-rose-500 text-background font-mono text-sm uppercase tracking-wider
+                           hover:bg-rose-400 disabled:bg-muted disabled:text-muted-foreground transition-colors"
                 >
                   {isVerifying ? t.verifying : t.splitAndMerge}
                 </button>
@@ -246,8 +248,8 @@ export function MultipartVerifier() {
                     {/* Hash comparison */}
                     <div className="grid sm:grid-cols-2 gap-4">
                       {/* Original hash */}
-                      <div className="p-3 bg-neutral-900 border border-neutral-800">
-                        <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider mb-2">
+                      <div className="p-3 bg-muted border border-border">
+                        <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-2">
                           {t.originalHash}
                         </div>
                         <div className="font-mono text-[9px] text-cyan-400 break-all">
@@ -257,13 +259,13 @@ export function MultipartVerifier() {
 
                       {/* Reconstructed hash */}
                       <div
-                        className={`p-3 bg-neutral-900 border ${
+                        className={`p-3 bg-muted border ${
                           result.isMatch
                             ? 'border-emerald-500/50'
                             : 'border-red-500/50'
                         }`}
                       >
-                        <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider mb-2">
+                        <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-2">
                           {t.reconstructedHash}
                         </div>
                         <div
@@ -336,7 +338,7 @@ export function MultipartVerifier() {
                       <div className="flex justify-center">
                         <button
                           onClick={downloadFile}
-                          className="px-6 py-2 bg-emerald-500 text-neutral-950 font-mono text-sm uppercase tracking-wider
+                          className="px-6 py-2 bg-emerald-500 text-background font-mono text-sm uppercase tracking-wider
                                    hover:bg-emerald-400 transition-colors flex items-center gap-2"
                         >
                           <svg

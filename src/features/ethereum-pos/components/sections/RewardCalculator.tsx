@@ -117,25 +117,25 @@ export function RewardCalculator() {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-emerald-400" />
         <div>
-          <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-300">
+          <h3 className="text-sm font-mono uppercase tracking-wider text-foreground">
             {t.title}
           </h3>
-          <p className="text-xs text-neutral-500">{t.subtitle}</p>
+          <p className="text-xs text-muted-foreground">{t.subtitle}</p>
         </div>
       </div>
 
-      <div className="bg-neutral-950 border border-neutral-800 p-6 space-y-6">
+      <div className="bg-card border border-border p-6 space-y-6">
         {/* Sliders */}
         <div className="grid sm:grid-cols-2 gap-6">
           {/* Total Staked */}
           <div className="space-y-3">
             <div className="flex justify-between items-baseline">
-              <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
+              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
                 {t.totalStaked}
               </span>
-              <span className="font-mono text-lg text-neutral-100">
+              <span className="font-mono text-lg text-foreground">
                 {totalStakedM}
-                <span className="text-neutral-500 text-sm">
+                <span className="text-muted-foreground text-sm">
                   {t.million} ETH
                 </span>
               </span>
@@ -147,12 +147,12 @@ export function RewardCalculator() {
               step={1}
               value={totalStakedM}
               onChange={(e) => setTotalStakedM(Number(e.target.value))}
-              className="w-full h-2 bg-neutral-800 appearance-none cursor-pointer
+              className="w-full h-2 bg-border appearance-none cursor-pointer
                        [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4
                        [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-emerald-400
                        [&::-webkit-slider-thumb]:cursor-pointer"
             />
-            <div className="flex justify-between text-[9px] font-mono text-neutral-600">
+            <div className="flex justify-between text-[9px] font-mono text-muted-foreground/60">
               <span>5M</span>
               <span>100M</span>
             </div>
@@ -161,12 +161,12 @@ export function RewardCalculator() {
           {/* Your Stake */}
           <div className="space-y-3">
             <div className="flex justify-between items-baseline">
-              <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
+              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
                 {t.yourStake}
               </span>
-              <span className="font-mono text-lg text-neutral-100">
+              <span className="font-mono text-lg text-foreground">
                 {yourStake}
-                <span className="text-neutral-500 text-sm"> ETH</span>
+                <span className="text-muted-foreground text-sm"> ETH</span>
               </span>
             </div>
             <input
@@ -176,12 +176,12 @@ export function RewardCalculator() {
               step={32}
               value={yourStake}
               onChange={(e) => setYourStake(Number(e.target.value))}
-              className="w-full h-2 bg-neutral-800 appearance-none cursor-pointer
+              className="w-full h-2 bg-border appearance-none cursor-pointer
                        [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4
                        [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-cyan-400
                        [&::-webkit-slider-thumb]:cursor-pointer"
             />
-            <div className="flex justify-between text-[9px] font-mono text-neutral-600">
+            <div className="flex justify-between text-[9px] font-mono text-muted-foreground/60">
               <span>32 ETH (1 validator)</span>
               <span>3,200 ETH (100 validators)</span>
             </div>
@@ -191,7 +191,7 @@ export function RewardCalculator() {
         {/* Results */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="p-4 bg-emerald-400/10 border border-emerald-400/30">
-            <div className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider mb-1">
+            <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-1">
               {t.apr}
             </div>
             <div className="font-mono text-2xl text-emerald-400">
@@ -199,31 +199,31 @@ export function RewardCalculator() {
             </div>
           </div>
 
-          <div className="p-4 bg-neutral-900/50 border border-neutral-800">
-            <div className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider mb-1">
+          <div className="p-4 bg-muted/50 border border-border">
+            <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-1">
               {t.annualReward}
             </div>
-            <div className="font-mono text-lg text-neutral-100">
+            <div className="font-mono text-lg text-foreground">
               {calculations.annualReward}
-              <span className="text-neutral-500 text-sm"> ETH</span>
+              <span className="text-muted-foreground text-sm"> ETH</span>
             </div>
           </div>
 
-          <div className="p-4 bg-neutral-900/50 border border-neutral-800">
-            <div className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider mb-1">
+          <div className="p-4 bg-muted/50 border border-border">
+            <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-1">
               {t.monthlyReward}
             </div>
-            <div className="font-mono text-lg text-neutral-100">
+            <div className="font-mono text-lg text-foreground">
               {calculations.monthlyReward}
-              <span className="text-neutral-500 text-sm"> ETH</span>
+              <span className="text-muted-foreground text-sm"> ETH</span>
             </div>
           </div>
 
-          <div className="p-4 bg-neutral-900/50 border border-neutral-800">
-            <div className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider mb-1">
+          <div className="p-4 bg-muted/50 border border-border">
+            <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-1">
               {t.validatorCount}
             </div>
-            <div className="font-mono text-lg text-neutral-100">
+            <div className="font-mono text-lg text-foreground">
               {calculations.validatorCount}
             </div>
           </div>
@@ -231,11 +231,11 @@ export function RewardCalculator() {
 
         {/* Curve Visualization */}
         <div className="space-y-3">
-          <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
+          <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
             {t.formula}: APR(%) = 166 / SQRT(N)
           </div>
 
-          <div className="h-48 bg-neutral-900/30 border border-neutral-800 p-2">
+          <div className="h-48 bg-muted/30 border border-border p-2">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={chartData}
@@ -302,16 +302,16 @@ export function RewardCalculator() {
             </ResponsiveContainer>
           </div>
 
-          <div className="flex justify-between text-[9px] font-mono text-neutral-600">
+          <div className="flex justify-between text-[9px] font-mono text-muted-foreground/60">
             <span>{t.lowStake}</span>
-            <span className="px-2 py-0.5 bg-amber-400 text-neutral-950">
+            <span className="px-2 py-0.5 bg-amber-400 text-background">
               {totalStakedM}M: {currentY.toFixed(1)}%
             </span>
             <span>{t.highStake}</span>
           </div>
 
           {/* Explanation */}
-          <p className="text-[10px] font-mono text-neutral-500 leading-relaxed">
+          <p className="text-[10px] font-mono text-muted-foreground leading-relaxed">
             {t.incentiveNote}
           </p>
         </div>

@@ -25,7 +25,7 @@ function formatTime(timestamp: number): string {
 function getEventColor(type: EventLog['type']): string {
   switch (type) {
     case 'slot_proposed':
-      return 'text-neutral-400';
+      return 'text-muted-foreground';
     case 'epoch_checkpoint':
       return 'text-amber-400';
     case 'epoch_justified':
@@ -37,7 +37,7 @@ function getEventColor(type: EventLog['type']): string {
     case 'randao_updated':
       return 'text-purple-400';
     default:
-      return 'text-neutral-400';
+      return 'text-muted-foreground';
   }
 }
 
@@ -72,18 +72,18 @@ export function EventLogPanel({ logs, onClear }: EventLogPanelProps) {
   }, [logs.length]);
 
   return (
-    <div className="flex flex-col h-full border border-neutral-800 bg-neutral-900/50">
+    <div className="flex flex-col h-full border border-border bg-muted/50">
       {/* 헤더 */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-800">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border">
         <div className="flex items-center gap-2">
-          <span className="text-emerald-400 font-mono text-xs">{'>'}</span>
-          <span className="font-mono text-[10px] tracking-[0.15em] text-neutral-500 uppercase">
+          <span className="text-primary font-mono text-xs">{'>'}</span>
+          <span className="font-mono text-[10px] tracking-[0.15em] text-muted-foreground uppercase">
             Event Log
           </span>
         </div>
         <button
           onClick={onClear}
-          className="font-mono text-[9px] text-neutral-600 hover:text-neutral-400 transition-colors uppercase tracking-wider"
+          className="font-mono text-[9px] text-muted-foreground/60 hover:text-muted-foreground transition-colors uppercase tracking-wider"
         >
           Clear
         </button>
@@ -96,7 +96,7 @@ export function EventLogPanel({ logs, onClear }: EventLogPanelProps) {
       >
         {logs.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <span className="font-mono text-[10px] text-neutral-700">
+            <span className="font-mono text-[10px] text-muted-foreground/40">
               {locale === 'ko' ? '이벤트 대기 중...' : 'Waiting for events...'}
             </span>
           </div>
@@ -109,9 +109,9 @@ export function EventLogPanel({ logs, onClear }: EventLogPanelProps) {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
-                className="flex items-start gap-2 px-3 py-1.5 border-b border-neutral-800/50 hover:bg-neutral-800/30"
+                className="flex items-start gap-2 px-3 py-1.5 border-b border-border/50 hover:bg-muted/30"
               >
-                <span className="font-mono text-[9px] text-neutral-600 shrink-0">
+                <span className="font-mono text-[9px] text-muted-foreground/60 shrink-0">
                   {formatTime(log.timestamp)}
                 </span>
                 <span
@@ -131,8 +131,8 @@ export function EventLogPanel({ logs, onClear }: EventLogPanelProps) {
       </div>
 
       {/* 푸터 */}
-      <div className="px-3 py-1.5 border-t border-neutral-800 bg-neutral-900/80">
-        <span className="font-mono text-[9px] text-neutral-600">
+      <div className="px-3 py-1.5 border-t border-border bg-muted/80">
+        <span className="font-mono text-[9px] text-muted-foreground/60">
           {logs.length} {locale === 'ko' ? '개 이벤트' : 'events'}
         </span>
       </div>

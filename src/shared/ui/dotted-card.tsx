@@ -13,7 +13,7 @@ export function DottedCard({
 }: DottedCardProps) {
   return (
     <div
-      className={`relative bg-transparent border-2 border-dotted border-neutral-700 ${className}`}
+      className={`relative bg-transparent border-2 border-dotted border-border ${className}`}
     >
       <div className={`relative p-4 ${contentClassName}`}>{children}</div>
     </div>

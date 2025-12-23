@@ -35,19 +35,21 @@ export function HashComparison({
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4 }}
-          className="relative bg-neutral-950 border border-neutral-800 overflow-hidden"
+          className="relative bg-card border border-border overflow-hidden"
         >
-          <div className="h-1 bg-neutral-700" />
+          <div className="h-1 bg-muted" />
           <div className="p-4">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 bg-neutral-600" />
-              <h3 className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-500">
+              <div className="w-2 h-2 bg-muted-foreground/60" />
+              <h3 className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
                 {t.originalTitle}
               </h3>
             </div>
-            <div className="bg-neutral-900 border border-neutral-800 p-3">
-              <div className="font-mono text-[9px] sm:text-[10px] text-neutral-500 break-all leading-relaxed">
-                <span className="text-neutral-700 select-none">sha256://</span>
+            <div className="bg-muted border border-border p-3">
+              <div className="font-mono text-[9px] sm:text-[10px] text-muted-foreground break-all leading-relaxed">
+                <span className="text-muted-foreground/40 select-none">
+                  sha256://
+                </span>
                 {originalHash}
               </div>
             </div>
@@ -59,7 +61,7 @@ export function HashComparison({
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className={`relative bg-neutral-950 border overflow-hidden ${
+          className={`relative bg-card border overflow-hidden ${
             isMatch ? 'border-emerald-800/50' : 'border-red-800/50'
           }`}
         >
@@ -69,12 +71,12 @@ export function HashComparison({
               <div
                 className={`w-2 h-2 ${isMatch ? 'bg-emerald-500' : 'bg-red-500'} animate-pulse`}
               />
-              <h3 className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-500">
+              <h3 className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
                 {t.reconstructedTitle}
               </h3>
             </div>
             <div
-              className={`bg-neutral-900 border p-3 ${
+              className={`bg-muted border p-3 ${
                 isMatch ? 'border-emerald-900/50' : 'border-red-900/50'
               }`}
             >
@@ -83,7 +85,9 @@ export function HashComparison({
                   isMatch ? 'text-emerald-400' : 'text-red-400'
                 }`}
               >
-                <span className="text-neutral-700 select-none">sha256://</span>
+                <span className="text-muted-foreground/40 select-none">
+                  sha256://
+                </span>
                 {reconstructedHash}
               </div>
             </div>
@@ -223,7 +227,7 @@ export function HashComparison({
         >
           <button
             onClick={onDownload}
-            className="group relative px-10 py-4 bg-emerald-500 text-neutral-950 font-mono text-sm uppercase tracking-wider
+            className="group relative px-10 py-4 bg-emerald-500 text-background font-mono text-sm uppercase tracking-wider
                      hover:bg-emerald-400 transition-all duration-200"
           >
             <span className="relative z-10 flex items-center gap-3">

@@ -12,7 +12,7 @@ export function WithClaudeBadge({ className }: WithClaudeBadgeProps) {
         'inline-flex items-center gap-1 px-1.5 py-0.5',
         'text-[10px] font-medium',
         'bg-gradient-to-r from-orange-500/20 to-amber-500/20',
-        'text-orange-300 rounded border border-orange-500/30',
+        'text-orange-600 dark:text-orange-300 rounded border border-orange-500/30',
         className,
       )}
     >

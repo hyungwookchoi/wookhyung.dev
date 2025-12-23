@@ -28,21 +28,21 @@ function MetricCard({ label, value, sublabel, delay = 0 }: MetricCardProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3, delay }}
-      className="p-4 bg-neutral-900/50 border border-neutral-800"
+      className="p-4 bg-muted/50 border border-border"
     >
       <div className="space-y-3">
-        <span className="font-mono text-[10px] tracking-[0.15em] text-neutral-500 uppercase block">
+        <span className="font-mono text-[10px] tracking-[0.15em] text-muted-foreground uppercase block">
           {label}
         </span>
         <motion.div
           key={value}
           initial={{ opacity: 0.5 }}
           animate={{ opacity: 1 }}
-          className="font-mono text-2xl font-light text-neutral-100 tabular-nums"
+          className="font-mono text-2xl font-light text-foreground tabular-nums"
         >
           {value}
         </motion.div>
-        <span className="font-mono text-[10px] text-neutral-600 block">
+        <span className="font-mono text-[10px] text-muted-foreground/60 block">
           {sublabel}
         </span>
       </div>
@@ -57,7 +57,7 @@ export function MetricsCards({
   translations,
 }: MetricsCardsProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-neutral-800">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-border">
       <MetricCard
         label="APR"
         value={apr}

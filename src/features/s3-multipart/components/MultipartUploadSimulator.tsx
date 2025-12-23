@@ -62,7 +62,7 @@ export function MultipartUploadSimulator() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-3xl sm:text-4xl font-light tracking-[-0.03em] text-neutral-100 mb-3"
+          className="text-3xl sm:text-4xl font-light tracking-[-0.03em] text-foreground mb-3"
           style={{ fontFamily: 'var(--font-sans, system-ui)' }}
         >
           {t.title}
@@ -72,7 +72,7 @@ export function MultipartUploadSimulator() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-sm text-neutral-500 font-mono max-w-xl"
+          className="text-sm text-muted-foreground font-mono max-w-xl"
         >
           {t.subtitle}
         </motion.p>
@@ -102,7 +102,7 @@ export function MultipartUploadSimulator() {
             transition={{ duration: 0.4 }}
             className="mb-8 overflow-hidden"
           >
-            <div className="p-6 bg-neutral-900/80 border border-neutral-800 relative">
+            <div className="p-6 bg-muted/80 border border-border relative">
               {/* Corner accents */}
               <div className="absolute top-0 left-0 w-4 h-4 border-l-2 border-t-2 border-cyan-500/50" />
               <div className="absolute top-0 right-0 w-4 h-4 border-r-2 border-t-2 border-cyan-500/50" />
@@ -112,7 +112,7 @@ export function MultipartUploadSimulator() {
               <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-6">
                 <div className="flex-1">
                   <div className="flex items-baseline justify-between mb-3">
-                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-500">
+                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
                       {t.controls.partCount}
                     </span>
                     <span className="text-2xl font-mono text-cyan-400 tabular-nums">
@@ -122,7 +122,7 @@ export function MultipartUploadSimulator() {
 
                   {/* Custom range slider */}
                   <div className="relative h-8 flex items-center">
-                    <div className="absolute inset-x-0 h-[2px] bg-neutral-800" />
+                    <div className="absolute inset-x-0 h-[2px] bg-border" />
                     <div
                       className="absolute left-0 h-[2px] bg-gradient-to-r from-cyan-500 to-cyan-400"
                       style={{ width: `${((partCount - 2) / 8) * 100}%` }}
@@ -142,14 +142,14 @@ export function MultipartUploadSimulator() {
                         <div
                           key={n}
                           className={`w-[2px] h-2 ${
-                            n <= partCount ? 'bg-cyan-500' : 'bg-neutral-700'
+                            n <= partCount ? 'bg-cyan-500' : 'bg-muted'
                           }`}
                         />
                       ))}
                     </div>
                     {/* Thumb indicator */}
                     <div
-                      className="absolute w-4 h-4 bg-cyan-400 border-2 border-neutral-900 transition-all pointer-events-none"
+                      className="absolute w-4 h-4 bg-cyan-400 border-2 border-card transition-all pointer-events-none"
                       style={{
                         left: `calc(${((partCount - 2) / 8) * 100}% - 8px)`,
                       }}
@@ -160,8 +160,8 @@ export function MultipartUploadSimulator() {
                 <button
                   onClick={() => splitFile(partCount)}
                   disabled={isProcessing}
-                  className="group relative px-8 py-3 bg-cyan-500 text-neutral-950 font-mono text-sm uppercase tracking-wider
-                           hover:bg-cyan-400 disabled:bg-neutral-700 disabled:text-neutral-500 disabled:cursor-not-allowed
+                  className="group relative px-8 py-3 bg-cyan-500 text-background font-mono text-sm uppercase tracking-wider
+                           hover:bg-cyan-400 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed
                            transition-all duration-200"
                 >
                   <span className="relative z-10">
@@ -193,16 +193,18 @@ export function MultipartUploadSimulator() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
-            className="mb-8 p-6 bg-neutral-900/60 border border-neutral-800"
+            className="mb-8 p-6 bg-muted/60 border border-border"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-2 h-2 bg-amber-400 animate-pulse" />
-              <h3 className="text-[11px] font-mono uppercase tracking-[0.2em] text-neutral-400">
+              <h3 className="text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
                 {t.hash.originalTitle}
               </h3>
             </div>
-            <div className="font-mono text-[10px] sm:text-xs text-cyan-400 break-all leading-relaxed bg-neutral-950/50 p-4 border border-neutral-800">
-              <span className="text-neutral-600 select-none">sha256://</span>
+            <div className="font-mono text-[10px] sm:text-xs text-cyan-400 break-all leading-relaxed bg-card/50 p-4 border border-border">
+              <span className="text-muted-foreground/60 select-none">
+                sha256://
+              </span>
               {originalHash}
             </div>
           </motion.div>
@@ -219,10 +221,10 @@ export function MultipartUploadSimulator() {
             className="mb-8"
           >
             <div className="flex items-baseline gap-4 mb-6">
-              <h3 className="text-xl font-light tracking-tight text-neutral-200">
+              <h3 className="text-xl font-light tracking-tight text-foreground">
                 {t.parts.title}
               </h3>
-              <span className="text-[10px] font-mono text-neutral-600 uppercase tracking-wider">
+              <span className="text-[10px] font-mono text-muted-foreground/60 uppercase tracking-wider">
                 [{parts.length} {locale === 'ko' ? '파트' : 'parts'}]
               </span>
             </div>
@@ -257,7 +259,7 @@ export function MultipartUploadSimulator() {
                 className="group relative px-12 py-4 bg-transparent border-2 border-amber-500/50 text-amber-400
                          font-mono text-sm uppercase tracking-[0.15em]
                          hover:border-amber-400 hover:text-amber-300 hover:bg-amber-500/5
-                         disabled:border-neutral-700 disabled:text-neutral-600 disabled:cursor-not-allowed
+                         disabled:border-border disabled:text-muted-foreground/60 disabled:cursor-not-allowed
                          transition-all duration-300"
               >
                 <span className="relative z-10 flex items-center gap-3">

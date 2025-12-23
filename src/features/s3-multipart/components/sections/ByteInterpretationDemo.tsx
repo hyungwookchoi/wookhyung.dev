@@ -65,18 +65,18 @@ export function ByteInterpretationDemo() {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-purple-400" />
         <div>
-          <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-300">
+          <h3 className="text-sm font-mono uppercase tracking-wider text-foreground">
             {t.title}
           </h3>
-          <p className="text-xs text-neutral-500">{t.subtitle}</p>
+          <p className="text-xs text-muted-foreground">{t.subtitle}</p>
         </div>
       </div>
 
       {/* Main visualization */}
-      <div className="bg-neutral-950 border border-neutral-800 overflow-hidden">
+      <div className="bg-card border border-border overflow-hidden">
         {/* Byte input */}
-        <div className="p-6 border-b border-neutral-800">
-          <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider mb-3">
+        <div className="p-6 border-b border-border">
+          <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-3">
             {t.inputBytes}
           </div>
           <div className="flex flex-wrap gap-2">
@@ -90,7 +90,7 @@ export function ByteInterpretationDemo() {
                   <input
                     type="text"
                     defaultValue={byte.toString(16).padStart(2, '0')}
-                    className="w-14 h-14 bg-neutral-900 border-2 border-cyan-500 text-center font-mono text-lg text-cyan-400 uppercase focus:outline-none"
+                    className="w-14 h-14 bg-muted border-2 border-cyan-500 text-center font-mono text-lg text-cyan-400 uppercase focus:outline-none"
                     maxLength={2}
                     autoFocus
                     onBlur={(e) => {
@@ -107,23 +107,25 @@ export function ByteInterpretationDemo() {
                 ) : (
                   <button
                     onClick={() => setEditingIndex(i)}
-                    className="w-14 h-14 bg-neutral-900 border border-neutral-700 hover:border-cyan-500/50
+                    className="w-14 h-14 bg-muted border border-border hover:border-cyan-500/50
                              font-mono text-lg text-cyan-400 uppercase transition-colors"
                   >
                     {byte.toString(16).padStart(2, '0')}
                   </button>
                 )}
-                <div className="absolute -bottom-4 left-0 right-0 text-center text-[8px] text-neutral-600">
+                <div className="absolute -bottom-4 left-0 right-0 text-center text-[8px] text-muted-foreground/60">
                   {byte}
                 </div>
               </motion.div>
             ))}
           </div>
-          <div className="mt-6 text-[10px] text-neutral-600">{t.editHint}</div>
+          <div className="mt-6 text-[10px] text-muted-foreground/60">
+            {t.editHint}
+          </div>
         </div>
 
         {/* Mode selector */}
-        <div className="flex border-b border-neutral-800">
+        <div className="flex border-b border-border">
           {modeButtons.map(({ mode: m, label }) => (
             <button
               key={m}
@@ -131,7 +133,7 @@ export function ByteInterpretationDemo() {
               className={`flex-1 py-3 px-4 text-[10px] font-mono uppercase tracking-wider transition-colors ${
                 mode === m
                   ? 'bg-purple-500/10 text-purple-400 border-b-2 border-purple-400'
-                  : 'text-neutral-500 hover:text-neutral-300'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {label}
@@ -141,7 +143,7 @@ export function ByteInterpretationDemo() {
 
         {/* Interpretation result */}
         <div className="p-6 min-h-[140px]">
-          <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider mb-4">
+          <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-4">
             {t.interpretation}
           </div>
 
@@ -155,7 +157,7 @@ export function ByteInterpretationDemo() {
               <div className="text-4xl font-mono text-emerald-400 tracking-wider">
                 &quot;{interpretations.ascii}&quot;
               </div>
-              <div className="mt-2 text-xs text-neutral-500">
+              <div className="mt-2 text-xs text-muted-foreground">
                 {bytes.map((b) => String.fromCharCode(b)).join(' + ')} ={' '}
                 <span className="text-emerald-400">
                   &quot;{interpretations.ascii}&quot;
@@ -173,31 +175,31 @@ export function ByteInterpretationDemo() {
             >
               <div className="flex items-center gap-6">
                 <div
-                  className="w-20 h-20 border-2 border-neutral-700"
+                  className="w-20 h-20 border-2 border-border"
                   style={{ backgroundColor: interpretations.rgbHex }}
                 />
                 <div className="space-y-1 font-mono text-sm">
                   <div>
                     <span className="text-red-400">R:</span>{' '}
-                    <span className="text-neutral-300">
+                    <span className="text-foreground">
                       {interpretations.rgb.r}
                     </span>
                   </div>
                   <div>
                     <span className="text-green-400">G:</span>{' '}
-                    <span className="text-neutral-300">
+                    <span className="text-foreground">
                       {interpretations.rgb.g}
                     </span>
                   </div>
                   <div>
                     <span className="text-blue-400">B:</span>{' '}
-                    <span className="text-neutral-300">
+                    <span className="text-foreground">
                       {interpretations.rgb.b}
                     </span>
                   </div>
                 </div>
               </div>
-              <div className="mt-3 text-xs text-neutral-500">
+              <div className="mt-3 text-xs text-muted-foreground">
                 {t.colorPreview}:{' '}
                 <span className="text-cyan-400">{interpretations.rgbHex}</span>
               </div>
@@ -214,7 +216,7 @@ export function ByteInterpretationDemo() {
               <div className="text-4xl font-mono text-amber-400">
                 {interpretations.integer.toLocaleString()}
               </div>
-              <div className="mt-2 text-xs text-neutral-500 font-mono">
+              <div className="mt-2 text-xs text-muted-foreground font-mono">
                 {bytes
                   .slice(0, 4)
                   .map((b) => b.toString(16).padStart(2, '0'))
@@ -240,7 +242,7 @@ export function ByteInterpretationDemo() {
                   : t.invalidBytes}
               </div>
               {bytes.length >= 4 && (
-                <div className="mt-2 text-xs text-neutral-500">
+                <div className="mt-2 text-xs text-muted-foreground">
                   IEEE 754 Single Precision (32-bit)
                 </div>
               )}
@@ -249,32 +251,32 @@ export function ByteInterpretationDemo() {
         </div>
 
         {/* Preset buttons */}
-        <div className="border-t border-neutral-800 p-4 flex flex-wrap gap-2 justify-center">
+        <div className="border-t border-border p-4 flex flex-wrap gap-2 justify-center">
           <button
             onClick={() => setBytes([0x48, 0x65, 0x6c, 0x6c, 0x6f])}
-            className="px-3 py-1.5 bg-neutral-800 text-neutral-400 text-[10px] font-mono
-                     hover:bg-neutral-700 transition-colors"
+            className="px-3 py-1.5 bg-border text-muted-foreground text-[10px] font-mono
+                     hover:bg-muted transition-colors"
           >
             &quot;Hello&quot;
           </button>
           <button
             onClick={() => setBytes([0xff, 0x00, 0x00])}
-            className="px-3 py-1.5 bg-neutral-800 text-neutral-400 text-[10px] font-mono
-                     hover:bg-neutral-700 transition-colors"
+            className="px-3 py-1.5 bg-border text-muted-foreground text-[10px] font-mono
+                     hover:bg-muted transition-colors"
           >
             Red (RGB)
           </button>
           <button
             onClick={() => setBytes([0x00, 0xff, 0x00])}
-            className="px-3 py-1.5 bg-neutral-800 text-neutral-400 text-[10px] font-mono
-                     hover:bg-neutral-700 transition-colors"
+            className="px-3 py-1.5 bg-border text-muted-foreground text-[10px] font-mono
+                     hover:bg-muted transition-colors"
           >
             Green (RGB)
           </button>
           <button
             onClick={() => setBytes([0x42, 0x28, 0x00, 0x00])}
-            className="px-3 py-1.5 bg-neutral-800 text-neutral-400 text-[10px] font-mono
-                     hover:bg-neutral-700 transition-colors"
+            className="px-3 py-1.5 bg-border text-muted-foreground text-[10px] font-mono
+                     hover:bg-muted transition-colors"
           >
             42.0 (Float)
           </button>

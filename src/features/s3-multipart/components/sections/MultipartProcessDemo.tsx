@@ -34,36 +34,36 @@ export function MultipartProcessDemo() {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-cyan-400" />
         <div>
-          <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-300">
+          <h3 className="text-sm font-mono uppercase tracking-wider text-foreground">
             {t.title}
           </h3>
-          <p className="text-xs text-neutral-500">{t.subtitle}</p>
+          <p className="text-xs text-muted-foreground">{t.subtitle}</p>
         </div>
       </div>
 
       {/* Main visualization */}
-      <div className="bg-neutral-950 border border-neutral-800 overflow-hidden">
+      <div className="bg-card border border-border overflow-hidden">
         {/* Stage indicators */}
-        <div className="grid grid-cols-3 border-b border-neutral-800">
+        <div className="grid grid-cols-3 border-b border-border">
           {[1, 2, 3].map((s) => (
             <div
               key={s}
               className={`py-3 px-4 text-center transition-colors ${
                 stage >= s
                   ? 'bg-cyan-500/10 border-b-2 border-cyan-400'
-                  : 'bg-neutral-900/50'
+                  : 'bg-muted/50'
               }`}
             >
               <div
                 className={`text-[10px] font-mono uppercase tracking-wider ${
-                  stage >= s ? 'text-cyan-400' : 'text-neutral-600'
+                  stage >= s ? 'text-cyan-400' : 'text-muted-foreground/60'
                 }`}
               >
                 {s === 1 && t.stage1Title}
                 {s === 2 && t.stage2Title}
                 {s === 3 && t.stage3Title}
               </div>
-              <div className="text-[9px] text-neutral-500 mt-0.5">
+              <div className="text-[9px] text-muted-foreground mt-0.5">
                 {s === 1 && t.stage1Desc}
                 {s === 2 && t.stage2Desc}
                 {s === 3 && t.stage3Desc}
@@ -84,9 +84,9 @@ export function MultipartProcessDemo() {
                 exit={{ opacity: 0 }}
                 className="flex flex-col items-center justify-center h-full min-h-[220px]"
               >
-                <div className="w-24 h-28 border-2 border-dashed border-neutral-700 flex items-center justify-center mb-4">
+                <div className="w-24 h-28 border-2 border-dashed border-border flex items-center justify-center mb-4">
                   <div className="text-center">
-                    <div className="text-2xl text-neutral-600">
+                    <div className="text-2xl text-muted-foreground/60">
                       <svg
                         className="w-10 h-10 mx-auto"
                         fill="none"
@@ -101,13 +101,17 @@ export function MultipartProcessDemo() {
                         />
                       </svg>
                     </div>
-                    <div className="text-[10px] text-neutral-500 mt-1">
+                    <div className="text-[10px] text-muted-foreground mt-1">
                       video.mp4
                     </div>
-                    <div className="text-[9px] text-neutral-600">100 MB</div>
+                    <div className="text-[9px] text-muted-foreground/60">
+                      100 MB
+                    </div>
                   </div>
                 </div>
-                <div className="text-xs text-neutral-500">{t.clickToStart}</div>
+                <div className="text-xs text-muted-foreground">
+                  {t.clickToStart}
+                </div>
               </motion.div>
             )}
 
@@ -122,9 +126,9 @@ export function MultipartProcessDemo() {
               >
                 {/* Client */}
                 <div className="text-center">
-                  <div className="w-20 h-20 bg-neutral-900 border border-neutral-700 flex items-center justify-center mb-2">
+                  <div className="w-20 h-20 bg-muted border border-border flex items-center justify-center mb-2">
                     <svg
-                      className="w-8 h-8 text-neutral-400"
+                      className="w-8 h-8 text-muted-foreground"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -137,7 +141,9 @@ export function MultipartProcessDemo() {
                       />
                     </svg>
                   </div>
-                  <div className="text-[10px] text-neutral-500">Client</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Client
+                  </div>
                 </div>
 
                 {/* Arrow with API call */}
@@ -169,7 +175,7 @@ export function MultipartProcessDemo() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.6 }}
-                    className="text-[10px] text-neutral-500"
+                    className="text-[10px] text-muted-foreground"
                   >
                     {t.uploadId}
                   </motion.div>
@@ -247,7 +253,7 @@ export function MultipartProcessDemo() {
                         transition={{ delay: 0.5 + i * 0.15 }}
                         className="flex items-center gap-2 text-[9px] font-mono"
                       >
-                        <span className="text-neutral-500">
+                        <span className="text-muted-foreground">
                           {t.partLabel} {part.id}:
                         </span>
                         <span className="text-cyan-400">{part.etag}</span>
@@ -325,10 +331,12 @@ export function MultipartProcessDemo() {
                       <div className="text-xs text-emerald-400">
                         {t.finalObject}
                       </div>
-                      <div className="text-[10px] text-neutral-400 font-mono">
+                      <div className="text-[10px] text-muted-foreground font-mono">
                         video.mp4
                       </div>
-                      <div className="text-[9px] text-neutral-500">100 MB</div>
+                      <div className="text-[9px] text-muted-foreground">
+                        100 MB
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -348,10 +356,10 @@ export function MultipartProcessDemo() {
         </div>
 
         {/* Control button */}
-        <div className="border-t border-neutral-800 p-4 flex justify-center">
+        <div className="border-t border-border p-4 flex justify-center">
           <button
             onClick={handleNext}
-            className="px-6 py-2 bg-cyan-500 text-neutral-950 font-mono text-sm uppercase tracking-wider
+            className="px-6 py-2 bg-cyan-500 text-background font-mono text-sm uppercase tracking-wider
                      hover:bg-cyan-400 transition-colors"
           >
             {stage === 0

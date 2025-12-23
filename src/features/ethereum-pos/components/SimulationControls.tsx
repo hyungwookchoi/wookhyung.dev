@@ -43,10 +43,10 @@ export function SimulationControls({
   return (
     <div className="space-y-4">
       <div className="space-y-1">
-        <span className="font-mono text-[10px] tracking-[0.15em] text-neutral-500 uppercase block">
+        <span className="font-mono text-[10px] tracking-[0.15em] text-muted-foreground uppercase block">
           Simulation
         </span>
-        <span className="font-mono text-[10px] text-neutral-600">
+        <span className="font-mono text-[10px] text-muted-foreground/60">
           {t.description}
         </span>
       </div>
@@ -61,7 +61,7 @@ export function SimulationControls({
           className={`font-mono text-[10px] tracking-[0.1em] uppercase px-4 py-2.5 border transition-colors ${
             activeSimulation === 'attack'
               ? 'border-red-500/50 text-red-400 bg-red-500/5'
-              : 'border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:border-neutral-500'
+              : 'border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground'
           }`}
         >
           Attack
@@ -75,7 +75,7 @@ export function SimulationControls({
           className={`font-mono text-[10px] tracking-[0.1em] uppercase px-4 py-2.5 border transition-colors ${
             activeSimulation === 'offline'
               ? 'border-amber-500/50 text-amber-400 bg-amber-500/5'
-              : 'border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:border-neutral-500'
+              : 'border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground'
           }`}
         >
           Offline
@@ -98,23 +98,23 @@ export function SimulationControls({
                 </span>
               </div>
 
-              <p className="font-mono text-[11px] text-neutral-400 leading-relaxed">
+              <p className="font-mono text-[11px] text-muted-foreground leading-relaxed">
                 {t.attack.description}{' '}
                 <span className="text-red-400">{t.attack.highlight}</span>
                 {t.attack.suffix}
               </p>
 
-              <div className="grid grid-cols-2 gap-px bg-neutral-800">
-                <div className="p-3 bg-[#0a0a0b]">
-                  <span className="font-mono text-[9px] text-neutral-600 uppercase tracking-wider block mb-1">
+              <div className="grid grid-cols-2 gap-px bg-border">
+                <div className="p-3 bg-background">
+                  <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wider block mb-1">
                     Required
                   </span>
-                  <span className="font-mono text-sm text-neutral-100">
+                  <span className="font-mono text-sm text-foreground">
                     {requiredETH.toLocaleString()} ETH
                   </span>
                 </div>
-                <div className="p-3 bg-[#0a0a0b]">
-                  <span className="font-mono text-[9px] text-neutral-600 uppercase tracking-wider block mb-1">
+                <div className="p-3 bg-background">
+                  <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wider block mb-1">
                     Cost
                   </span>
                   <span className="font-mono text-sm text-red-400">
@@ -130,7 +130,7 @@ export function SimulationControls({
                   transition={{ duration: 2, ease: 'easeOut' }}
                   className="h-px bg-red-500 origin-left"
                 />
-                <p className="font-mono text-[9px] text-neutral-600 text-center tracking-wider">
+                <p className="font-mono text-[9px] text-muted-foreground/60 text-center tracking-wider">
                   {t.attack.networkHalted}
                 </p>
               </div>
@@ -153,7 +153,7 @@ export function SimulationControls({
                 </span>
               </div>
 
-              <p className="font-mono text-[11px] text-neutral-400 leading-relaxed">
+              <p className="font-mono text-[11px] text-muted-foreground leading-relaxed">
                 {t.offline.description}{' '}
                 <span className="text-amber-400">{t.offline.highlight}</span>
                 {t.offline.suffix}
@@ -161,7 +161,7 @@ export function SimulationControls({
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between font-mono text-xs">
-                  <span className="text-neutral-500">
+                  <span className="text-muted-foreground">
                     {t.offline.validatorBalance}
                   </span>
                   <motion.span
@@ -173,7 +173,7 @@ export function SimulationControls({
                     32.00 → 31.97 ETH
                   </motion.span>
                 </div>
-                <div className="h-1 bg-neutral-800">
+                <div className="h-1 bg-border">
                   <motion.div
                     initial={{ width: '100%' }}
                     animate={{ width: '94%' }}
@@ -183,7 +183,7 @@ export function SimulationControls({
                 </div>
               </div>
 
-              <p className="font-mono text-[9px] text-neutral-600 leading-relaxed">
+              <p className="font-mono text-[9px] text-muted-foreground/60 leading-relaxed">
                 {t.offline.ejectionWarning}
               </p>
             </div>

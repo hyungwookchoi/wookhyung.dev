@@ -103,14 +103,14 @@ export function HexDumpExplorer() {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-emerald-400" />
         <div>
-          <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-300">
+          <h3 className="text-sm font-mono uppercase tracking-wider text-foreground">
             {t.title}
           </h3>
-          <p className="text-xs text-neutral-500">{t.subtitle}</p>
+          <p className="text-xs text-muted-foreground">{t.subtitle}</p>
         </div>
       </div>
 
-      <div className="bg-neutral-950 border border-neutral-800 overflow-hidden">
+      <div className="bg-card border border-border overflow-hidden">
         {/* File dropzone or info */}
         {!file ? (
           <div
@@ -122,7 +122,7 @@ export function HexDumpExplorer() {
             onDragLeave={() => setIsDragging(false)}
             onClick={() => fileInputRef.current?.click()}
             className={`p-8 cursor-pointer transition-colors ${
-              isDragging ? 'bg-emerald-500/10' : 'hover:bg-neutral-900'
+              isDragging ? 'bg-emerald-500/10' : 'hover:bg-muted'
             }`}
           >
             <input
@@ -137,11 +137,11 @@ export function HexDumpExplorer() {
             <div className="flex flex-col items-center gap-3 text-center">
               <div
                 className={`w-16 h-16 border-2 border-dashed flex items-center justify-center transition-colors ${
-                  isDragging ? 'border-emerald-400' : 'border-neutral-700'
+                  isDragging ? 'border-emerald-400' : 'border-border'
                 }`}
               >
                 <svg
-                  className={`w-8 h-8 ${isDragging ? 'text-emerald-400' : 'text-neutral-600'}`}
+                  className={`w-8 h-8 ${isDragging ? 'text-emerald-400' : 'text-muted-foreground/60'}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -154,20 +154,24 @@ export function HexDumpExplorer() {
                   />
                 </svg>
               </div>
-              <div className="text-sm text-neutral-400">{t.selectFile}</div>
-              <div className="text-[10px] text-neutral-600">{t.dropHere}</div>
+              <div className="text-sm text-muted-foreground">
+                {t.selectFile}
+              </div>
+              <div className="text-[10px] text-muted-foreground/60">
+                {t.dropHere}
+              </div>
             </div>
           </div>
         ) : (
           <>
             {/* File info bar */}
-            <div className="px-4 py-3 bg-neutral-900/50 border-b border-neutral-800 flex items-center justify-between">
+            <div className="px-4 py-3 bg-muted/50 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 bg-emerald-500 animate-pulse" />
-                <span className="text-sm text-neutral-300 font-mono">
+                <span className="text-sm text-foreground font-mono">
                   {file.name}
                 </span>
-                <span className="text-xs text-neutral-500">
+                <span className="text-xs text-muted-foreground">
                   {formatBytes(file.size)}
                 </span>
               </div>
@@ -180,7 +184,7 @@ export function HexDumpExplorer() {
                     setLocalBytes(null);
                   }
                 }}
-                className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 {locale === 'ko' ? '다른 파일' : 'Change'}
               </button>
@@ -188,30 +192,30 @@ export function HexDumpExplorer() {
 
             {/* Hex dump table */}
             {isLoading ? (
-              <div className="p-8 text-center text-neutral-500">
+              <div className="p-8 text-center text-muted-foreground">
                 {locale === 'ko' ? '로딩 중...' : 'Loading...'}
               </div>
             ) : (
               <div className="overflow-x-auto">
                 {/* Header row */}
-                <div className="flex items-center px-4 py-2 bg-neutral-900/30 border-b border-neutral-800 text-[9px] font-mono text-neutral-600 uppercase tracking-wider">
+                <div className="flex items-center px-4 py-2 bg-muted/30 border-b border-border text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider">
                   <div className="w-20 shrink-0">{t.offset}</div>
                   <div className="flex-1">{t.hexValues}</div>
                   <div className="w-36 shrink-0 text-right">{t.ascii}</div>
                 </div>
 
                 {/* Data rows */}
-                <div className="divide-y divide-neutral-800/50">
+                <div className="divide-y divide-border/50">
                   {rows.map((row, rowIndex) => (
                     <motion.div
                       key={row.offset}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: rowIndex * 0.02 }}
-                      className="flex items-center px-4 py-1.5 hover:bg-neutral-900/30"
+                      className="flex items-center px-4 py-1.5 hover:bg-muted/30"
                     >
                       {/* Offset */}
-                      <div className="w-20 shrink-0 font-mono text-[10px] text-neutral-600">
+                      <div className="w-20 shrink-0 font-mono text-[10px] text-muted-foreground/60">
                         {row.offset.toString(16).padStart(8, '0')}
                       </div>
 
@@ -228,7 +232,7 @@ export function HexDumpExplorer() {
                               className={`font-mono text-[10px] px-1 py-0.5 transition-colors ${
                                 isSelected
                                   ? 'bg-emerald-500/20 text-emerald-400'
-                                  : 'text-cyan-400 hover:bg-neutral-800'
+                                  : 'text-cyan-400 hover:bg-border'
                               }`}
                             >
                               {byte.toString(16).padStart(2, '0')}
@@ -250,7 +254,7 @@ export function HexDumpExplorer() {
                       </div>
 
                       {/* ASCII */}
-                      <div className="w-36 shrink-0 text-right font-mono text-[10px] text-neutral-500">
+                      <div className="w-36 shrink-0 text-right font-mono text-[10px] text-muted-foreground">
                         {row.bytes.map((byte, i) => {
                           const globalIndex = row.offset + i;
                           const isSelected = selectedByte === globalIndex;
@@ -269,16 +273,16 @@ export function HexDumpExplorer() {
                 </div>
 
                 {/* Load more / status */}
-                <div className="px-4 py-3 bg-neutral-900/30 border-t border-neutral-800 flex items-center justify-between">
-                  <div className="text-[10px] text-neutral-500 font-mono">
+                <div className="px-4 py-3 bg-muted/30 border-t border-border flex items-center justify-between">
+                  <div className="text-[10px] text-muted-foreground font-mono">
                     {t.showingBytes} {visibleBytes.toLocaleString()} {t.of}{' '}
                     {totalBytes.toLocaleString()} {t.bytes}
                   </div>
                   {hasMore && (
                     <button
                       onClick={loadMore}
-                      className="px-3 py-1.5 bg-neutral-800 text-neutral-400 text-[10px] font-mono
-                               hover:bg-neutral-700 transition-colors"
+                      className="px-3 py-1.5 bg-border text-muted-foreground text-[10px] font-mono
+                               hover:bg-muted transition-colors"
                     >
                       {t.loadMore}
                     </button>
@@ -298,33 +302,41 @@ export function HexDumpExplorer() {
                 >
                   <div className="flex flex-wrap items-center gap-4 text-[10px] font-mono">
                     <div>
-                      <span className="text-neutral-500">{t.offset}: </span>
+                      <span className="text-muted-foreground">
+                        {t.offset}:{' '}
+                      </span>
                       <span className="text-emerald-400">
                         0x{selectedByte.toString(16).padStart(8, '0')}
                       </span>
                     </div>
                     <div>
-                      <span className="text-neutral-500">{t.hexValues}: </span>
+                      <span className="text-muted-foreground">
+                        {t.hexValues}:{' '}
+                      </span>
                       <span className="text-cyan-400">
                         0x
                         {fileBytes[selectedByte].toString(16).padStart(2, '0')}
                       </span>
                     </div>
                     <div>
-                      <span className="text-neutral-500">{t.decimal}: </span>
+                      <span className="text-muted-foreground">
+                        {t.decimal}:{' '}
+                      </span>
                       <span className="text-amber-400">
                         {fileBytes[selectedByte]}
                       </span>
                     </div>
                     <div>
-                      <span className="text-neutral-500">{t.binary}: </span>
+                      <span className="text-muted-foreground">
+                        {t.binary}:{' '}
+                      </span>
                       <span className="text-rose-400">
                         {fileBytes[selectedByte].toString(2).padStart(8, '0')}
                       </span>
                     </div>
                     <div>
-                      <span className="text-neutral-500">{t.ascii}: </span>
-                      <span className="text-neutral-300">
+                      <span className="text-muted-foreground">{t.ascii}: </span>
+                      <span className="text-foreground">
                         &apos;{byteToAscii(fileBytes[selectedByte])}&apos;
                       </span>
                     </div>

@@ -85,16 +85,16 @@ export function SlotEpochVisualizer() {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-cyan-400" />
         <div>
-          <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-300">
+          <h3 className="text-sm font-mono uppercase tracking-wider text-foreground">
             {t.title}
           </h3>
-          <p className="text-xs text-neutral-500">{t.subtitle}</p>
+          <p className="text-xs text-muted-foreground">{t.subtitle}</p>
         </div>
       </div>
 
-      <div className="bg-neutral-950 border border-neutral-800 p-6 space-y-6">
+      <div className="bg-card border border-border p-6 space-y-6">
         {/* Timing Info */}
-        <div className="flex flex-wrap gap-4 text-xs font-mono text-neutral-500">
+        <div className="flex flex-wrap gap-4 text-xs font-mono text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-amber-400/20 border border-amber-400/40" />
             <span>{t.slotDuration}</span>
@@ -125,7 +125,7 @@ export function SlotEpochVisualizer() {
                     font-mono text-[10px] transition-colors duration-300
                     ${isPast ? 'bg-emerald-400/20 border border-emerald-400/30 text-emerald-400' : ''}
                     ${isCurrent ? 'bg-amber-400/20 border-2 border-amber-400 text-amber-400' : ''}
-                    ${isFuture ? 'bg-neutral-900/50 border border-neutral-800 text-neutral-600' : ''}
+                    ${isFuture ? 'bg-muted/50 border border-border text-muted-foreground/60' : ''}
                   `}
                   initial={false}
                   animate={
@@ -158,33 +158,39 @@ export function SlotEpochVisualizer() {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 pt-4">
-          <div className="bg-neutral-900/50 p-3 border border-neutral-800">
-            <div className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider mb-1">
+          <div className="bg-muted/50 p-3 border border-border">
+            <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-1">
               {t.currentSlot}
             </div>
-            <div className="font-mono text-lg text-neutral-100">
+            <div className="font-mono text-lg text-foreground">
               {currentSlot + 1}
-              <span className="text-neutral-600 text-sm">/32</span>
+              <span className="text-muted-foreground/60 text-sm">/32</span>
             </div>
           </div>
 
-          <div className="bg-neutral-900/50 p-3 border border-neutral-800">
-            <div className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider mb-1">
+          <div className="bg-muted/50 p-3 border border-border">
+            <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-1">
               {t.timeRemaining}
             </div>
-            <div className="font-mono text-lg text-neutral-100">
+            <div className="font-mono text-lg text-foreground">
               {((TOTAL_SLOTS - currentSlot) * 12).toFixed(0)}
-              <span className="text-neutral-600 text-sm"> {t.seconds}</span>
+              <span className="text-muted-foreground/60 text-sm">
+                {' '}
+                {t.seconds}
+              </span>
             </div>
           </div>
 
-          <div className="bg-neutral-900/50 p-3 border border-neutral-800">
-            <div className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider mb-1">
+          <div className="bg-muted/50 p-3 border border-border">
+            <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-1">
               {t.totalTime}
             </div>
-            <div className="font-mono text-lg text-neutral-100">
+            <div className="font-mono text-lg text-foreground">
               6.4
-              <span className="text-neutral-600 text-sm"> {t.minutes}</span>
+              <span className="text-muted-foreground/60 text-sm">
+                {' '}
+                {t.minutes}
+              </span>
             </div>
           </div>
         </div>
@@ -198,10 +204,10 @@ export function SlotEpochVisualizer() {
               px-4 py-2 font-mono text-[10px] uppercase tracking-wider transition-colors
               ${
                 isRunning
-                  ? 'bg-amber-500 text-neutral-950 hover:bg-amber-400'
-                  : 'bg-cyan-500 text-neutral-950 hover:bg-cyan-400'
+                  ? 'bg-amber-500 text-background hover:bg-amber-400'
+                  : 'bg-cyan-500 text-background hover:bg-cyan-400'
               }
-              disabled:bg-neutral-700 disabled:text-neutral-500
+              disabled:bg-muted disabled:text-muted-foreground
             `}
           >
             {isRunning ? t.pause : t.play}
@@ -209,7 +215,7 @@ export function SlotEpochVisualizer() {
           <button
             onClick={handleReset}
             className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     border border-neutral-700 text-neutral-400 hover:text-neutral-100 hover:border-neutral-500 transition-colors"
+                     border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
           >
             {t.reset}
           </button>

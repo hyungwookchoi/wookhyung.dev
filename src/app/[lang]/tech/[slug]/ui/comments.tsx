@@ -1,11 +1,15 @@
 'use client';
 
+import { useTheme } from 'next-themes';
 import { useEffect, useRef } from 'react';
 
 import { siteConfig } from '@/shared/config/site';
 
 export const Comments = () => {
   const ref = useRef<HTMLDivElement>(null);
+  const { resolvedTheme } = useTheme();
+
+  const giscusTheme = resolvedTheme === 'dark' ? 'dark_dimmed' : 'light';
 
   useEffect(() => {
     if (!ref.current || ref.current.hasChildNodes()) return;
@@ -24,11 +28,11 @@ export const Comments = () => {
     scriptElem.setAttribute('data-reactions-enabled', '1');
     scriptElem.setAttribute('data-emit-metadata', '0');
     scriptElem.setAttribute('data-input-position', 'bottom');
-    scriptElem.setAttribute('data-theme', 'dark_dimmed');
+    scriptElem.setAttribute('data-theme', giscusTheme);
     scriptElem.setAttribute('data-lang', 'ko');
 
     ref.current.appendChild(scriptElem);
-  }, []);
+  }, [giscusTheme]);
 
   // https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md#isetconfigmessage
   useEffect(() => {
@@ -36,10 +40,10 @@ export const Comments = () => {
       'iframe.giscus-frame',
     );
     iframe?.contentWindow?.postMessage(
-      { giscus: { setConfig: { theme: 'dark_dimmed' } } },
+      { giscus: { setConfig: { theme: giscusTheme } } },
       'https://giscus.app',
     );
-  }, []);
+  }, [giscusTheme]);
 
   return <section ref={ref} />;
 };
