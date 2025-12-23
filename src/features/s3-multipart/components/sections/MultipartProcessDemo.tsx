@@ -30,11 +30,11 @@ export function MultipartProcessDemo() {
   // 전체 시뮬레이션 자동 실행
   const runFullSimulation = useCallback(async () => {
     setStage(0);
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 1000));
     setStage(1);
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 2000));
     setStage(2);
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 2000));
     setStage(3);
   }, []);
 
