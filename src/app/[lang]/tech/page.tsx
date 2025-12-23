@@ -69,7 +69,11 @@ export default async function Page({ params }: Props) {
     <>
       <div>
         <PageTitle title={dict.tech.title} />
-        <TechPostList posts={posts} lang={lang as Locale} />
+        <TechPostList
+          posts={posts}
+          lang={lang as Locale}
+          emptyMessage={dict.tech.empty}
+        />
 
         <div className="mt-6 text-end">
           <a

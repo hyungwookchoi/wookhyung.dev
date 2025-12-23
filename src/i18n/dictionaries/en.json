@@ -8,6 +8,7 @@
     "dev": "Dev",
     "tech": "Tech",
     "feed": "Feed",
+    "playground": "Playground",
     "personal": "Personal",
     "notes": "Notes",
     "preference": "Preference",
@@ -40,13 +41,20 @@
   },
   "tech": {
     "title": "Tech",
-    "viewPrevBlog": "View previous blog"
+    "viewPrevBlog": "View previous blog",
+    "empty": "No posts yet."
   },
   "notes": {
-    "title": "Notes"
+    "title": "Notes",
+    "empty": "No notes yet."
   },
   "feed": {
     "title": "Feed (Beta)"
+  },
+  "playground": {
+    "title": "Playground",
+    "description": "Interactive demos based on blog posts.",
+    "empty": "No playgrounds available yet."
   },
   "preference": {
     "title": "Preference",

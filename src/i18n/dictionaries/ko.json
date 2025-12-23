@@ -8,6 +8,7 @@
     "dev": "Dev",
     "tech": "Tech",
     "feed": "Feed",
+    "playground": "Playground",
     "personal": "Personal",
     "notes": "Notes",
     "preference": "Preference",
@@ -40,13 +41,20 @@
   },
   "tech": {
     "title": "Tech",
-    "viewPrevBlog": "이전 블로그 보기"
+    "viewPrevBlog": "이전 블로그 보기",
+    "empty": "아직 작성된 글이 없습니다."
   },
   "notes": {
-    "title": "Notes"
+    "title": "Notes",
+    "empty": "아직 작성된 노트가 없습니다."
   },
   "feed": {
     "title": "Feed (Beta)"
+  },
+  "playground": {
+    "title": "Playground",
+    "description": "포스팅 내용을 바탕으로 만든 인터랙티브 데모 모음입니다.",
+    "empty": "아직 등록된 플레이그라운드가 없습니다."
   },
   "preference": {
     "title": "Preference",

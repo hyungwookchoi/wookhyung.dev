@@ -68,7 +68,11 @@ export default async function Page({ params }: Props) {
     <>
       <div>
         <PageTitle title={dict.notes.title} />
-        <NotesPostList posts={posts} lang={lang as Locale} />
+        <NotesPostList
+          posts={posts}
+          lang={lang as Locale}
+          emptyMessage={dict.notes.empty}
+        />
       </div>
       <script
         type="application/ld+json"

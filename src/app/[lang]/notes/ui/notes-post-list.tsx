@@ -18,6 +18,7 @@ interface Post {
 interface NotesPostListProps {
   posts: Post[];
   lang: Locale;
+  emptyMessage?: string;
 }
 
 const STAGGER_DELAY = 0.06;
@@ -28,7 +29,11 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
 };
 
-export function NotesPostList({ posts, lang }: NotesPostListProps) {
+export function NotesPostList({
+  posts,
+  lang,
+  emptyMessage,
+}: NotesPostListProps) {
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString(
       lang === 'ko' ? 'ko-KR' : 'en-US',
@@ -39,6 +44,14 @@ export function NotesPostList({ posts, lang }: NotesPostListProps) {
       },
     );
   };
+
+  if (posts.length === 0) {
+    return (
+      <div className="py-12 text-center text-muted-foreground">
+        {emptyMessage}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col">
