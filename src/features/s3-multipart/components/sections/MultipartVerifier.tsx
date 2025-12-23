@@ -9,11 +9,21 @@ import { getTranslations } from '../../constants/translations';
 import { useOptionalSharedFile } from '../../contexts/FileContext';
 import { calculateHash, formatBytes } from '../../utils/bytes';
 
+interface PartInfo {
+  partNumber: number;
+  startOffset: number;
+  endOffset: number;
+  size: number;
+  hash: string;
+}
+
 interface VerificationResult {
   originalHash: string;
   reconstructedHash: string;
   isMatch: boolean;
   reconstructedBlob: Blob;
+  parts: PartInfo[];
+  totalSize: number;
 }
 
 export function MultipartVerifier() {
@@ -68,20 +78,31 @@ export function MultipartVerifier() {
       const originalHash = await calculateHash(arrayBuffer);
 
       const partSize = Math.ceil(fileBytes.length / partCount);
-      const parts: Uint8Array[] = [];
+      const partsData: Uint8Array[] = [];
+      const partsInfo: PartInfo[] = [];
 
       for (let i = 0; i < partCount; i++) {
         const start = i * partSize;
         const end = Math.min(start + partSize, fileBytes.length);
-        parts.push(fileBytes.slice(start, end));
+        const partBytes = fileBytes.slice(start, end);
+        partsData.push(partBytes);
+
+        const partHash = await calculateHash(partBytes.buffer);
+        partsInfo.push({
+          partNumber: i + 1,
+          startOffset: start,
+          endOffset: end - 1,
+          size: partBytes.length,
+          hash: partHash,
+        });
       }
 
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const totalSize = parts.reduce((sum, part) => sum + part.length, 0);
+      const totalSize = partsData.reduce((sum, part) => sum + part.length, 0);
       const merged = new Uint8Array(totalSize);
       let offset = 0;
-      for (const part of parts) {
+      for (const part of partsData) {
         merged.set(part, offset);
         offset += part.length;
       }
@@ -94,6 +115,8 @@ export function MultipartVerifier() {
         reconstructedHash,
         isMatch: originalHash === reconstructedHash,
         reconstructedBlob,
+        parts: partsInfo,
+        totalSize,
       });
     } catch (error) {
       console.error('Verification failed:', error);
@@ -245,6 +268,155 @@ export function MultipartVerifier() {
                   className="overflow-hidden"
                 >
                   <div className="p-4 space-y-4">
+                    {/* Split & Merge Visualization */}
+                    <div className="p-4 bg-muted/50 border border-border">
+                      <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-4">
+                        {t.splitDetails} → {t.mergeDetails}
+                      </div>
+
+                      {/* Original file */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-full h-8 bg-cyan-500/20 border border-cyan-500/50 flex items-center justify-center">
+                          <span className="text-[10px] font-mono text-cyan-400">
+                            {t.originalFile}: {formatBytes(result.totalSize)} (
+                            {result.totalSize.toLocaleString()} bytes)
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Split arrow */}
+                      <div className="flex justify-center my-2">
+                        <svg
+                          className="w-4 h-4 text-muted-foreground"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                          />
+                        </svg>
+                        <span className="text-[10px] font-mono text-muted-foreground ml-2">
+                          {t.splitPhase}
+                        </span>
+                      </div>
+
+                      {/* Parts visualization */}
+                      <div className="flex gap-1 mb-3">
+                        {result.parts.map((part, idx) => {
+                          const widthPercent =
+                            (part.size / result.totalSize) * 100;
+                          const colors = [
+                            'bg-rose-500/30 border-rose-500/50',
+                            'bg-amber-500/30 border-amber-500/50',
+                            'bg-emerald-500/30 border-emerald-500/50',
+                            'bg-blue-500/30 border-blue-500/50',
+                            'bg-purple-500/30 border-purple-500/50',
+                          ];
+                          const textColors = [
+                            'text-rose-400',
+                            'text-amber-400',
+                            'text-emerald-400',
+                            'text-blue-400',
+                            'text-purple-400',
+                          ];
+                          return (
+                            <div
+                              key={idx}
+                              className={`h-8 ${colors[idx % colors.length]} border flex items-center justify-center`}
+                              style={{ width: `${widthPercent}%` }}
+                            >
+                              <span
+                                className={`text-[9px] font-mono ${textColors[idx % textColors.length]}`}
+                              >
+                                P{part.partNumber}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Parts detail table */}
+                      <div className="space-y-1 mb-3">
+                        {result.parts.map((part, idx) => {
+                          const textColors = [
+                            'text-rose-400',
+                            'text-amber-400',
+                            'text-emerald-400',
+                            'text-blue-400',
+                            'text-purple-400',
+                          ];
+                          return (
+                            <div
+                              key={idx}
+                              className="grid grid-cols-[auto_1fr_auto_1fr] gap-x-3 gap-y-1 text-[9px] font-mono items-center"
+                            >
+                              <span
+                                className={`${textColors[idx % textColors.length]} font-semibold`}
+                              >
+                                Part {part.partNumber}
+                              </span>
+                              <span className="text-muted-foreground">
+                                [{part.startOffset.toLocaleString()} -{' '}
+                                {part.endOffset.toLocaleString()}]
+                              </span>
+                              <span className="text-muted-foreground">
+                                {formatBytes(part.size)}
+                              </span>
+                              <span
+                                className="text-cyan-400/70 truncate"
+                                title={part.hash}
+                              >
+                                {part.hash.slice(0, 16)}...
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Merge arrow */}
+                      <div className="flex justify-center my-2">
+                        <svg
+                          className="w-4 h-4 text-muted-foreground"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                          />
+                        </svg>
+                        <span className="text-[10px] font-mono text-muted-foreground ml-2">
+                          {t.mergePhase}
+                        </span>
+                      </div>
+
+                      {/* Reconstructed file */}
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-full h-8 border flex items-center justify-center ${
+                            result.isMatch
+                              ? 'bg-emerald-500/20 border-emerald-500/50'
+                              : 'bg-red-500/20 border-red-500/50'
+                          }`}
+                        >
+                          <span
+                            className={`text-[10px] font-mono ${result.isMatch ? 'text-emerald-400' : 'text-red-400'}`}
+                          >
+                            {t.reconstructedFile}:{' '}
+                            {formatBytes(result.totalSize)} (
+                            {result.totalSize.toLocaleString()} bytes)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Hash comparison */}
                     <div className="grid sm:grid-cols-2 gap-4">
                       {/* Original hash */}
