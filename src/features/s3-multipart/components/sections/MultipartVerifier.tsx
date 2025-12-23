@@ -340,7 +340,7 @@ export function MultipartVerifier() {
                       </div>
 
                       {/* Parts detail table */}
-                      <div className="space-y-1 mb-3">
+                      <div className="space-y-2 sm:space-y-1 mb-3">
                         {result.parts.map((part, idx) => {
                           const textColors = [
                             'text-rose-400',
@@ -352,7 +352,7 @@ export function MultipartVerifier() {
                           return (
                             <div
                               key={idx}
-                              className="grid grid-cols-[auto_1fr_auto_1fr] gap-x-3 gap-y-1 text-[9px] font-mono items-center"
+                              className="flex flex-col sm:grid sm:grid-cols-[auto_1fr_auto_1fr] gap-1 sm:gap-x-3 sm:gap-y-1 text-[9px] font-mono sm:items-center p-2 sm:p-0 bg-muted/30 sm:bg-transparent border border-border/50 sm:border-0"
                             >
                               <span
                                 className={`${textColors[idx % textColors.length]} font-semibold`}
@@ -418,7 +418,7 @@ export function MultipartVerifier() {
                     </div>
 
                     {/* Hash comparison */}
-                    <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* Original hash */}
                       <div className="p-3 bg-muted border border-border">
                         <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-2">

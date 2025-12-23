@@ -131,7 +131,7 @@ export function SlotEpochVisualizer() {
           <div className="absolute -left-2 top-0 bottom-0 w-0.5 bg-cyan-400/30" />
           <div className="absolute -right-2 top-0 bottom-0 w-0.5 bg-cyan-400/30" />
 
-          <div className="grid grid-cols-8 gap-1">
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-1">
             {Array.from({ length: TOTAL_SLOTS }).map((_, index) => {
               const isPast = index < currentSlot;
               const isCurrent = index === currentSlot;
@@ -177,7 +177,7 @@ export function SlotEpochVisualizer() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 pt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-4">
           <div className="bg-muted/50 p-3 border border-border">
             <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-1">
               {t.currentSlot}

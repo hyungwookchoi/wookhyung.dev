@@ -79,7 +79,7 @@ export function ByteInterpretationDemo() {
           <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-3">
             {t.inputBytes}
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-5 gap-2 pb-5 max-w-xs">
             {bytes.map((byte, i) => (
               <motion.div
                 key={i}
@@ -125,12 +125,12 @@ export function ByteInterpretationDemo() {
         </div>
 
         {/* Mode selector */}
-        <div className="flex border-b border-border">
+        <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-border">
           {modeButtons.map(({ mode: m, label }) => (
             <button
               key={m}
               onClick={() => setMode(m)}
-              className={`flex-1 py-3 px-4 text-[10px] font-mono uppercase tracking-wider transition-colors ${
+              className={`py-3 px-4 text-[10px] font-mono uppercase tracking-wider transition-colors ${
                 mode === m
                   ? 'bg-purple-500/10 text-purple-400 border-b-2 border-purple-400'
                   : 'text-muted-foreground hover:text-foreground'

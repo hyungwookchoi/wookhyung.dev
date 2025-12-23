@@ -70,7 +70,7 @@ export function ETagVisualization() {
       {/* Main visualization */}
       <div className="bg-card border border-border overflow-hidden">
         {/* Step indicators */}
-        <div className="grid grid-cols-4 border-b border-border">
+        <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-border">
           {[1, 2, 3, 4].map((s) => (
             <div
               key={s}

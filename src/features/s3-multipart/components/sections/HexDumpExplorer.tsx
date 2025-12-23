@@ -199,9 +199,11 @@ export function HexDumpExplorer() {
               <div className="overflow-x-auto">
                 {/* Header row */}
                 <div className="flex items-center px-4 py-2 bg-muted/30 border-b border-border text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider">
-                  <div className="w-20 shrink-0">{t.offset}</div>
+                  <div className="w-16 sm:w-20 shrink-0">{t.offset}</div>
                   <div className="flex-1">{t.hexValues}</div>
-                  <div className="w-36 shrink-0 text-right">{t.ascii}</div>
+                  <div className="hidden sm:block w-36 shrink-0 text-right">
+                    {t.ascii}
+                  </div>
                 </div>
 
                 {/* Data rows */}
@@ -215,8 +217,13 @@ export function HexDumpExplorer() {
                       className="flex items-center px-4 py-1.5 hover:bg-muted/30"
                     >
                       {/* Offset */}
-                      <div className="w-20 shrink-0 font-mono text-[10px] text-muted-foreground/60">
-                        {row.offset.toString(16).padStart(8, '0')}
+                      <div className="w-16 sm:w-20 shrink-0 font-mono text-[10px] text-muted-foreground/60">
+                        <span className="hidden sm:inline">
+                          {row.offset.toString(16).padStart(8, '0')}
+                        </span>
+                        <span className="sm:hidden">
+                          {row.offset.toString(16).padStart(4, '0')}
+                        </span>
                       </div>
 
                       {/* Hex values */}
@@ -254,7 +261,7 @@ export function HexDumpExplorer() {
                       </div>
 
                       {/* ASCII */}
-                      <div className="w-36 shrink-0 text-right font-mono text-[10px] text-muted-foreground">
+                      <div className="hidden sm:block w-36 shrink-0 text-right font-mono text-[10px] text-muted-foreground">
                         {row.bytes.map((byte, i) => {
                           const globalIndex = row.offset + i;
                           const isSelected = selectedByte === globalIndex;

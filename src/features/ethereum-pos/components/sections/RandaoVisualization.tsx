@@ -198,7 +198,7 @@ export function RandaoVisualization() {
 
       <div className="bg-card border border-border p-6 space-y-6">
         {/* Phase Indicators */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {[
             { key: 'commit', title: t.step1Title, desc: t.step1Desc },
             { key: 'reveal', title: t.step2Title, desc: t.step2Desc },
@@ -229,7 +229,7 @@ export function RandaoVisualization() {
           {validators.map((v) => (
             <motion.div
               key={v.id}
-              className="flex items-center gap-4 p-3 bg-muted/50 border border-border"
+              className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 bg-muted/50 border border-border"
               animate={{
                 borderColor:
                   (phase === 'commit' && v.committed && !v.revealed) ||
@@ -239,7 +239,7 @@ export function RandaoVisualization() {
               }}
             >
               {/* Validator ID */}
-              <div className="w-20 flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <div className="w-6 h-6 bg-purple-400/20 border border-purple-400/30 flex items-center justify-center">
                   <span className="text-[10px] font-mono text-purple-400">
                     V{v.id}
@@ -251,8 +251,8 @@ export function RandaoVisualization() {
               </div>
 
               {/* Secret */}
-              <div className="flex-1 flex items-center gap-2">
-                <span className="text-[9px] font-mono text-muted-foreground/60 w-12">
+              <div className="flex-1 flex flex-wrap items-center gap-2">
+                <span className="text-[9px] font-mono text-muted-foreground/60">
                   {t.secret}:
                 </span>
                 <AnimatePresence mode="wait">

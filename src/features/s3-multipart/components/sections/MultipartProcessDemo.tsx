@@ -66,7 +66,7 @@ export function MultipartProcessDemo() {
       {/* Main visualization */}
       <div className="bg-card border border-border overflow-hidden">
         {/* Stage indicators */}
-        <div className="grid grid-cols-3 border-b border-border">
+        <div className="grid grid-cols-1 sm:grid-cols-3 border-b border-border">
           {[1, 2, 3].map((s) => (
             <div
               key={s}
@@ -144,7 +144,7 @@ export function MultipartProcessDemo() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="flex items-center justify-center gap-8 min-h-[220px]"
+                className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 min-h-[220px]"
               >
                 {/* Client */}
                 <div className="text-center">
@@ -171,10 +171,10 @@ export function MultipartProcessDemo() {
                 {/* Arrow with API call */}
                 <div className="flex flex-col items-center">
                   <motion.div
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
+                    initial={{ scaleX: 0, scaleY: 0 }}
+                    animate={{ scaleX: 1, scaleY: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="w-24 h-0.5 bg-gradient-to-r from-cyan-500 to-amber-500"
+                    className="w-0.5 h-12 sm:w-24 sm:h-0.5 bg-gradient-to-b sm:bg-gradient-to-r from-cyan-500 to-amber-500"
                   />
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -220,7 +220,7 @@ export function MultipartProcessDemo() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex items-center justify-center gap-6 min-h-[220px]"
+                className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 min-h-[220px]"
               >
                 {/* File parts */}
                 <div className="flex flex-col gap-2">
@@ -247,7 +247,7 @@ export function MultipartProcessDemo() {
                 </div>
 
                 {/* Arrows */}
-                <div className="flex flex-col gap-2">
+                <div className="hidden sm:flex flex-col gap-2">
                   {mockParts.map((_, i) => (
                     <motion.div
                       key={i}
@@ -258,6 +258,13 @@ export function MultipartProcessDemo() {
                     />
                   ))}
                 </div>
+                {/* Mobile Arrow */}
+                <motion.div
+                  initial={{ scaleY: 0 }}
+                  animate={{ scaleY: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="sm:hidden w-0.5 h-8 bg-gradient-to-b from-cyan-500 to-amber-500"
+                />
 
                 {/* S3 bucket with ETags */}
                 <div className="bg-amber-500/10 border border-amber-500/50 p-4">

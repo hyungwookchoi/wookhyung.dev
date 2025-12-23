@@ -368,7 +368,7 @@ export function SlashingPenaltyDemo() {
         </div>
 
         {/* Penalty Summary */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3 bg-muted/50 border border-border">
             <div className="text-[9px] font-mono text-muted-foreground uppercase">
               {t.initial}

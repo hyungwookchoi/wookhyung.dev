@@ -255,7 +255,7 @@ export function AttestationSimulator() {
           <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
             {t.validators} ({TOTAL_VALIDATORS})
           </div>
-          <div className="grid grid-cols-8 gap-2">
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
             {validators.map((v) => (
               <motion.div
                 key={v.id}
@@ -326,7 +326,7 @@ export function AttestationSimulator() {
 
                 {/* Block Proposal Visualization */}
                 {phase !== 'shuffled' && (
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col sm:flex-row items-center gap-4">
                     {/* Proposer */}
                     <div className="flex flex-col items-center gap-1">
                       <div className="w-10 h-10 bg-amber-400/20 border-2 border-amber-400 flex items-center justify-center">
@@ -364,7 +364,7 @@ export function AttestationSimulator() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.3 }}
-                      className="flex items-center gap-1"
+                      className="flex flex-wrap items-center justify-center gap-1"
                     >
                       {committee
                         .filter((v) => !v.isProposer)
