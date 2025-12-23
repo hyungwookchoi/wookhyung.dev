@@ -5,11 +5,28 @@ import { notFound } from 'next/navigation';
 import { getMDXComponent } from 'next-contentlayer2/hooks';
 import serialize from 'serialize-javascript';
 
-import { EthereumPosPlayground } from '@/features/ethereum-pos';
+import {
+  AttestationSimulator,
+  EthereumPosPlayground,
+  RandaoVisualization,
+  RewardCalculator,
+  SlashingPenaltyDemo,
+  SlotEpochVisualizer,
+} from '@/features/ethereum-pos';
+import {
+  ByteInterpretationDemo,
+  ETagVisualization,
+  FileProvider,
+  HexDumpExplorer,
+  MultipartProcessDemo,
+  MultipartUploadSimulator,
+  MultipartVerifier,
+} from '@/features/s3-multipart';
 import { isValidLocale, Locale } from '@/i18n/config';
 import { LocaleProvider } from '@/i18n/context';
 import { siteConfig } from '@/shared/config/site';
 import { BackButton } from '@/shared/ui/back-button';
+import { WithClaudeBadge } from '@/shared/ui/with-claude-badge';
 import { getTechPostBySlugAndLocale, techPosts } from '@/shared/util/post';
 import { openGraph, twitter } from '@/shared/util/seo';
 
@@ -113,20 +130,35 @@ export default async function Page({ params }: Props) {
               {post.summary}
             </p>
           )}
-          <div className="flex items-center gap-2 mt-2 mb-4 not-prose">
+          <div className="flex items-center gap-3 mt-2 mb-4 not-prose">
             <time
               dateTime={post.date}
               className="text-[10px] text-neutral-500 uppercase tracking-[0.15em]"
             >
               {format(new Date(post.date), dateFormat, { locale: dateLocale })}
             </time>
+            {post.withClaude && <WithClaudeBadge />}
           </div>
           <hr className="border-neutral-800" />
           <LocaleProvider locale={lang as Locale}>
             <Content
               components={{
                 Image,
+                // Ethereum PoS components
                 EthereumPosPlayground,
+                SlotEpochVisualizer,
+                RandaoVisualization,
+                AttestationSimulator,
+                RewardCalculator,
+                SlashingPenaltyDemo,
+                // S3 Multipart components
+                MultipartUploadSimulator,
+                MultipartProcessDemo,
+                ETagVisualization,
+                HexDumpExplorer,
+                ByteInterpretationDemo,
+                MultipartVerifier,
+                FileProvider,
               }}
             />
           </LocaleProvider>

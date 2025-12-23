@@ -30,6 +30,7 @@
     "next-contentlayer2": "^0.5.8",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "recharts": "^3.6.0",
     "rehype-preset-minify": "^7.0.1",
     "rehype-prism-plus": "^2.0.1",
     "remark-gfm": "^4.0.1",

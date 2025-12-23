@@ -4,6 +4,7 @@ summary: Learn Ethereum's Proof of Stake consensus mechanism through interactive
 date: '2025-12-19'
 tags: ['Ethereum', 'Blockchain', 'PoS']
 draft: false
+withClaude: true
 ---
 
 ## 1. Introduction: A New Era for Ethereum
@@ -18,6 +19,8 @@ The Ethereum PoS network divides time into strict units to ensure that validator
 
 - Slot: The minimum unit for block production, with one slot every 12 seconds. Each slot has one designated block proposer.
 - Epoch: A unit consisting of 32 slots, taking approximately 6.4 minutes (12 seconds × 32). Epochs serve as reference points for aggregating validator votes and determining finality.
+
+<SlotEpochVisualizer />
 
 ---
 
@@ -40,11 +43,15 @@ For network security, it must be impossible to predict who will create the next 
 - How it works: Numbers submitted by validators are mixed using a "Commit-Reveal" scheme to generate a single random number.
 - Significance: This fundamentally prevents any entity from monopolizing block production or identifying the next proposer in advance for targeted attacks.
 
+<RandaoVisualization />
+
 ### B. Committees and Attestations
 
 Having hundreds of thousands of validators communicate simultaneously would be inefficient. Therefore, the network randomly divides validators into small groups called committees.
 
 - Attestation: Committee members review the proposed block's validity and submit a digital signature, staking their deposit to vouch that the block is valid. This process serves as a vote guaranteeing the block's trustworthiness.
+
+<AttestationSimulator />
 
 ### C. Fork Choice Rule: LMD-GHOST
 
@@ -76,6 +83,8 @@ APR(%) = 166 / √n
 
 This model encourages participation with high yields when the staked amount is low, and suppresses excessive inflation by lowering yields when it becomes sufficiently large.
 
+<RewardCalculator />
+
 ---
 
 ## 7. Security Maintenance and Deterrence Mechanisms
@@ -90,6 +99,8 @@ Severe economic sanctions are imposed for protocol violations.
 
 - Inactivity Leak: If a validator goes offline and fails to participate in consensus, their stake is gradually reduced.
 - Slashing: If malicious manipulation such as double voting is detected, between 1% and up to 100% of the deposit can be burned according to the correlation penalty. Slashed validators are forcibly ejected from the network over 36 days.
+
+<SlashingPenaltyDemo />
 
 ---
 
