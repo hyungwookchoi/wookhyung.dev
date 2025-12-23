@@ -4,7 +4,6 @@ summary: Understanding how large files are split and merged at the byte level
 date: '2025-12-23'
 tags: ['AWS']
 draft: false
-withClaude: true
 ---
 
 When uploading large files to S3, you'll use multipart upload. But to truly understand how "splitting a file for upload" actually works, and why split files can be merged back together perfectly, we need to understand the fundamental nature of files.
@@ -17,17 +16,17 @@ S3 Multipart Upload is a method of uploading large files by dividing them into s
 
 ### How It Works
 
-Multipart upload proceeds in three stages:
+Multipart upload proceeds in three stages.
 
-1. **Initiate**: When you initialize a multipart upload, you receive a unique Upload ID
-2. **Upload Parts**: The file is divided into parts (minimum 5MB, except for the last part) and each is uploaded separately. Each part receives a number from 1 to 10,000, and an ETag upon completion
-3. **Complete**: The Complete Multipart Upload request combines the parts into a single object
+1. **Initiate**: When you initialize a multipart upload, you receive a unique Upload ID.
+2. **Upload Parts**: The file is divided into parts (minimum 5MB, except for the last part) and each is uploaded separately. Each part receives a number from 1 to 10,000, and an ETag upon completion.
+3. **Complete**: The Complete Multipart Upload request combines the parts into a single object.
 
 ### Key Benefits
 
-- **Resilience**: If the upload is interrupted due to network issues, only the failed parts need to be re-uploaded
-- **Performance**: Multiple parts can be uploaded in parallel, significantly improving upload speeds for large files
-- **Flexibility**: Files can be uploaded in a streaming fashion without knowing the file size in advance
+- **Resilience**: If the upload is interrupted due to network issues, only the failed parts need to be re-uploaded.
+- **Performance**: Multiple parts can be uploaded in parallel, significantly improving upload speeds for large files.
+- **Flexibility**: Files can be uploaded in a streaming fashion without knowing the file size in advance.
 
 ### Practical Considerations
 
@@ -60,13 +59,13 @@ The Complete request body is in XML format, containing each part's number and ET
 
 ### Internal Process
 
-When S3 receives a Complete request, it performs the following:
+When S3 receives a Complete request, it performs the following.
 
-1. **Validation**: Verifies that each provided ETag matches the ETag of the actually uploaded part
-2. **Order Verification**: Validates that part numbers are sequential and in correct order
-3. **Combination**: Concatenates parts in order to create the final object
-4. **Metadata Generation**: Calculates the final object's ETag
-5. **Cleanup**: Cleans up the temporarily stored individual part data
+1. **Validation**: Verifies that each provided ETag matches the ETag of the actually uploaded part.
+2. **Order Verification**: Validates that part numbers are sequential and in correct order.
+3. **Combination**: Concatenates parts in order to create the final object.
+4. **Metadata Generation**: Calculates the final object's ETag.
+5. **Cleanup**: Cleans up the temporarily stored individual part data.
 
 ### Multipart ETag Peculiarity
 
@@ -155,16 +154,19 @@ final_file = part1 + part2 + part3
 ```
 
 Original file:
+
 ```
 00 00 00 18 66 74 79 70 6D 70 34 32 00 00 00 00 ...
 ```
 
 Part 1:
+
 ```
 00 00 00 18 66 74 79 70
 ```
 
 Part 2:
+
 ```
 6D 70 34 32 00 00 00 00
 ```
@@ -264,11 +266,13 @@ Stored as bytes: FF 64 32
 ```
 
 One complete frame:
+
 ```
 1920 × 1080 pixels × 3 bytes (RGB) = 6,220,800 bytes ≈ 6MB
 ```
 
 One second of 30fps video:
+
 ```
 6MB × 30 frames = 180MB/second
 ```
@@ -293,6 +297,7 @@ After compression (~200KB):
 Compression principles:
 
 **Spatial Redundancy Removal:**
+
 ```
 If 1000 sky blue pixels are all similar:
 Original: [0x00 0x80 0xFF] × 1000 = 3,000 bytes
@@ -300,6 +305,7 @@ Compressed: "Pixels (0,0) to (31,31): color 0x0080FF" = ~20 bytes
 ```
 
 **Temporal Redundancy Removal:**
+
 ```
 Frame 1: Car at position (100, 200)
 Frame 2: Car at position (105, 200)
@@ -319,6 +325,7 @@ The first few bytes of an actual MP4 file:
 ```
 
 Interpretation:
+
 ```
 00 00 00 20: Box size = 32 bytes (big-endian integer)
 66 74 79 70: "ftyp" (ASCII) - file type box
@@ -331,6 +338,7 @@ Interpretation:
 What a video player does:
 
 **1. Parsing**
+
 ```javascript
 const bytes = readFile('video.mp4');
 const boxes = parseMP4Boxes(bytes);
@@ -343,6 +351,7 @@ const height = videoTrack.height; // 1080
 ```
 
 **2. Decoding**
+
 ```javascript
 // Read compressed frame data
 const compressedFrame = boxes.mdat.frames[0]; // 200KB
@@ -353,6 +362,7 @@ const decodedPixels = h264Decoder.decode(compressedFrame);
 ```
 
 **3. Rendering**
+
 ```javascript
 // Send pixel data to GPU
 const texture = gpu.createTexture(1920, 1080);
@@ -395,6 +405,7 @@ FF 00 00  // Red pixel (0, 0, 255)
 ```
 
 When an image viewer opens this file:
+
 1. Read header: "This is a 24-bit BMP of size 2×2"
 2. Read pixel data: Group bytes in threes and interpret as RGB
 3. Display on monitor: Output corresponding color at each pixel position
@@ -410,6 +421,7 @@ Byte value 128 (0x80) → 2.5V voltage → LED half brightness
 ```
 
 RGB(255, 0, 0) pixel:
+
 ```
 Red LED: Maximum brightness ███
 Green LED: Off ░░░
@@ -444,6 +456,7 @@ Pixel array → Video on screen
 ```
 
 All digital media ultimately follows:
+
 1. **Encoding**: Meaningful data → Bytes
 2. **Storage/Transmission**: Bytes are just numbers
 3. **Decoding**: Bytes → Meaningful data
