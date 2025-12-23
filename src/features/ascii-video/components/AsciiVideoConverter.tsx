@@ -13,6 +13,8 @@ import { AsciiCanvas, AsciiCanvasHandle } from './AsciiCanvas';
 import { PlaybackControls } from './PlaybackControls';
 import { VideoDropzone } from './VideoDropzone';
 
+const DEFAULT_VIDEO_URL = '/videos/reze-dance.mp4';
+
 export function AsciiVideoConverter() {
   const locale = useLocale();
   const t = getTranslations(locale);
@@ -24,11 +26,12 @@ export function AsciiVideoConverter() {
     isLoaded,
     isPlaying,
     videoRef,
+    videoSrc,
     setVideoFile,
     play,
     pause,
     reset,
-  } = useVideoProcessor();
+  } = useVideoProcessor(DEFAULT_VIDEO_URL);
 
   const { asciiFrame } = useAsciiRenderer(videoRef, isPlaying);
   const { isRecording, startRecording, stopRecording } = useVideoRecorder();
@@ -181,7 +184,13 @@ export function AsciiVideoConverter() {
       </div>
 
       {/* Hidden video element for processing */}
-      <video ref={videoRef} className="hidden" playsInline muted />
+      <video
+        ref={videoRef}
+        src={videoSrc}
+        className="hidden"
+        playsInline
+        muted
+      />
     </motion.div>
   );
 }

@@ -1,57 +1,91 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { VideoProcessorState } from '../types';
 
-export function useVideoProcessor() {
+interface ExtendedState extends VideoProcessorState {
+  videoSrc: string;
+}
+
+export function useVideoProcessor(defaultVideoUrl: string) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [state, setState] = useState<VideoProcessorState>({
+  const [state, setState] = useState<ExtendedState>({
     videoFile: null,
     isLoaded: false,
     isPlaying: false,
     duration: 0,
     currentTime: 0,
+    videoSrc: defaultVideoUrl,
   });
 
+  // 사용자가 파일을 업로드했을 때
   const setVideoFile = useCallback((file: File | null) => {
-    if (!file || !videoRef.current) return;
+    if (!file) return;
 
-    // 이전 URL 해제
-    if (videoRef.current.src) {
-      URL.revokeObjectURL(videoRef.current.src);
-    }
+    // 이전 blob URL 해제
+    setState((prev) => {
+      if (prev.videoSrc.startsWith('blob:')) {
+        URL.revokeObjectURL(prev.videoSrc);
+      }
+      return prev;
+    });
 
     const url = URL.createObjectURL(file);
-    videoRef.current.src = url;
-    videoRef.current.load();
+    setState((prev) => ({
+      ...prev,
+      videoFile: file,
+      videoSrc: url,
+      isLoaded: false,
+    }));
+  }, []);
 
-    videoRef.current.onloadedmetadata = () => {
+  // 비디오 이벤트 핸들러 설정
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleLoadedMetadata = () => {
       setState((prev) => ({
         ...prev,
-        videoFile: file,
+        videoFile: prev.videoFile || ({ name: 'default.mp4' } as File),
         isLoaded: true,
-        duration: videoRef.current?.duration || 0,
+        duration: video.duration || 0,
       }));
-
-      // 자동 재생
-      videoRef.current?.play();
-      setState((prev) => ({ ...prev, isPlaying: true }));
     };
 
-    videoRef.current.onended = () => {
+    const handleCanPlay = () => {
+      // 자동 재생 없이 준비 완료 상태만 유지
+    };
+
+    const handleEnded = () => {
       setState((prev) => ({ ...prev, isPlaying: false }));
     };
 
-    videoRef.current.ontimeupdate = () => {
+    const handleTimeUpdate = () => {
       setState((prev) => ({
         ...prev,
-        currentTime: videoRef.current?.currentTime || 0,
+        currentTime: video.currentTime || 0,
       }));
     };
 
-    setState((prev) => ({ ...prev, videoFile: file }));
-  }, []);
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('ended', handleEnded);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+
+    // 이미 로드된 상태라면 수동으로 이벤트 트리거
+    if (video.readyState >= 1) {
+      handleLoadedMetadata();
+    }
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+    };
+  }, [state.videoSrc]);
 
   const play = useCallback(() => {
     videoRef.current?.play();
@@ -64,20 +98,21 @@ export function useVideoProcessor() {
   }, []);
 
   const reset = useCallback(() => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-      URL.revokeObjectURL(videoRef.current.src);
-      videoRef.current.src = '';
-    }
-    setState({
-      videoFile: null,
-      isLoaded: false,
-      isPlaying: false,
-      duration: 0,
-      currentTime: 0,
+    // blob URL 해제
+    setState((prev) => {
+      if (prev.videoSrc.startsWith('blob:')) {
+        URL.revokeObjectURL(prev.videoSrc);
+      }
+      return {
+        videoFile: null,
+        isLoaded: false,
+        isPlaying: false,
+        duration: 0,
+        currentTime: 0,
+        videoSrc: defaultVideoUrl,
+      };
     });
-  }, []);
+  }, [defaultVideoUrl]);
 
   return {
     ...state,
