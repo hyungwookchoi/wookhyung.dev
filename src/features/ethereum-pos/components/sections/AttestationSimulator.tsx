@@ -1,7 +1,8 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 import { useLocale } from '@/i18n/context';
 
@@ -28,6 +29,7 @@ const translations = {
     proposeBlock: '블록 제안',
     collectAttestations: '증명 수집',
     reset: '초기화',
+    replay: '다시 보기',
   },
   en: {
     title: 'Committee & Attestation Simulator',
@@ -51,6 +53,7 @@ const translations = {
     proposeBlock: 'Propose Block',
     collectAttestations: 'Collect Attestations',
     reset: 'Reset',
+    replay: 'Replay',
   },
 };
 
@@ -81,6 +84,12 @@ export function AttestationSimulator() {
     'idle' | 'shuffled' | 'proposed' | 'attesting' | 'justified'
   >('idle');
   const [attestationCount, setAttestationCount] = useState(0);
+  const hasAutoStarted = useRef(false);
+
+  const { ref, inView } = useInView({
+    threshold: 0.3,
+    triggerOnce: true,
+  });
 
   const shuffleCommittee = useCallback(() => {
     const shuffled = [...Array(TOTAL_VALIDATORS).keys()].sort(
@@ -138,11 +147,73 @@ export function AttestationSimulator() {
     setAttestationCount(0);
   }, []);
 
+  // 전체 시뮬레이션 순차 실행
+  const runFullSimulation = useCallback(async () => {
+    // 1. Shuffle committee
+    const shuffled = [...Array(TOTAL_VALIDATORS).keys()].sort(
+      () => Math.random() - 0.5,
+    );
+    const committeeIds = shuffled.slice(0, COMMITTEE_SIZE);
+    const proposerId = committeeIds[0];
+
+    const newValidators = Array.from({ length: TOTAL_VALIDATORS }, (_, i) => ({
+      id: i + 1,
+      isProposer: i + 1 === proposerId + 1,
+      isCommitteeMember: committeeIds.includes(i),
+      hasAttested: false,
+    }));
+
+    setValidators(newValidators);
+    setPhase('shuffled');
+    setAttestationCount(0);
+
+    await new Promise((r) => setTimeout(r, 800));
+
+    // 2. Propose block
+    setPhase('proposed');
+
+    await new Promise((r) => setTimeout(r, 800));
+
+    // 3. Collect attestations
+    setPhase('attesting');
+    const committeeMembers = newValidators.filter(
+      (v) => v.isCommitteeMember && !v.isProposer,
+    );
+
+    for (let i = 0; i < committeeMembers.length; i++) {
+      await new Promise((r) => setTimeout(r, 300));
+      setValidators((prev) =>
+        prev.map((v) =>
+          v.id === committeeMembers[i].id ? { ...v, hasAttested: true } : v,
+        ),
+      );
+      setAttestationCount((c) => c + 1);
+    }
+
+    await new Promise((r) => setTimeout(r, 500));
+    setPhase('justified');
+  }, []);
+
+  // 뷰포트 진입 시 자동 시작
+  useEffect(() => {
+    if (inView && !hasAutoStarted.current) {
+      hasAutoStarted.current = true;
+      runFullSimulation();
+    }
+  }, [inView, runFullSimulation]);
+
+  const handleReplay = useCallback(() => {
+    reset();
+    setTimeout(() => {
+      runFullSimulation();
+    }, 100);
+  }, [reset, runFullSimulation]);
+
   const committee = validators.filter((v) => v.isCommitteeMember);
   const proposer = validators.find((v) => v.isProposer);
 
   return (
-    <div className="not-prose my-8 relative">
+    <div ref={ref} className="not-prose my-8 relative">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-amber-400" />
@@ -376,42 +447,17 @@ export function AttestationSimulator() {
         </AnimatePresence>
 
         {/* Controls */}
-        <div className="flex flex-wrap items-center gap-2 pt-2">
-          <button
-            onClick={shuffleCommittee}
-            disabled={phase === 'attesting'}
-            className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     bg-cyan-500 text-background hover:bg-cyan-400
-                     disabled:bg-muted disabled:text-muted-foreground transition-colors"
-          >
-            {t.shuffleCommittee}
-          </button>
-          <button
-            onClick={proposeBlock}
-            disabled={phase !== 'shuffled'}
-            className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     bg-amber-500 text-background hover:bg-amber-400
-                     disabled:bg-muted disabled:text-muted-foreground transition-colors"
-          >
-            {t.proposeBlock}
-          </button>
-          <button
-            onClick={collectAttestations}
-            disabled={phase !== 'proposed'}
-            className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     bg-emerald-500 text-background hover:bg-emerald-400
-                     disabled:bg-muted disabled:text-muted-foreground transition-colors"
-          >
-            {t.collectAttestations}
-          </button>
-          <button
-            onClick={reset}
-            className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
-          >
-            {t.reset}
-          </button>
-        </div>
+        {phase === 'justified' && (
+          <div className="flex items-center justify-center pt-2">
+            <button
+              onClick={handleReplay}
+              className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
+                       bg-amber-500 text-background hover:bg-amber-400 transition-colors"
+            >
+              {t.replay}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

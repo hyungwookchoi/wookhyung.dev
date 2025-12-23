@@ -1,7 +1,8 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 import { useLocale } from '@/i18n/context';
 
@@ -37,6 +38,7 @@ const translations = {
     simulate: '시뮬레이션',
     reset: '초기화',
     simulating: '진행 중...',
+    replay: '다시 보기',
   },
   en: {
     title: 'Penalty & Slashing Simulator',
@@ -70,6 +72,7 @@ const translations = {
     simulate: 'Simulate',
     reset: 'Reset',
     simulating: 'Running...',
+    replay: 'Replay',
   },
 };
 
@@ -85,6 +88,13 @@ export function SlashingPenaltyDemo() {
   const [currentDay, setCurrentDay] = useState(0);
   const [slashedCount, setSlashedCount] = useState(1);
   const [isEjected, setIsEjected] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const hasAutoStarted = useRef(false);
+
+  const { ref, inView } = useInView({
+    threshold: 0.3,
+    triggerOnce: true,
+  });
 
   const EJECTION_THRESHOLD = 16;
   const INITIAL_BALANCE = 32;
@@ -100,6 +110,7 @@ export function SlashingPenaltyDemo() {
 
   const simulateInactivity = useCallback(async () => {
     setIsSimulating(true);
+    setIsComplete(false);
     setBalance(INITIAL_BALANCE);
     setCurrentDay(0);
     setIsEjected(false);
@@ -122,10 +133,12 @@ export function SlashingPenaltyDemo() {
     }
 
     setIsSimulating(false);
+    setIsComplete(true);
   }, []);
 
   const simulateSlashing = useCallback(async () => {
     setIsSimulating(true);
+    setIsComplete(false);
     setBalance(INITIAL_BALANCE);
     setCurrentDay(0);
     setIsEjected(false);
@@ -153,6 +166,7 @@ export function SlashingPenaltyDemo() {
     setIsEjected(true);
 
     setIsSimulating(false);
+    setIsComplete(true);
   }, [slashedCount, getCorrelationPenalty]);
 
   const handleSimulate = useCallback(() => {
@@ -168,17 +182,29 @@ export function SlashingPenaltyDemo() {
     setCurrentDay(0);
     setIsEjected(false);
     setIsSimulating(false);
+    setIsComplete(false);
   }, []);
 
+  // 뷰포트 진입 시 자동 시작
   useEffect(() => {
-    handleReset();
+    if (inView && !hasAutoStarted.current) {
+      hasAutoStarted.current = true;
+      handleSimulate();
+    }
+  }, [inView, handleSimulate]);
+
+  // 시나리오 변경 시 리셋 (자동 시작 후에만)
+  useEffect(() => {
+    if (hasAutoStarted.current) {
+      handleReset();
+    }
   }, [scenario, handleReset]);
 
   const balancePercentage = (balance / INITIAL_BALANCE) * 100;
   const ejectionPercentage = (EJECTION_THRESHOLD / INITIAL_BALANCE) * 100;
 
   return (
-    <div className="not-prose my-8 relative">
+    <div ref={ref} className="not-prose my-8 relative">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-red-400" />
@@ -421,28 +447,22 @@ export function SlashingPenaltyDemo() {
         </AnimatePresence>
 
         {/* Controls */}
-        <div className="flex items-center gap-2 pt-2">
-          <button
-            onClick={handleSimulate}
-            disabled={isSimulating}
-            className={`px-4 py-2 font-mono text-[10px] uppercase tracking-wider transition-colors
-                     ${
-                       scenario === 'inactivity'
-                         ? 'bg-amber-500 hover:bg-amber-400'
-                         : 'bg-red-500 hover:bg-red-400'
-                     }
-                     text-background disabled:bg-muted disabled:text-muted-foreground`}
-          >
-            {isSimulating ? t.simulating : t.simulate}
-          </button>
-          <button
-            onClick={handleReset}
-            className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
-          >
-            {t.reset}
-          </button>
-        </div>
+        {isComplete && (
+          <div className="flex items-center justify-center pt-2">
+            <button
+              onClick={handleSimulate}
+              className={`px-4 py-2 font-mono text-[10px] uppercase tracking-wider transition-colors
+                       ${
+                         scenario === 'inactivity'
+                           ? 'bg-amber-500 hover:bg-amber-400'
+                           : 'bg-red-500 hover:bg-red-400'
+                       }
+                       text-background`}
+            >
+              {t.replay}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

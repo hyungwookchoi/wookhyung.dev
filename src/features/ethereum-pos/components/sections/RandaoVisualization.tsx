@@ -1,7 +1,8 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 import { useLocale } from '@/i18n/context';
 
@@ -23,6 +24,7 @@ const translations = {
     run: '실행',
     reset: '초기화',
     running: '실행 중...',
+    replay: '다시 보기',
   },
   en: {
     title: 'RANDAO Mechanism',
@@ -41,6 +43,7 @@ const translations = {
     run: 'Run',
     reset: 'Reset',
     running: 'Running...',
+    replay: 'Replay',
   },
 };
 
@@ -87,6 +90,12 @@ export function RandaoVisualization() {
     })),
   );
   const [finalRandom, setFinalRandom] = useState<string>('');
+  const hasAutoStarted = useRef(false);
+
+  const { ref, inView } = useInView({
+    threshold: 0.3,
+    triggerOnce: true,
+  });
 
   const runSimulation = useCallback(async () => {
     // Reset
@@ -153,6 +162,14 @@ export function RandaoVisualization() {
     );
   }, []);
 
+  // 뷰포트 진입 시 자동 시작
+  useEffect(() => {
+    if (inView && !hasAutoStarted.current) {
+      hasAutoStarted.current = true;
+      runSimulation();
+    }
+  }, [inView, runSimulation]);
+
   const getPhaseColor = (targetPhase: string) => {
     const phases = ['commit', 'reveal', 'mix', 'done'];
     const currentIndex = phases.indexOf(phase);
@@ -167,7 +184,7 @@ export function RandaoVisualization() {
   };
 
   return (
-    <div className="not-prose my-8 relative">
+    <div ref={ref} className="not-prose my-8 relative">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-purple-400" />
@@ -359,24 +376,17 @@ export function RandaoVisualization() {
         </AnimatePresence>
 
         {/* Controls */}
-        <div className="flex items-center gap-2 pt-2">
-          <button
-            onClick={runSimulation}
-            disabled={phase !== 'idle' && phase !== 'done'}
-            className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     bg-purple-500 text-background hover:bg-purple-400
-                     disabled:bg-muted disabled:text-muted-foreground transition-colors"
-          >
-            {phase !== 'idle' && phase !== 'done' ? t.running : t.run}
-          </button>
-          <button
-            onClick={handleReset}
-            className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
-          >
-            {t.reset}
-          </button>
-        </div>
+        {phase === 'done' && (
+          <div className="flex items-center justify-center pt-2">
+            <button
+              onClick={runSimulation}
+              className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
+                       bg-purple-500 text-background hover:bg-purple-400 transition-colors"
+            >
+              {t.replay}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 import { useLocale } from '@/i18n/context';
 
@@ -11,6 +12,12 @@ export function ETagVisualization() {
   const locale = useLocale();
   const t = getTranslations(locale).etagDemo;
   const [step, setStep] = useState(0);
+  const hasAutoStarted = useRef(false);
+
+  const { ref, inView } = useInView({
+    threshold: 0.3,
+    triggerOnce: true,
+  });
 
   const mockParts = [
     { id: 1, hash: 'd41d8cd98f00b204e9800998ecf8427e' },
@@ -22,16 +29,33 @@ export function ETagVisualization() {
   const finalMd5 = '7c12b89b4bd8b1a8f5e2...';
   const finalEtag = '7c12b89b4bd8b1a8f5e2...-3';
 
-  const handleAnimate = () => {
-    if (step < 4) {
-      setStep((s) => s + 1);
-    } else {
-      setStep(0);
+  // 전체 시뮬레이션 자동 실행
+  const runFullSimulation = useCallback(async () => {
+    setStep(0);
+    await new Promise((r) => setTimeout(r, 500));
+    setStep(1);
+    await new Promise((r) => setTimeout(r, 1000));
+    setStep(2);
+    await new Promise((r) => setTimeout(r, 1000));
+    setStep(3);
+    await new Promise((r) => setTimeout(r, 1000));
+    setStep(4);
+  }, []);
+
+  // 뷰포트 진입 시 자동 시작
+  useEffect(() => {
+    if (inView && !hasAutoStarted.current) {
+      hasAutoStarted.current = true;
+      runFullSimulation();
     }
-  };
+  }, [inView, runFullSimulation]);
+
+  const handleReplay = useCallback(() => {
+    runFullSimulation();
+  }, [runFullSimulation]);
 
   return (
-    <div className="not-prose my-8 relative">
+    <div ref={ref} className="not-prose my-8 relative">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-amber-400" />
@@ -260,25 +284,17 @@ export function ETagVisualization() {
         </div>
 
         {/* Control button */}
-        <div className="border-t border-border p-4 flex justify-center">
-          <button
-            onClick={handleAnimate}
-            className="px-6 py-2 bg-amber-500 text-background font-mono text-sm uppercase tracking-wider
-                     hover:bg-amber-400 transition-colors"
-          >
-            {step === 0
-              ? locale === 'ko'
-                ? '시작'
-                : 'Start'
-              : step >= 4
-                ? locale === 'ko'
-                  ? '다시 시작'
-                  : 'Restart'
-                : locale === 'ko'
-                  ? '다음 단계'
-                  : 'Next Step'}
-          </button>
-        </div>
+        {step >= 4 && (
+          <div className="border-t border-border p-4 flex justify-center">
+            <button
+              onClick={handleReplay}
+              className="px-6 py-2 bg-amber-500 text-background font-mono text-sm uppercase tracking-wider
+                       hover:bg-amber-400 transition-colors"
+            >
+              {locale === 'ko' ? '다시 보기' : 'Replay'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

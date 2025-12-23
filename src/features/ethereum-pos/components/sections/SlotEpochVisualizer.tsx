@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 import { useLocale } from '@/i18n/context';
 
@@ -18,6 +19,7 @@ const translations = {
     play: '재생',
     pause: '일시정지',
     reset: '초기화',
+    replay: '다시 보기',
     currentSlot: '현재 슬롯',
     timeRemaining: '남은 시간',
     totalTime: '총 시간',
@@ -34,6 +36,7 @@ const translations = {
     play: 'Play',
     pause: 'Pause',
     reset: 'Reset',
+    replay: 'Replay',
     currentSlot: 'Current Slot',
     timeRemaining: 'Time Left',
     totalTime: 'Total Time',
@@ -47,9 +50,24 @@ export function SlotEpochVisualizer() {
   const [currentSlot, setCurrentSlot] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const hasAutoStarted = useRef(false);
+
+  const { ref, inView } = useInView({
+    threshold: 0.3,
+    triggerOnce: true,
+  });
 
   const SLOT_DURATION = 1000; // 1초 (12초의 1/12로 축소)
   const TOTAL_SLOTS = 32;
+
+  // 뷰포트 진입 시 자동 시작
+  useEffect(() => {
+    if (inView && !hasAutoStarted.current) {
+      hasAutoStarted.current = true;
+      setIsRunning(true);
+    }
+  }, [inView]);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -60,6 +78,7 @@ export function SlotEpochVisualizer() {
           setCurrentSlot((slot) => {
             if (slot >= TOTAL_SLOTS - 1) {
               setIsRunning(false);
+              setIsComplete(true);
               return slot;
             }
             return slot + 1;
@@ -73,14 +92,15 @@ export function SlotEpochVisualizer() {
     return () => clearInterval(interval);
   }, [isRunning]);
 
-  const handleReset = useCallback(() => {
-    setIsRunning(false);
+  const handleReplay = useCallback(() => {
     setCurrentSlot(0);
     setProgress(0);
+    setIsComplete(false);
+    setIsRunning(true);
   }, []);
 
   return (
-    <div className="not-prose my-8 relative">
+    <div ref={ref} className="not-prose my-8 relative">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-cyan-400" />
@@ -196,30 +216,17 @@ export function SlotEpochVisualizer() {
         </div>
 
         {/* Controls */}
-        <div className="flex items-center gap-2 pt-2">
-          <button
-            onClick={() => setIsRunning(!isRunning)}
-            disabled={currentSlot >= TOTAL_SLOTS - 1 && progress >= 100}
-            className={`
-              px-4 py-2 font-mono text-[10px] uppercase tracking-wider transition-colors
-              ${
-                isRunning
-                  ? 'bg-amber-500 text-background hover:bg-amber-400'
-                  : 'bg-cyan-500 text-background hover:bg-cyan-400'
-              }
-              disabled:bg-muted disabled:text-muted-foreground
-            `}
-          >
-            {isRunning ? t.pause : t.play}
-          </button>
-          <button
-            onClick={handleReset}
-            className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
-                     border border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground transition-colors"
-          >
-            {t.reset}
-          </button>
-        </div>
+        {isComplete && (
+          <div className="flex items-center justify-center pt-2">
+            <button
+              onClick={handleReplay}
+              className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
+                       bg-cyan-500 text-background hover:bg-cyan-400 transition-colors"
+            >
+              {t.replay}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
