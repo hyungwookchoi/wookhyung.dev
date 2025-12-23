@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/get-dictionary';
 import { cn } from '@/shared/lib/tailwind-merge';
-import { ThemeToggle } from '@/shared/ui/theme-toggle';
+import { MobileThemeToggle, ThemeToggle } from '@/shared/ui/theme-toggle';
 
 interface SubMenuItem {
   name: string;
@@ -563,7 +563,7 @@ export const Header = ({ lang, dict }: HeaderProps) => {
                   <p className="text-[10px] text-muted-foreground uppercase tracking-[0.15em] mb-2">
                     Theme
                   </p>
-                  <ThemeToggle />
+                  <MobileThemeToggle />
                 </div>
               </motion.div>
             </motion.div>
