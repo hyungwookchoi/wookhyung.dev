@@ -1,0 +1,477 @@
+---
+title: 'How S3 Multipart Upload Works: From Bytes to Video'
+summary: Understanding how large files are split and merged at the byte level
+date: '2025-12-23'
+tags: ['AWS']
+draft: false
+withClaude: true
+---
+
+When uploading large files to S3, you'll use multipart upload. But to truly understand how "splitting a file for upload" actually works, and why split files can be merged back together perfectly, we need to understand the fundamental nature of files.
+
+---
+
+## What is S3 Multipart Upload?
+
+S3 Multipart Upload is a method of uploading large files by dividing them into smaller parts. AWS recommends using multipart upload for files over 100MB, and it's mandatory for files over 5GB.
+
+### How It Works
+
+Multipart upload proceeds in three stages:
+
+1. **Initiate**: When you initialize a multipart upload, you receive a unique Upload ID
+2. **Upload Parts**: The file is divided into parts (minimum 5MB, except for the last part) and each is uploaded separately. Each part receives a number from 1 to 10,000, and an ETag upon completion
+3. **Complete**: The Complete Multipart Upload request combines the parts into a single object
+
+### Key Benefits
+
+- **Resilience**: If the upload is interrupted due to network issues, only the failed parts need to be re-uploaded
+- **Performance**: Multiple parts can be uploaded in parallel, significantly improving upload speeds for large files
+- **Flexibility**: Files can be uploaded in a streaming fashion without knowing the file size in advance
+
+### Practical Considerations
+
+If you start a multipart upload but don't complete or abort it, the incomplete parts remain stored in S3, incurring costs. It's recommended to configure a Lifecycle Policy to automatically delete incomplete multipart uploads older than 7 days.
+
+<MultipartProcessDemo />
+
+---
+
+## How Complete Multipart Upload Works
+
+Complete Multipart Upload is an API call that tells S3 "I've uploaded all the parts, now combine them into a single object."
+
+### Request Structure
+
+The Complete request body is in XML format, containing each part's number and ETag:
+
+```xml
+<CompleteMultipartUpload>
+  <Part>
+    <PartNumber>1</PartNumber>
+    <ETag>"etag-value-1"</ETag>
+  </Part>
+  <Part>
+    <PartNumber>2</PartNumber>
+    <ETag>"etag-value-2"</ETag>
+  </Part>
+</CompleteMultipartUpload>
+```
+
+### Internal Process
+
+When S3 receives a Complete request, it performs the following:
+
+1. **Validation**: Verifies that each provided ETag matches the ETag of the actually uploaded part
+2. **Order Verification**: Validates that part numbers are sequential and in correct order
+3. **Combination**: Concatenates parts in order to create the final object
+4. **Metadata Generation**: Calculates the final object's ETag
+5. **Cleanup**: Cleans up the temporarily stored individual part data
+
+### Multipart ETag Peculiarity
+
+While a regular upload's ETag is the MD5 hash of the entire file, multipart upload objects have a different ETag format:
+
+```
+"d41d8cd98f00b204e9800998ecf8427e-3"
+```
+
+The `-3` at the end indicates the file was uploaded in 3 parts. The actual hash value is the MD5 of all part MD5s concatenated:
+
+```
+ETag = MD5(MD5(part1) + MD5(part2) + MD5(part3)) + "-" + partCount
+```
+
+### Efficient Design
+
+Since S3 is a distributed storage system, each part may be stored in different physical locations. When a Complete request comes in, S3 doesn't physically copy the data—instead, it creates metadata stating "this object consists of parts 1, 2, 3." This approach allows even multi-GB files to complete in seconds.
+
+<ETagVisualization />
+
+---
+
+## The Essence of Files: A Sequence of Bytes
+
+Here's the key question: Taking video files as an example, how can split parts of a video file be merged back into a single working file? To understand this, we need to know what a file actually is.
+
+### Files are Ordered Sequences of Bytes
+
+A file is ultimately **an ordered sequence of bytes**. Video files are no different.
+
+```
+video.mp4 = [byte0, byte1, byte2, ..., byteN]
+```
+
+For example, a 100MB video file:
+
+```
+Total size: 104,857,600 bytes
+Actual content: 0x00 0x00 0x00 0x18 0x66 0x74 0x79 0x70 ...
+```
+
+Dividing this into 3 parts:
+
+```
+Part 1: bytes [0        ~ 34,952,533]  (33.3MB)
+Part 2: bytes [34,952,534 ~ 69,905,066]  (33.3MB)
+Part 3: bytes [69,905,067 ~ 104,857,599] (33.4MB)
+```
+
+### Video File Structure
+
+MP4 files are structured with "boxes" or "atoms":
+
+```
+[ftyp box - file type]
+[moov box - metadata: codec, resolution, duration, etc.]
+  ├─ [mvhd - overall info]
+  ├─ [trak - video track]
+  └─ [trak - audio track]
+[mdat box - actual video/audio data]
+  ├─ Frame 1 data
+  ├─ Frame 2 data
+  └─ ...
+```
+
+However, **multipart upload completely ignores this structure**. It simply divides the byte array:
+
+```python
+file_bytes = read_entire_file()
+part_size = len(file_bytes) // 3
+
+part1 = file_bytes[0:part_size]
+part2 = file_bytes[part_size:part_size*2]
+part3 = file_bytes[part_size*2:]
+```
+
+Whether it cuts through the middle of a video file header or through a specific frame doesn't matter. It just mechanically divides bytes.
+
+### Merging Back Together
+
+Multipart Complete simply concatenates bytes in order:
+
+```python
+final_file = part1 + part2 + part3
+```
+
+Original file:
+```
+00 00 00 18 66 74 79 70 6D 70 34 32 00 00 00 00 ...
+```
+
+Part 1:
+```
+00 00 00 18 66 74 79 70
+```
+
+Part 2:
+```
+6D 70 34 32 00 00 00 00
+```
+
+Joining these in order restores the exact same byte sequence as the original.
+
+### Practical Verification
+
+You can verify this directly in the terminal:
+
+```bash
+# 1. Split test video file into 3 parts
+split -n 3 video.mp4 part_
+
+# 2. Merge back together
+cat part_aa part_ab part_ac > reconstructed.mp4
+
+# 3. Compare with original
+md5sum video.mp4
+md5sum reconstructed.mp4
+# -> The two hash values are identical!
+```
+
+Video players will play `reconstructed.mp4` exactly like the original because it's byte-for-byte identical.
+
+### Self-Describing File Formats
+
+This simple approach works because **file formats are self-describing**:
+
+```
+[Header]
+- Type: MP4
+- Size: 100MB
+- Video data location: starts at byte 1,024
+
+[Video Data at byte 1,024]
+...
+```
+
+Video players start reading from the beginning, parse the header, determine "where everything is," then seek to those positions to read data. Whether uploaded via multipart or single upload, **as long as the bytes are in correct order**, everything works.
+
+### The Importance of Order
+
+If the order is wrong:
+
+```python
+wrong_file = part2 + part1 + part3
+```
+
+- The MP4 header ends up in the middle, so the player can't recognize the file type
+- Byte order is scrambled, making playback impossible
+
+That's why the Complete request **must include PartNumber**, and S3 concatenates exactly in that order.
+
+<FileProvider>
+
+<HexDumpExplorer />
+
+---
+
+## How Bytes Become Video
+
+Let's dive into an even more fundamental question. How do bytes become video?
+
+### The Key: Interpretation Creates Meaning
+
+Bytes are just numbers from 0 to 255. The same byte sequence becomes entirely different things depending on **how it's interpreted**.
+
+```
+Byte sequence: 0x48 0x65 0x6C 0x6C 0x6F
+
+Interpretation 1 (ASCII text): "Hello"
+Interpretation 2 (integer): 310,939,249,775
+Interpretation 3 (RGB pixels): Red=72, Green=101, Blue=108 ...
+```
+
+### The Smallest Unit of Video: Pixels
+
+Video is a grid of countless pixels (dots). Each pixel contains color information.
+
+```
+1920x1080 resolution = 2,073,600 pixels
+Each pixel = 3 RGB values (Red, Green, Blue)
+```
+
+### Representing Pixels as Bytes
+
+In the simplest case (uncompressed):
+
+```
+Pixel (x=0, y=0):
+  Red:   255 (0xFF) - bright red
+  Green: 100 (0x64) - some green
+  Blue:  50  (0x32) - little blue
+
+Stored as bytes: FF 64 32
+```
+
+One complete frame:
+```
+1920 × 1080 pixels × 3 bytes (RGB) = 6,220,800 bytes ≈ 6MB
+```
+
+One second of 30fps video:
+```
+6MB × 30 frames = 180MB/second
+```
+
+This is **uncompressed raw video**. It's too large in practice, so we compress it.
+
+### Compression: The Role of Codecs
+
+Actual MP4 files contain compressed original data. Using H.264 compression as an example:
+
+```
+Original frame (6MB):
+FF 64 32 FF 64 32 FF 64 32 ... (all pixels)
+
+After compression (~200KB):
+[I-frame header]
+[DCT coefficients]
+[Motion vectors]
+[Difference data]
+```
+
+Compression principles:
+
+**Spatial Redundancy Removal:**
+```
+If 1000 sky blue pixels are all similar:
+Original: [0x00 0x80 0xFF] × 1000 = 3,000 bytes
+Compressed: "Pixels (0,0) to (31,31): color 0x0080FF" = ~20 bytes
+```
+
+**Temporal Redundancy Removal:**
+```
+Frame 1: Car at position (100, 200)
+Frame 2: Car at position (105, 200)
+
+Original: Store both frames completely = 12MB
+Compressed: "Store frame 1 + frame 2 is '5 pixels right'" = ~6.2MB
+```
+
+### Actual Byte Structure
+
+The first few bytes of an actual MP4 file:
+
+```
+00000000  00 00 00 20 66 74 79 70  69 73 6f 6d 00 00 02 00
+00000010  69 73 6f 6d 69 73 6f 32  61 76 63 31 6d 70 34 31
+00000020  00 00 08 08 66 72 65 65  00 00 00 00 6d 64 61 74
+```
+
+Interpretation:
+```
+00 00 00 20: Box size = 32 bytes (big-endian integer)
+66 74 79 70: "ftyp" (ASCII) - file type box
+69 73 6f 6d: "isom" - ISO Base Media format
+6D 64 61 74: "mdat" - media data box start
+```
+
+### Playback Process: From Bytes to Video
+
+What a video player does:
+
+**1. Parsing**
+```javascript
+const bytes = readFile('video.mp4');
+const boxes = parseMP4Boxes(bytes);
+
+// Read metadata
+const videoTrack = boxes.moov.trak[0];
+const codec = videoTrack.codec; // "H.264"
+const width = videoTrack.width; // 1920
+const height = videoTrack.height; // 1080
+```
+
+**2. Decoding**
+```javascript
+// Read compressed frame data
+const compressedFrame = boxes.mdat.frames[0]; // 200KB
+
+// Decompress with H.264 decoder
+const decodedPixels = h264Decoder.decode(compressedFrame);
+// Result: [255,100,50, 255,100,50, ...] (6MB of RGB data)
+```
+
+**3. Rendering**
+```javascript
+// Send pixel data to GPU
+const texture = gpu.createTexture(1920, 1080);
+texture.upload(decodedPixels);
+
+// Draw to screen
+for (let y = 0; y < 1080; y++) {
+  for (let x = 0; x < 1920; x++) {
+    const pixelIndex = (y * 1920 + x) * 3;
+    const r = decodedPixels[pixelIndex];
+    const g = decodedPixels[pixelIndex + 1];
+    const b = decodedPixels[pixelIndex + 2];
+
+    screen.setPixel(x, y, r, g, b);
+  }
+}
+```
+
+### Concrete Example: A Simple Image
+
+Let's create a 2×2 pixel image:
+
+```
+[Red]  [Green]
+[Blue] [White]
+```
+
+Saved as an uncompressed BMP file:
+
+```
+// BMP Header (54 bytes)
+42 4D 46 00 00 00 00 00 00 00 36 00 00 00 28 00
+00 00 02 00 00 00 02 00 00 00 01 00 18 00 ...
+
+// Pixel data (2×2×3 = 12 bytes)
+00 00 FF  // Blue pixel (Blue=255, Green=0, Red=0)
+FF FF FF  // White pixel (255, 255, 255)
+FF 00 00  // Red pixel (0, 0, 255)
+00 FF 00  // Green pixel (0, 255, 0)
+```
+
+When an image viewer opens this file:
+1. Read header: "This is a 24-bit BMP of size 2×2"
+2. Read pixel data: Group bytes in threes and interpret as RGB
+3. Display on monitor: Output corresponding color at each pixel position
+
+### Hardware Level: From Bytes to Light
+
+Each pixel on a monitor is actually composed of red, green, and blue LEDs/LCDs:
+
+```
+Byte value 255 (0xFF) → 5V voltage → LED maximum brightness
+Byte value 0 (0x00) → 0V voltage → LED off
+Byte value 128 (0x80) → 2.5V voltage → LED half brightness
+```
+
+RGB(255, 0, 0) pixel:
+```
+Red LED: Maximum brightness ███
+Green LED: Off ░░░
+Blue LED: Off ░░░
+→ Appears red to the eye
+```
+
+<ByteInterpretationDemo />
+
+---
+
+## Hierarchical Abstraction: From Electrons to Video
+
+Summarizing the entire process:
+
+```
+Physical Level:
+Electron flow → Voltage → LED brightness
+
+Hardware Level:
+0s and 1s → Bytes (8-bit groups)
+
+File Format Level:
+Byte sequence → Structured data
+"These bytes are header, those bytes are pixel data"
+
+Codec Level:
+Compressed bytes → Original pixels restored
+
+Application Level:
+Pixel array → Video on screen
+```
+
+All digital media ultimately follows:
+1. **Encoding**: Meaningful data → Bytes
+2. **Storage/Transmission**: Bytes are just numbers
+3. **Decoding**: Bytes → Meaningful data
+
+Video, music, documents, programs—all work on the same principle. The bytes are the same; only the **interpretation method** differs.
+
+---
+
+## Back to Multipart Upload
+
+Now it's clear why multipart upload works:
+
+```
+File = Ordered array of bytes
+Multipart upload = Split array into chunks
+Complete = Concatenate chunks in original order
+
+video.mp4 [0...N]
+    ↓ split
+part1 [0...N/3]
+part2 [N/3...2N/3]
+part3 [2N/3...N]
+    ↓ complete
+video.mp4 [0...N] ✓
+```
+
+From a computer architecture perspective, whether it's memory, disk, or S3, it's ultimately an "addressable byte array," and files are just portions of that array. Multipart upload leverages this fundamental simplicity.
+
+<MultipartVerifier />
+
+</FileProvider>
