@@ -185,19 +185,17 @@ export function SlashingPenaltyDemo() {
     setIsComplete(false);
   }, []);
 
-  // 뷰포트 진입 시 자동 시작
+  // 뷰포트 진입 시 자동 시작 (inactivity 시나리오만)
   useEffect(() => {
-    if (inView && !hasAutoStarted.current) {
+    if (inView && !hasAutoStarted.current && scenario === 'inactivity') {
       hasAutoStarted.current = true;
-      handleSimulate();
+      simulateInactivity();
     }
-  }, [inView, handleSimulate]);
+  }, [inView, scenario, simulateInactivity]);
 
-  // 시나리오 변경 시 리셋 (자동 시작 후에만)
+  // 시나리오 변경 시 리셋
   useEffect(() => {
-    if (hasAutoStarted.current) {
-      handleReset();
-    }
+    handleReset();
   }, [scenario, handleReset]);
 
   const balancePercentage = (balance / INITIAL_BALANCE) * 100;
@@ -447,19 +445,27 @@ export function SlashingPenaltyDemo() {
         </AnimatePresence>
 
         {/* Controls */}
-        {isComplete && (
+        {/* inactivity: 완료 후 다시 보기 버튼만 표시 */}
+        {scenario === 'inactivity' && isComplete && (
           <div className="flex items-center justify-center pt-2">
             <button
-              onClick={handleSimulate}
-              className={`px-4 py-2 font-mono text-[10px] uppercase tracking-wider transition-colors
-                       ${
-                         scenario === 'inactivity'
-                           ? 'bg-amber-500 hover:bg-amber-400'
-                           : 'bg-red-500 hover:bg-red-400'
-                       }
-                       text-background`}
+              onClick={simulateInactivity}
+              className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider transition-colors
+                       bg-amber-500 hover:bg-amber-400 text-background"
             >
               {t.replay}
+            </button>
+          </div>
+        )}
+        {/* slashing: 시작 전 또는 완료 후 버튼 표시 */}
+        {scenario === 'slashing' && !isSimulating && (
+          <div className="flex items-center justify-center pt-2">
+            <button
+              onClick={simulateSlashing}
+              className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider transition-colors
+                       bg-red-500 hover:bg-red-400 text-background"
+            >
+              {isComplete ? t.replay : t.simulate}
             </button>
           </div>
         )}
