@@ -79,6 +79,6 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     // Skip internal paths and static files
-    '/((?!_next|api|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp|xml|txt|json|woff|woff2|ttf|eot)).*)',
+    '/((?!_next|api|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp|xml|txt|json|woff|woff2|ttf|eot|webmanifest)).*)',
   ],
 };
