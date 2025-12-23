@@ -173,23 +173,14 @@ export function AsciiVideoConverter() {
         <div className="relative z-10 p-4 sm:p-6 md:p-8">
           {/* ASCII Art Header */}
           <header className="mb-6 sm:mb-8">
-            {/* Mobile: Simple Title */}
-            <div className="sm:hidden mb-4">
-              <h1 className="text-[#00ff41] text-lg font-bold tracking-wider">
-                ASCII CONVERTER
-              </h1>
-            </div>
-
-            {/* Desktop: ASCII Art Title */}
-            <div className="hidden sm:block">
-              <pre className="text-[#00ff41] text-[10px] md:text-xs leading-tight mb-4 opacity-80">
-                {`
-    _    ____   ____ ___ ___    ____ ___  _   ___     _______ ____ _____ _____ ____
+            {/* ASCII Art Title - Same style for all screens */}
+            <div className="overflow-x-auto mb-4">
+              <pre className="text-[#00ff41] text-[5px] sm:text-[10px] md:text-xs leading-tight opacity-80 whitespace-pre">
+                {`    _    ____   ____ ___ ___    ____ ___  _   ___     _______ ____ _____ _____ ____
    / \\  / ___| / ___|_ _|_ _|  / ___/ _ \\| \\ | \\ \\   / | ____|  _ |_   _| ____|  _ \\
   / _ \\ \\___ \\| |    | | | |  | |  | | | |  \\| |\\ \\ / /|  _| | |_) || | |  _| | |_) |
  / ___ \\ ___) | |___ | | | |  | |__| |_| | |\\  | \\ V / | |___|  _ < | | | |___|  _ <
-/_/   \\_|____/ \\____|___|___|  \\____\\___/|_| \\_|  \\_/  |_____|_| \\_\\|_| |_____|_| \\_\\
-                `}
+/_/   \\_|____/ \\____|___|___|  \\____\\___/|_| \\_|  \\_/  |_____|_| \\_\\|_| |_____|_| \\_\\`}
               </pre>
             </div>
 
