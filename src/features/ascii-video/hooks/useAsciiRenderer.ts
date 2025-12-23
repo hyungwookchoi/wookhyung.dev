@@ -17,6 +17,7 @@ interface UseAsciiRendererResult {
 export function useAsciiRenderer(
   videoRef: RefObject<HTMLVideoElement | null>,
   isPlaying: boolean,
+  videoSrc?: string,
 ): UseAsciiRendererResult {
   const [asciiFrame, setAsciiFrame] = useState<AsciiCell[][]>([]);
   const [dimensions, setDimensions] = useState<AsciiDimensions>({
@@ -107,11 +108,19 @@ export function useAsciiRenderer(
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
     video.addEventListener('loadeddata', handleLoadedData);
 
+    // 이미 로드된 상태라면 수동으로 첫 프레임 렌더링
+    if (video.readyState >= 1) {
+      handleLoadedMetadata();
+    }
+    if (video.readyState >= 2) {
+      handleLoadedData();
+    }
+
     return () => {
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
       video.removeEventListener('loadeddata', handleLoadedData);
     };
-  }, [videoRef]);
+  }, [videoRef, videoSrc]);
 
   return { asciiFrame, dimensions };
 }

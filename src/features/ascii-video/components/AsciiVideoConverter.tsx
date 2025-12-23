@@ -1,26 +1,33 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { useLocale } from '@/i18n/context';
 
 import { getTranslations } from '../constants/translations';
 import { useAsciiRenderer } from '../hooks/useAsciiRenderer';
+import { useImageAsciiRenderer } from '../hooks/useImageAsciiRenderer';
 import { useVideoProcessor } from '../hooks/useVideoProcessor';
 import { useVideoRecorder } from '../hooks/useVideoRecorder';
 import { AsciiCanvas, AsciiCanvasHandle } from './AsciiCanvas';
+import { ImageDropzone } from './ImageDropzone';
 import { PlaybackControls } from './PlaybackControls';
 import { VideoDropzone } from './VideoDropzone';
 
 const DEFAULT_VIDEO_URL = '/videos/reze-dance.mp4';
 
+type TabType = 'video' | 'image';
+
 export function AsciiVideoConverter() {
   const locale = useLocale();
   const t = getTranslations(locale);
 
+  const [activeTab, setActiveTab] = useState<TabType>('video');
   const asciiCanvasRef = useRef<AsciiCanvasHandle>(null);
+  const imageAsciiCanvasRef = useRef<AsciiCanvasHandle>(null);
 
+  // Video processing
   const {
     videoFile,
     isLoaded,
@@ -30,11 +37,24 @@ export function AsciiVideoConverter() {
     setVideoFile,
     play,
     pause,
-    reset,
+    reset: resetVideo,
   } = useVideoProcessor(DEFAULT_VIDEO_URL);
 
-  const { asciiFrame } = useAsciiRenderer(videoRef, isPlaying);
+  const { asciiFrame: videoAsciiFrame } = useAsciiRenderer(
+    videoRef,
+    isPlaying,
+    videoSrc,
+  );
   const { isRecording, startRecording, stopRecording } = useVideoRecorder();
+
+  // Image processing
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const {
+    asciiFrame: imageAsciiFrame,
+    isLoading: isImageLoading,
+    processImage,
+    reset: resetImageAscii,
+  } = useImageAsciiRenderer();
 
   const handleRecord = useCallback(() => {
     const canvas = asciiCanvasRef.current?.getCanvas();
@@ -48,6 +68,31 @@ export function AsciiVideoConverter() {
     stopRecording();
     pause();
   }, [stopRecording, pause]);
+
+  const handleImageSelect = useCallback(
+    (file: File | null) => {
+      setImageFile(file);
+      if (file) {
+        processImage(file);
+      }
+    },
+    [processImage],
+  );
+
+  const handleImageReset = useCallback(() => {
+    setImageFile(null);
+    resetImageAscii();
+  }, [resetImageAscii]);
+
+  const handleDownloadImage = useCallback(() => {
+    const canvas = imageAsciiCanvasRef.current?.getCanvas();
+    if (canvas) {
+      const link = document.createElement('a');
+      link.download = 'ascii-image.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  }, []);
 
   return (
     <motion.div
@@ -100,7 +145,7 @@ export function AsciiVideoConverter() {
 
           {/* Status Indicator */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {isRecording && (
+            {activeTab === 'video' && isRecording && (
               <motion.div
                 animate={{ opacity: [1, 0.3, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
@@ -111,10 +156,14 @@ export function AsciiVideoConverter() {
               </motion.div>
             )}
             <span className="text-[#00ff41]/40 text-[10px] sm:text-xs">
-              {isPlaying ? '▶' : '■'}
+              {activeTab === 'video' ? (isPlaying ? '▶' : '■') : '◈'}
               <span className="hidden sm:inline">
                 {' '}
-                {isPlaying ? 'PLAYING' : 'READY'}
+                {activeTab === 'video'
+                  ? isPlaying
+                    ? 'PLAYING'
+                    : 'READY'
+                  : 'IMAGE'}
               </span>
             </span>
           </div>
@@ -127,21 +176,21 @@ export function AsciiVideoConverter() {
             {/* Mobile: Simple Title */}
             <div className="sm:hidden mb-4">
               <h1 className="text-[#00ff41] text-lg font-bold tracking-wider">
-                ASCII VIDEO
+                ASCII CONVERTER
               </h1>
             </div>
 
             {/* Desktop: ASCII Art Title */}
             <div className="hidden sm:block overflow-x-auto">
               <pre className="text-[#00ff41] text-[8px] md:text-[10px] leading-tight mb-4 opacity-80 inline-block">
-                {`╔═══════════════════════════════════════════════════════════════════════╗
-║  █████╗ ███████╗ ██████╗██╗██╗  ██╗   ██╗██╗██████╗ ███████╗ ██████╗  ║
-║ ██╔══██╗██╔════╝██╔════╝██║██║  ██║   ██║██║██╔══██╗██╔════╝██╔═══██╗ ║
-║ ███████║███████╗██║     ██║██║  ██║   ██║██║██║  ██║█████╗  ██║   ██║ ║
-║ ██╔══██║╚════██║██║     ██║██║  ╚██╗ ██╔╝██║██║  ██║██╔══╝  ██║   ██║ ║
-║ ██║  ██║███████║╚██████╗██║██║   ╚████╔╝ ██║██████╔╝███████╗╚██████╔╝ ║
-║ ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝    ╚═══╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝  ║
-╚═══════════════════════════════════════════════════════════════════════╝`}
+                {`╔═══════════════════════════════════════════════════════════════════════════════════╗
+║  █████╗ ███████╗ ██████╗██╗██╗     ██████╗ ██████╗ ███╗   ██╗██╗   ██╗███████╗██████╗ ║
+║ ██╔══██╗██╔════╝██╔════╝██║██║    ██╔════╝██╔═══██╗████╗  ██║██║   ██║██╔════╝██╔══██╗║
+║ ███████║███████╗██║     ██║██║    ██║     ██║   ██║██╔██╗ ██║██║   ██║█████╗  ██████╔╝║
+║ ██╔══██║╚════██║██║     ██║██║    ██║     ██║   ██║██║╚██╗██║╚██╗ ██╔╝██╔══╝  ██╔══██╗║
+║ ██║  ██║███████║╚██████╗██║██║    ╚██████╗╚██████╔╝██║ ╚████║ ╚████╔╝ ███████╗██║  ██║║
+║ ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝     ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝║
+╚═══════════════════════════════════════════════════════════════════════════════════╝`}
               </pre>
             </div>
 
@@ -165,34 +214,166 @@ export function AsciiVideoConverter() {
             </div>
           </header>
 
-          {/* Dropzone 또는 ASCII 출력 */}
-          {!videoFile ? (
-            <VideoDropzone onFileSelect={setVideoFile} t={t.dropzone} />
-          ) : (
-            <div className="space-y-6">
-              <AsciiCanvas ref={asciiCanvasRef} asciiFrame={asciiFrame} />
-              {isLoaded && (
-                <PlaybackControls
-                  isPlaying={isPlaying}
-                  isRecording={isRecording}
-                  onPlay={play}
-                  onPause={pause}
-                  onReset={reset}
-                  onRecord={handleRecord}
-                  onStopRecord={handleStopRecord}
-                  t={t.controls}
+          {/* Tab Navigation */}
+          <div className="flex gap-1 mb-6 border-b border-[#00ff41]/20 pb-0">
+            <button
+              onClick={() => setActiveTab('video')}
+              className={`
+                relative px-4 py-2 text-xs sm:text-sm font-mono uppercase tracking-wider
+                transition-all duration-200
+                ${
+                  activeTab === 'video'
+                    ? 'text-[#00ff41]'
+                    : 'text-[#00ff41]/40 hover:text-[#00ff41]/70'
+                }
+              `}
+            >
+              <span className="relative z-10">[ {t.tabs.video} ]</span>
+              {activeTab === 'video' && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-x-0 -bottom-px h-px bg-[#00ff41]"
+                  transition={{ duration: 0.2 }}
                 />
               )}
-            </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('image')}
+              className={`
+                relative px-4 py-2 text-xs sm:text-sm font-mono uppercase tracking-wider
+                transition-all duration-200
+                ${
+                  activeTab === 'image'
+                    ? 'text-[#00ff41]'
+                    : 'text-[#00ff41]/40 hover:text-[#00ff41]/70'
+                }
+              `}
+            >
+              <span className="relative z-10">[ {t.tabs.image} ]</span>
+              {activeTab === 'image' && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-x-0 -bottom-px h-px bg-[#00ff41]"
+                  transition={{ duration: 0.2 }}
+                />
+              )}
+            </button>
+          </div>
+
+          {/* Video Tab Content */}
+          {activeTab === 'video' && (
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {!videoFile ? (
+                <VideoDropzone onFileSelect={setVideoFile} t={t.dropzone} />
+              ) : (
+                <div className="space-y-6">
+                  <AsciiCanvas
+                    ref={asciiCanvasRef}
+                    asciiFrame={videoAsciiFrame}
+                  />
+                  {isLoaded && (
+                    <PlaybackControls
+                      isPlaying={isPlaying}
+                      isRecording={isRecording}
+                      onPlay={play}
+                      onPause={pause}
+                      onReset={resetVideo}
+                      onRecord={handleRecord}
+                      onStopRecord={handleStopRecord}
+                      t={t.controls}
+                    />
+                  )}
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* Image Tab Content */}
+          {activeTab === 'image' && (
+            <motion.div
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {!imageFile ? (
+                <ImageDropzone
+                  onFileSelect={handleImageSelect}
+                  t={t.imageDropzone}
+                />
+              ) : (
+                <div className="space-y-6">
+                  {isImageLoading ? (
+                    <div className="flex flex-col items-center justify-center py-12 sm:py-20 text-[#00ff41]/40">
+                      <motion.div
+                        className="relative w-16 h-16 sm:w-20 sm:h-20 mb-6"
+                        animate={{ rotate: 360 }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: 'linear',
+                        }}
+                      >
+                        <div className="absolute inset-0 border-2 border-[#00ff41]/20 rounded-full" />
+                        <div className="absolute inset-0 border-2 border-transparent border-t-[#00ff41]/60 rounded-full" />
+                      </motion.div>
+                      <div className="text-[#00ff41]/60 text-xs sm:text-sm font-mono">
+                        PROCESSING...
+                      </div>
+                    </div>
+                  ) : (
+                    <AsciiCanvas
+                      ref={imageAsciiCanvasRef}
+                      asciiFrame={imageAsciiFrame}
+                    />
+                  )}
+
+                  {/* Image Controls */}
+                  <div className="flex justify-center gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleDownloadImage}
+                      disabled={isImageLoading}
+                      className="px-4 py-2 border border-[#00ff41]/60 text-[#00ff41] text-xs sm:text-sm
+                        font-mono uppercase tracking-wider hover:bg-[#00ff41]/10 transition-colors
+                        disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      [ {t.imageControls.download} ]
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleImageReset}
+                      className="px-4 py-2 border border-[#00ff41]/60 text-[#00ff41] text-xs sm:text-sm
+                        font-mono uppercase tracking-wider hover:bg-[#00ff41]/10 transition-colors"
+                    >
+                      [ {t.imageControls.reset} ]
+                    </motion.button>
+                  </div>
+                </div>
+              )}
+            </motion.div>
           )}
         </div>
 
         {/* Bottom Status Bar */}
         <div className="relative z-10 flex items-center justify-between px-3 sm:px-4 py-2 border-t border-[#00ff41]/20 bg-[#050505] text-[8px] sm:text-[10px] text-[#00ff41]/40 gap-2">
-          <span className="hidden sm:inline">MODE: REALTIME</span>
-          <span className="sm:hidden">REALTIME</span>
-          <span className="hidden sm:inline">OUTPUT: WEBM</span>
-          <span className="sm:hidden">WEBM</span>
+          <span className="hidden sm:inline">
+            MODE: {activeTab === 'video' ? 'REALTIME' : 'STATIC'}
+          </span>
+          <span className="sm:hidden">
+            {activeTab === 'video' ? 'REALTIME' : 'STATIC'}
+          </span>
+          <span className="hidden sm:inline">
+            OUTPUT: {activeTab === 'video' ? 'WEBM' : 'PNG'}
+          </span>
+          <span className="sm:hidden">
+            {activeTab === 'video' ? 'WEBM' : 'PNG'}
+          </span>
           <span>
             {new Date().toLocaleTimeString('en-US', { hour12: false })}
           </span>
@@ -206,6 +387,7 @@ export function AsciiVideoConverter() {
         className="hidden"
         playsInline
         muted
+        preload="auto"
       />
     </motion.div>
   );

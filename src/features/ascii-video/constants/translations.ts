@@ -2,8 +2,12 @@ import { Locale } from '@/i18n/config';
 
 export const translations = {
   ko: {
-    title: 'ASCII 비디오 컨버터',
-    subtitle: 'video_to_ascii --realtime --color',
+    title: 'ASCII 컨버터',
+    subtitle: 'media_to_ascii --realtime --color',
+    tabs: {
+      video: 'VIDEO',
+      image: 'IMAGE',
+    },
     dropzone: {
       placeholder: 'INPUT_FILE을 드래그하거나 클릭하여 선택...',
       dragActive: 'DROP_TARGET_READY',
@@ -11,6 +15,10 @@ export const translations = {
       type: 'TYPE',
       unknown: 'UNKNOWN',
     },
+    imageDropzone: {
+      placeholder: 'IMAGE_FILE을 드래그하거나 클릭하여 선택...',
+      dragActive: 'DROP_TARGET_READY',
+    },
     controls: {
       play: 'PLAY',
       pause: 'STOP',
@@ -19,10 +27,18 @@ export const translations = {
       stopRecord: 'END',
       recording: 'RECORDING...',
     },
+    imageControls: {
+      download: 'DOWNLOAD',
+      reset: 'RESET',
+    },
   },
   en: {
-    title: 'ASCII Video Converter',
-    subtitle: 'video_to_ascii --realtime --color',
+    title: 'ASCII Converter',
+    subtitle: 'media_to_ascii --realtime --color',
+    tabs: {
+      video: 'VIDEO',
+      image: 'IMAGE',
+    },
     dropzone: {
       placeholder: 'Drag INPUT_FILE or click to select...',
       dragActive: 'DROP_TARGET_READY',
@@ -30,6 +46,10 @@ export const translations = {
       type: 'TYPE',
       unknown: 'UNKNOWN',
     },
+    imageDropzone: {
+      placeholder: 'Drag IMAGE_FILE or click to select...',
+      dragActive: 'DROP_TARGET_READY',
+    },
     controls: {
       play: 'PLAY',
       pause: 'STOP',
@@ -37,6 +57,10 @@ export const translations = {
       record: 'REC',
       stopRecord: 'END',
       recording: 'RECORDING...',
+    },
+    imageControls: {
+      download: 'DOWNLOAD',
+      reset: 'RESET',
     },
   },
 } as const;
