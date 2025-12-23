@@ -74,7 +74,7 @@ export function useAsciiRenderer(
       const newDimensions = calculateDimensions(
         video.videoWidth,
         video.videoHeight,
-        120, // maxRows - 고화질
+        100, // maxRows
       );
       setDimensions(newDimensions);
     };
@@ -94,7 +94,7 @@ export function useAsciiRenderer(
       const currentDims = calculateDimensions(
         video.videoWidth,
         video.videoHeight,
-        120, // maxRows - 고화질
+        100, // maxRows
       );
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const ascii = imageDataToColorAscii(

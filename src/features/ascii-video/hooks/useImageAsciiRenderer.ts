@@ -41,7 +41,7 @@ export function useImageAsciiRenderer(): UseImageAsciiRendererResult {
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0);
 
-      const dimensions = calculateDimensions(img.width, img.height, 120);
+      const dimensions = calculateDimensions(img.width, img.height, 100);
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const ascii = imageDataToColorAscii(
         imageData,
