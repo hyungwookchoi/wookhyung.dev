@@ -83,44 +83,57 @@ export function AsciiVideoConverter() {
         />
 
         {/* Terminal Header Bar */}
-        <div className="relative z-10 flex items-center justify-between px-4 py-3 border-b border-[#00ff41]/20 bg-[#0a0a0a]">
-          <div className="flex items-center gap-3">
+        <div className="relative z-10 flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3 border-b border-[#00ff41]/20 bg-[#0a0a0a]">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Terminal Dots */}
-            <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#ff5f56] opacity-80" />
-              <div className="w-3 h-3 rounded-full bg-[#ffbd2e] opacity-80" />
-              <div className="w-3 h-3 rounded-full bg-[#27ca40] opacity-80" />
+            <div className="flex gap-1.5 sm:gap-2">
+              <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#ff5f56] opacity-80" />
+              <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#ffbd2e] opacity-80" />
+              <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#27ca40] opacity-80" />
             </div>
             {/* Title */}
-            <span className="text-[#00ff41]/60 text-xs tracking-[0.2em] uppercase ml-2">
-              ascii_converter.exe
+            <span className="text-[#00ff41]/60 text-[10px] sm:text-xs tracking-[0.1em] sm:tracking-[0.2em] uppercase ml-1 sm:ml-2">
+              <span className="hidden sm:inline">ascii_converter.exe</span>
+              <span className="sm:hidden">ascii.exe</span>
             </span>
           </div>
 
           {/* Status Indicator */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {isRecording && (
               <motion.div
                 animate={{ opacity: [1, 0.3, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
-                className="flex items-center gap-2 text-[#ff3e3e] text-xs"
+                className="flex items-center gap-1 sm:gap-2 text-[#ff3e3e] text-[10px] sm:text-xs"
               >
-                <span className="w-2 h-2 rounded-full bg-[#ff3e3e]" />
+                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#ff3e3e]" />
                 REC
               </motion.div>
             )}
-            <span className="text-[#00ff41]/40 text-xs">
-              {isPlaying ? '▶ PLAYING' : '■ READY'}
+            <span className="text-[#00ff41]/40 text-[10px] sm:text-xs">
+              {isPlaying ? '▶' : '■'}
+              <span className="hidden sm:inline">
+                {' '}
+                {isPlaying ? 'PLAYING' : 'READY'}
+              </span>
             </span>
           </div>
         </div>
 
         {/* Main Content Area */}
-        <div className="relative z-10 p-6 sm:p-8">
+        <div className="relative z-10 p-4 sm:p-6 md:p-8">
           {/* ASCII Art Header */}
-          <header className="mb-8">
-            <div className="overflow-x-auto">
-              <pre className="text-[#00ff41] text-[6px] sm:text-[8px] md:text-[10px] leading-tight mb-4 opacity-80 inline-block">
+          <header className="mb-6 sm:mb-8">
+            {/* Mobile: Simple Title */}
+            <div className="sm:hidden mb-4">
+              <h1 className="text-[#00ff41] text-lg font-bold tracking-wider">
+                ASCII VIDEO
+              </h1>
+            </div>
+
+            {/* Desktop: ASCII Art Title */}
+            <div className="hidden sm:block overflow-x-auto">
+              <pre className="text-[#00ff41] text-[8px] md:text-[10px] leading-tight mb-4 opacity-80 inline-block">
                 {`╔═══════════════════════════════════════════════════════════════════════╗
 ║  █████╗ ███████╗ ██████╗██╗██╗  ██╗   ██╗██╗██████╗ ███████╗ ██████╗  ║
 ║ ██╔══██╗██╔════╝██╔════╝██║██║  ██║   ██║██║██╔══██╗██╔════╝██╔═══██╗ ║
@@ -132,12 +145,13 @@ export function AsciiVideoConverter() {
               </pre>
             </div>
 
-            <div className="flex items-center gap-2 text-[#00ff41]/60 text-xs">
+            <div className="flex items-center gap-2 text-[#00ff41]/60 text-[10px] sm:text-xs">
               <span className="text-[#00ff41]">$</span>
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
+                className="truncate"
               >
                 {t.subtitle}
               </motion.span>
@@ -174,9 +188,11 @@ export function AsciiVideoConverter() {
         </div>
 
         {/* Bottom Status Bar */}
-        <div className="relative z-10 flex items-center justify-between px-4 py-2 border-t border-[#00ff41]/20 bg-[#050505] text-[10px] text-[#00ff41]/40">
-          <span>MODE: REALTIME</span>
-          <span>OUTPUT: WEBM</span>
+        <div className="relative z-10 flex items-center justify-between px-3 sm:px-4 py-2 border-t border-[#00ff41]/20 bg-[#050505] text-[8px] sm:text-[10px] text-[#00ff41]/40 gap-2">
+          <span className="hidden sm:inline">MODE: REALTIME</span>
+          <span className="sm:hidden">REALTIME</span>
+          <span className="hidden sm:inline">OUTPUT: WEBM</span>
+          <span className="sm:hidden">WEBM</span>
           <span>
             {new Date().toLocaleTimeString('en-US', { hour12: false })}
           </span>

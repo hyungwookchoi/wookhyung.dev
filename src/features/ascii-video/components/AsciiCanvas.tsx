@@ -65,18 +65,30 @@ export const AsciiCanvas = memo(
     const content = useMemo(() => {
       if (asciiFrame.length === 0) {
         return (
-          <div className="flex flex-col items-center justify-center py-20 text-[#00ff41]/40">
-            <pre className="text-xs mb-4">
-              {`
-  ████████╗██╗   ██╗██████╗ ███╗   ██╗    ██████╗ ███╗   ██╗
-  ╚══██╔══╝██║   ██║██╔══██╗████╗  ██║   ██╔═══██╗████╗  ██║
-     ██║   ██║   ██║██████╔╝██╔██╗ ██║   ██║   ██║██╔██╗ ██║
-     ██║   ██║   ██║██╔══██╗██║╚██╗██║   ██║   ██║██║╚██╗██║
-     ██║   ╚██████╔╝██║  ██║██║ ╚████║   ╚██████╔╝██║ ╚████║
-     ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝    ╚═════╝ ╚═╝  ╚═══╝
-              `.trim()}
-            </pre>
-            <span className="text-sm">INITIALIZING...</span>
+          <div className="flex flex-col items-center justify-center py-12 sm:py-20 text-[#00ff41]/40">
+            {/* Loading Animation */}
+            <motion.div
+              className="relative w-16 h-16 sm:w-20 sm:h-20 mb-6"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+            >
+              <div className="absolute inset-0 border-2 border-[#00ff41]/20 rounded-full" />
+              <div className="absolute inset-0 border-2 border-transparent border-t-[#00ff41]/60 rounded-full" />
+            </motion.div>
+
+            {/* Status Text */}
+            <div className="text-center space-y-2">
+              <motion.div
+                className="text-[#00ff41]/60 text-xs sm:text-sm font-mono"
+                animate={{ opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                ▶ PRESS PLAY
+              </motion.div>
+              <div className="text-[10px] sm:text-xs text-[#00ff41]/30">
+                video loaded • waiting for input
+              </div>
+            </div>
           </div>
         );
       }

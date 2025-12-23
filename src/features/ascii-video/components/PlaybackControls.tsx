@@ -20,7 +20,43 @@ interface PlaybackControlsProps {
   };
 }
 
-function TerminalButton({
+function MobileButton({
+  onClick,
+  disabled,
+  variant = 'default',
+  icon,
+  label,
+}: {
+  onClick: () => void;
+  disabled?: boolean;
+  variant?: 'default' | 'danger';
+  icon: string;
+  label: string;
+}) {
+  const variantClasses =
+    variant === 'danger'
+      ? 'border-red-400/50 text-red-400'
+      : 'border-[#00ff41]/50 text-[#00ff41]/70';
+
+  return (
+    <motion.button
+      whileTap={disabled ? {} : { scale: 0.95 }}
+      onClick={onClick}
+      disabled={disabled}
+      className={`
+        flex items-center gap-2 px-4 py-2 border rounded font-mono text-xs
+        transition-all duration-200
+        ${variantClasses}
+        ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer active:bg-[#00ff41]/10'}
+      `}
+    >
+      <span className="text-sm">{icon}</span>
+      <span>{label}</span>
+    </motion.button>
+  );
+}
+
+function DesktopButton({
   onClick,
   disabled,
   variant = 'default',
@@ -31,8 +67,6 @@ function TerminalButton({
   variant?: 'default' | 'danger';
   children: React.ReactNode;
 }) {
-  const baseClasses =
-    'relative font-mono text-[10px] sm:text-xs transition-all duration-200';
   const variantClasses =
     variant === 'danger'
       ? 'text-red-400 hover:text-red-300'
@@ -44,7 +78,11 @@ function TerminalButton({
       whileTap={disabled ? {} : { scale: 0.98 }}
       onClick={onClick}
       disabled={disabled}
-      className={`${baseClasses} ${variantClasses} ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+      className={`
+        relative font-mono text-xs transition-all duration-200
+        ${variantClasses}
+        ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
+      `}
     >
       <pre className="leading-none select-none">{children}</pre>
     </motion.button>
@@ -75,10 +113,31 @@ export function PlaybackControls({
         </motion.span>
       </div>
 
-      {/* ASCII Button Panel */}
-      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-        {/* Play/Pause Button */}
-        <TerminalButton
+      {/* Mobile Button Panel */}
+      <div className="flex sm:hidden flex-wrap items-center justify-center gap-2">
+        <MobileButton
+          onClick={isPlaying ? onPause : onPlay}
+          disabled={isRecording}
+          icon={isPlaying ? '▐▐' : '▶'}
+          label={isPlaying ? t.pause : t.play}
+        />
+        <MobileButton
+          onClick={onReset}
+          disabled={isRecording}
+          icon="↺"
+          label={t.reset}
+        />
+        <MobileButton
+          onClick={isRecording ? onStopRecord : onRecord}
+          variant={isRecording ? 'danger' : 'default'}
+          icon={isRecording ? '■' : '●'}
+          label={isRecording ? t.stopRecord : t.record}
+        />
+      </div>
+
+      {/* Desktop ASCII Button Panel */}
+      <div className="hidden sm:flex flex-wrap items-center justify-center gap-4">
+        <DesktopButton
           onClick={isPlaying ? onPause : onPlay}
           disabled={isRecording}
         >
@@ -89,17 +148,15 @@ export function PlaybackControls({
             : `┌──────────┐
 │ ▶  ${t.play.padEnd(4)} │
 └──────────┘`}
-        </TerminalButton>
+        </DesktopButton>
 
-        {/* Reset Button */}
-        <TerminalButton onClick={onReset} disabled={isRecording}>
+        <DesktopButton onClick={onReset} disabled={isRecording}>
           {`┌──────────┐
 │ ↺  ${t.reset.padEnd(4)} │
 └──────────┘`}
-        </TerminalButton>
+        </DesktopButton>
 
-        {/* Record Button */}
-        <TerminalButton
+        <DesktopButton
           onClick={isRecording ? onStopRecord : onRecord}
           variant={isRecording ? 'danger' : 'default'}
         >
@@ -110,7 +167,7 @@ export function PlaybackControls({
             : `┌──────────┐
 │ ●  ${t.record.padEnd(4)} │
 └──────────┘`}
-        </TerminalButton>
+        </DesktopButton>
       </div>
 
       {/* Recording Status Indicator */}
@@ -123,11 +180,11 @@ export function PlaybackControls({
           <motion.span
             animate={{ opacity: [1, 0.3] }}
             transition={{ duration: 0.5, repeat: Infinity }}
-            className="text-red-500 text-lg"
+            className="text-red-500 text-base sm:text-lg"
           >
             ●
           </motion.span>
-          <span className="text-red-400 text-xs font-mono uppercase tracking-wider">
+          <span className="text-red-400 text-[10px] sm:text-xs font-mono uppercase tracking-wider">
             {t.recording}
           </span>
         </motion.div>
