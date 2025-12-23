@@ -2,6 +2,7 @@
 
 import { ArrowUpRightIcon } from 'lucide-react';
 import { motion } from 'motion/react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import type { Locale } from '@/i18n/config';
@@ -51,25 +52,37 @@ export function PlaygroundList({ lang, emptyMessage }: PlaygroundListProps) {
           <Link
             href={`/${lang}/playground/${playground.slug}`}
             className={cn(
-              'group flex flex-col gap-3 p-5',
+              'group flex flex-col overflow-hidden',
               'border border-border bg-card',
               'hover:border-primary/50 hover:bg-muted/50 transition-all duration-200',
             )}
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <span className="text-[10px] uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5">
-                  {playground.category}
-                </span>
-                <h2 className="mt-2 text-base font-medium text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                  {playground.title[lang]}
-                </h2>
+            {playground.thumbnail && (
+              <div className="relative aspect-video w-full overflow-hidden bg-muted">
+                <Image
+                  src={playground.thumbnail}
+                  alt={playground.title[lang]}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                />
               </div>
-              <ArrowUpRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+            )}
+            <div className="flex flex-col gap-3 p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5">
+                    {playground.category}
+                  </span>
+                  <h2 className="mt-2 text-base font-medium text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                    {playground.title[lang]}
+                  </h2>
+                </div>
+                <ArrowUpRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+              </div>
+              <p className="text-sm text-muted-foreground line-clamp-2">
+                {playground.description[lang]}
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {playground.description[lang]}
-            </p>
           </Link>
         </motion.div>
       ))}

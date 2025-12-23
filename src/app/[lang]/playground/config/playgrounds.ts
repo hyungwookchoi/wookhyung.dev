@@ -9,22 +9,22 @@ export interface Playground {
     en: string;
   };
   category: string;
+  thumbnail?: string;
   relatedPost?: string;
 }
 
 export const PLAYGROUNDS: Playground[] = [
-  // Example:
-  // {
-  //   slug: 'ethereum-pos-simulator',
-  //   title: {
-  //     ko: 'Ethereum PoS 시뮬레이터',
-  //     en: 'Ethereum PoS Simulator',
-  //   },
-  //   description: {
-  //     ko: 'Ethereum의 지분 증명(PoS) 합의 메커니즘을 시각적으로 이해해보세요.',
-  //     en: 'Visually understand Ethereum\'s Proof of Stake consensus mechanism.',
-  //   },
-  //   category: 'Blockchain',
-  //   relatedPost: '/tech/ethereum-pos',
-  // },
+  {
+    slug: 'ascii-video',
+    title: {
+      ko: 'ASCII 비디오 컨버터',
+      en: 'ASCII Video Converter',
+    },
+    description: {
+      ko: '동영상을 ASCII 아트로 변환하는 인터랙티브 도구',
+      en: 'Convert your video to ASCII art in real-time',
+    },
+    category: 'Media',
+    thumbnail: '/images/video-to-ascii-thumbnail.png',
+  },
 ];
