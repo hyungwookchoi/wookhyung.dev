@@ -98,8 +98,18 @@ export function RewardCalculator() {
       staked: p.x,
       apr: Number(p.y.toFixed(2)),
     }));
+
+    // Add current position if not already in data
+    if (!data.some((d) => d.staked === totalStakedM)) {
+      data.push({
+        staked: totalStakedM,
+        apr: Number(currentY.toFixed(2)),
+      });
+      data.sort((a, b) => a.staked - b.staked);
+    }
+
     return data;
-  }, [curvePoints]);
+  }, [curvePoints, totalStakedM, currentY]);
 
   return (
     <div className="not-prose my-8 relative">
