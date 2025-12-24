@@ -1,8 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useLocale } from '@/i18n/context';
 
@@ -23,6 +22,7 @@ const translations = {
     currentSlot: '현재 슬롯',
     timeRemaining: '남은 시간',
     totalTime: '총 시간',
+    start: '시작',
   },
   en: {
     title: 'Slot & Epoch Visualization',
@@ -40,6 +40,7 @@ const translations = {
     currentSlot: 'Current Slot',
     timeRemaining: 'Time Left',
     totalTime: 'Total Time',
+    start: 'Start',
   },
 };
 
@@ -51,23 +52,10 @@ export function SlotEpochVisualizer() {
   const [progress, setProgress] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const hasAutoStarted = useRef(false);
-
-  const { ref, inView } = useInView({
-    threshold: 0.3,
-    triggerOnce: true,
-  });
+  const [hasStarted, setHasStarted] = useState(false);
 
   const SLOT_DURATION = 1000; // 1초 (12초의 1/12로 축소)
   const TOTAL_SLOTS = 32;
-
-  // 뷰포트 진입 시 자동 시작
-  useEffect(() => {
-    if (inView && !hasAutoStarted.current) {
-      hasAutoStarted.current = true;
-      setIsRunning(true);
-    }
-  }, [inView]);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -92,15 +80,16 @@ export function SlotEpochVisualizer() {
     return () => clearInterval(interval);
   }, [isRunning]);
 
-  const handleReplay = useCallback(() => {
+  const handleStart = useCallback(() => {
     setCurrentSlot(0);
     setProgress(0);
     setIsComplete(false);
+    setHasStarted(true);
     setIsRunning(true);
   }, []);
 
   return (
-    <div ref={ref} className="not-prose my-8 relative">
+    <div className="not-prose my-8 relative">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-cyan-400" />
@@ -216,14 +205,14 @@ export function SlotEpochVisualizer() {
         </div>
 
         {/* Controls */}
-        {isComplete && (
+        {(!hasStarted || isComplete) && (
           <div className="flex items-center justify-center pt-2">
             <button
-              onClick={handleReplay}
+              onClick={handleStart}
               className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
                        bg-cyan-500 text-background hover:bg-cyan-400 transition-colors"
             >
-              {t.replay}
+              {!hasStarted ? t.start : t.replay}
             </button>
           </div>
         )}

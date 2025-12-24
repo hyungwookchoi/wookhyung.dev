@@ -1,8 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useCallback, useState } from 'react';
 
 import { useLocale } from '@/i18n/context';
 
@@ -14,12 +13,6 @@ export function MultipartProcessDemo() {
   const locale = useLocale();
   const t = getTranslations(locale).processDemo;
   const [stage, setStage] = useState<Stage>(0);
-  const hasAutoStarted = useRef(false);
-
-  const { ref, inView } = useInView({
-    threshold: 0.3,
-    triggerOnce: true,
-  });
 
   const mockParts = [
     { id: 1, etag: 'a1b2c3d4e5f6' },
@@ -27,7 +20,6 @@ export function MultipartProcessDemo() {
     { id: 3, etag: '1a2b3c4d5e6f' },
   ];
 
-  // 전체 시뮬레이션 자동 실행
   const runFullSimulation = useCallback(async () => {
     setStage(0);
     await new Promise((r) => setTimeout(r, 1000));
@@ -38,20 +30,12 @@ export function MultipartProcessDemo() {
     setStage(3);
   }, []);
 
-  // 뷰포트 진입 시 자동 시작
-  useEffect(() => {
-    if (inView && !hasAutoStarted.current) {
-      hasAutoStarted.current = true;
-      runFullSimulation();
-    }
-  }, [inView, runFullSimulation]);
-
-  const handleReplay = useCallback(() => {
+  const handleStart = useCallback(() => {
     runFullSimulation();
   }, [runFullSimulation]);
 
   return (
-    <div ref={ref} className="not-prose my-8 relative">
+    <div className="not-prose my-8 relative">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-cyan-400" />
@@ -131,9 +115,13 @@ export function MultipartProcessDemo() {
                     </div>
                   </div>
                 </div>
-                <div className="text-xs text-muted-foreground">
+                <button
+                  onClick={handleStart}
+                  className="px-6 py-2 bg-cyan-500 text-background font-mono text-sm uppercase tracking-wider
+                           hover:bg-cyan-400 transition-colors"
+                >
                   {t.clickToStart}
-                </div>
+                </button>
               </motion.div>
             )}
 
@@ -388,7 +376,7 @@ export function MultipartProcessDemo() {
         {stage === 3 && (
           <div className="border-t border-border p-4 flex justify-center">
             <button
-              onClick={handleReplay}
+              onClick={handleStart}
               className="px-6 py-2 bg-cyan-500 text-background font-mono text-sm uppercase tracking-wider
                        hover:bg-cyan-400 transition-colors"
             >

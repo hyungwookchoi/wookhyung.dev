@@ -194,3 +194,168 @@ From a computer architecture perspective, whether it's memory, disk, or S3, it's
 <MultipartVerifier />
 
 </FileProvider>
+
+---
+
+## 7. Uploading to S3 from Frontend: Presigned URLs
+
+Now that you understand how multipart upload works, you might wonder how to implement it in a real web application. To upload files directly to S3 from the frontend, you need to understand **Presigned URLs**.
+
+### Why Presigned URLs Are Needed
+
+Accessing S3 requires AWS Access Key and Secret Key. But exposing these credentials to the browser creates serious security issues.
+
+```javascript
+// ❌ Never do this!
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: 'AKIAIOSFODNN7EXAMPLE',
+    secretAccessKey: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+  }
+});
+```
+
+Presigned URLs solve this by generating **URLs with temporary access permissions**, allowing file uploads to S3 without credentials.
+
+### How It Works
+
+The backend generates a Presigned URL using the AWS SDK.
+
+```javascript
+// Backend (Node.js)
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
+const command = new PutObjectCommand({
+  Bucket: 'my-bucket',
+  Key: 'uploads/photo.jpg',
+  ContentType: 'image/jpeg'
+});
+
+const presignedUrl = await getSignedUrl(s3Client, command, {
+  expiresIn: 3600  // Valid for 1 hour
+});
+```
+
+The generated URL looks like this:
+
+```
+https://my-bucket.s3.amazonaws.com/uploads/photo.jpg?
+X-Amz-Algorithm=AWS4-HMAC-SHA256&
+X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F...&
+X-Amz-Date=20241224T120000Z&
+X-Amz-Expires=3600&
+X-Amz-Signature=abc123...
+```
+
+The URL contains a **Signature**, allowing anyone with this URL to perform the specified operation only for the designated time. The frontend uploads directly to S3 using this URL.
+
+```javascript
+// Frontend
+const uploadFile = async (file) => {
+  // 1. Get Presigned URL from backend
+  const { uploadUrl } = await fetch('/api/get-upload-url', {
+    method: 'POST',
+    body: JSON.stringify({ filename: file.name, contentType: file.type })
+  }).then(r => r.json());
+
+  // 2. Upload directly to S3
+  await fetch(uploadUrl, {
+    method: 'PUT',
+    body: file,
+    headers: { 'Content-Type': file.type }
+  });
+};
+```
+
+<PresignedUrlFlowDemo />
+
+### Multipart Upload with Presigned URLs
+
+For large files, you can generate a Presigned URL for each part and upload them in parallel.
+
+```javascript
+// Backend: Initialize multipart + generate Presigned URLs for each part
+app.post('/api/init-multipart', async (req, res) => {
+  const { filename, partCount } = req.body;
+
+  // 1. Initialize multipart upload
+  const { UploadId } = await s3Client.send(
+    new CreateMultipartUploadCommand({ Bucket: 'my-bucket', Key: filename })
+  );
+
+  // 2. Generate Presigned URL for each part
+  const presignedUrls = await Promise.all(
+    Array.from({ length: partCount }, async (_, i) => {
+      const command = new UploadPartCommand({
+        Bucket: 'my-bucket',
+        Key: filename,
+        UploadId,
+        PartNumber: i + 1
+      });
+      return { partNumber: i + 1, url: await getSignedUrl(s3Client, command) };
+    })
+  );
+
+  res.json({ uploadId: UploadId, presignedUrls });
+});
+```
+
+The frontend splits the file and uploads in parallel.
+
+```javascript
+// Frontend: Parallel upload
+const uploadMultipart = async (file) => {
+  const partSize = 5 * 1024 * 1024; // 5MB
+  const partCount = Math.ceil(file.size / partSize);
+
+  // 1. Get Presigned URLs
+  const { uploadId, presignedUrls } = await fetch('/api/init-multipart', {
+    method: 'POST',
+    body: JSON.stringify({ filename: file.name, partCount })
+  }).then(r => r.json());
+
+  // 2. Parallel upload
+  const parts = await Promise.all(
+    presignedUrls.map(async ({ partNumber, url }) => {
+      const start = (partNumber - 1) * partSize;
+      const blob = file.slice(start, Math.min(start + partSize, file.size));
+      const res = await fetch(url, { method: 'PUT', body: blob });
+      return { PartNumber: partNumber, ETag: res.headers.get('ETag') };
+    })
+  );
+
+  // 3. Complete request
+  await fetch('/api/complete-multipart', {
+    method: 'POST',
+    body: JSON.stringify({ uploadId, filename: file.name, parts })
+  });
+};
+```
+
+### Why Use Presigned URLs?
+
+You could upload files through the backend. But consider uploading a 100MB file.
+
+**Via Backend:**
+- User → Backend: 100MB transfer
+- Backend → S3: 100MB transfer
+- Total traffic: 200MB, backend server load
+
+**With Presigned URL:**
+- User → Backend: URL request (few KB)
+- User → S3: 100MB direct transfer
+- Total traffic: 100MB, no backend load
+
+Since files bypass the backend, both server costs and response times improve.
+
+### Security
+
+Presigned URLs have these security characteristics:
+
+- **Time limit**: Set validity period with `expiresIn` (max 7 days)
+- **Operation restriction**: Can limit to PUT only, or GET only
+- **Path restriction**: Only accessible to specified file paths
+- **No credential exposure**: URL contains only signature, not actual Access Key
+
+Even if a URL is leaked, it becomes useless after the specified time expires, and only designated operations can be performed, making it much safer than exposing credentials directly.

@@ -7,6 +7,7 @@ export { ETagVisualization } from './components/sections/ETagVisualization';
 export { HexDumpExplorer } from './components/sections/HexDumpExplorer';
 export { MultipartProcessDemo } from './components/sections/MultipartProcessDemo';
 export { MultipartVerifier } from './components/sections/MultipartVerifier';
+export { PresignedUrlFlowDemo } from './components/sections/PresignedUrlFlowDemo';
 
 // Shared context
 export { FileProvider, useSharedFile } from './contexts/FileContext';

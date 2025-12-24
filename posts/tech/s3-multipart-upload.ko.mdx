@@ -194,3 +194,170 @@ video.mp4 [0...N] ✓
 <MultipartVerifier />
 
 </FileProvider>
+
+---
+
+## 7. 프론트엔드에서 S3에 업로드하기: Presigned URL
+
+멀티파트 업로드의 원리를 이해했다면, 실제 웹 애플리케이션에서 어떻게 구현하는지 궁금할 것이다. 프론트엔드에서 S3에 직접 파일을 업로드하려면 **Presigned URL**이라는 개념을 이해해야 한다.
+
+### Presigned URL이 필요한 이유
+
+S3에 접근하려면 AWS Access Key와 Secret Key가 필요하다. 하지만 이 자격증명을 브라우저에 노출하면 심각한 보안 문제가 발생한다.
+
+```javascript
+// ❌ 절대 이렇게 하면 안 됨!
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: 'AKIAIOSFODNN7EXAMPLE',
+    secretAccessKey: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+  },
+});
+```
+
+Presigned URL은 **임시로 접근 권한이 부여된 URL**을 생성하여, 자격증명 없이도 S3에 파일을 업로드할 수 있게 한다.
+
+### 작동 방식
+
+백엔드에서 AWS SDK를 사용해 Presigned URL을 생성한다.
+
+```javascript
+// 백엔드 (Node.js)
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
+const command = new PutObjectCommand({
+  Bucket: 'my-bucket',
+  Key: 'uploads/photo.jpg',
+  ContentType: 'image/jpeg',
+});
+
+const presignedUrl = await getSignedUrl(s3Client, command, {
+  expiresIn: 3600, // 1시간 동안 유효
+});
+```
+
+생성된 URL은 다음과 같은 형태다.
+
+```
+https://my-bucket.s3.amazonaws.com/uploads/photo.jpg?
+X-Amz-Algorithm=AWS4-HMAC-SHA256&
+X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F...&
+X-Amz-Date=20241224T120000Z&
+X-Amz-Expires=3600&
+X-Amz-Signature=abc123...
+```
+
+URL 자체에 **서명**(Signature)이 포함되어 있어, 이 URL을 가진 사람은 지정된 시간 동안만 해당 작업을 수행할 수 있다. 프론트엔드는 이 URL로 S3에 직접 업로드한다.
+
+```javascript
+// 프론트엔드
+const uploadFile = async (file) => {
+  // 1. 백엔드에서 Presigned URL 받기
+  const { uploadUrl } = await fetch('/api/get-upload-url', {
+    method: 'POST',
+    body: JSON.stringify({ filename: file.name, contentType: file.type }),
+  }).then((r) => r.json());
+
+  // 2. S3에 직접 업로드
+  await fetch(uploadUrl, {
+    method: 'PUT',
+    body: file,
+    headers: { 'Content-Type': file.type },
+  });
+};
+```
+
+<PresignedUrlFlowDemo />
+
+### 멀티파트 업로드와 Presigned URL
+
+대용량 파일의 경우, 각 파트마다 Presigned URL을 생성하여 병렬로 업로드할 수 있다.
+
+```javascript
+// 백엔드: 멀티파트 초기화 + 각 파트의 Presigned URL 생성
+app.post('/api/init-multipart', async (req, res) => {
+  const { filename, partCount } = req.body;
+
+  // 1. 멀티파트 업로드 초기화
+  const { UploadId } = await s3Client.send(
+    new CreateMultipartUploadCommand({ Bucket: 'my-bucket', Key: filename }),
+  );
+
+  // 2. 각 파트의 Presigned URL 생성
+  const presignedUrls = await Promise.all(
+    Array.from({ length: partCount }, async (_, i) => {
+      const command = new UploadPartCommand({
+        Bucket: 'my-bucket',
+        Key: filename,
+        UploadId,
+        PartNumber: i + 1,
+      });
+      return { partNumber: i + 1, url: await getSignedUrl(s3Client, command) };
+    }),
+  );
+
+  res.json({ uploadId: UploadId, presignedUrls });
+});
+```
+
+프론트엔드에서는 파일을 분할하고 병렬로 업로드한다.
+
+```javascript
+// 프론트엔드: 병렬 업로드
+const uploadMultipart = async (file) => {
+  const partSize = 5 * 1024 * 1024; // 5MB
+  const partCount = Math.ceil(file.size / partSize);
+
+  // 1. Presigned URL들 받기
+  const { uploadId, presignedUrls } = await fetch('/api/init-multipart', {
+    method: 'POST',
+    body: JSON.stringify({ filename: file.name, partCount }),
+  }).then((r) => r.json());
+
+  // 2. 병렬 업로드
+  const parts = await Promise.all(
+    presignedUrls.map(async ({ partNumber, url }) => {
+      const start = (partNumber - 1) * partSize;
+      const blob = file.slice(start, Math.min(start + partSize, file.size));
+      const res = await fetch(url, { method: 'PUT', body: blob });
+      return { PartNumber: partNumber, ETag: res.headers.get('ETag') };
+    }),
+  );
+
+  // 3. Complete 요청
+  await fetch('/api/complete-multipart', {
+    method: 'POST',
+    body: JSON.stringify({ uploadId, filename: file.name, parts }),
+  });
+};
+```
+
+### 왜 Presigned URL을 사용하는가?
+
+파일을 백엔드를 경유해서 업로드할 수도 있다. 하지만 100MB 파일을 업로드한다고 생각해보자.
+
+**백엔드 경유 방식:**
+
+- 사용자 → 백엔드: 100MB 전송
+- 백엔드 → S3: 100MB 전송
+- 총 트래픽: 200MB, 백엔드 서버 부하 발생
+
+**Presigned URL 방식:**
+
+- 사용자 → 백엔드: URL 요청 (수 KB)
+- 사용자 → S3: 100MB 직접 전송
+- 총 트래픽: 100MB, 백엔드 부하 없음
+
+파일이 백엔드를 거치지 않으므로 서버 비용과 응답 시간 모두 개선된다.
+
+### 보안
+
+Presigned URL은 다음과 같은 보안 특징을 가진다.
+
+- **시간 제한**: `expiresIn`으로 유효 시간 설정 (최대 7일)
+- **작업 제한**: PUT만 가능하도록, 또는 GET만 가능하도록 제한
+- **경로 제한**: 지정된 파일 경로에만 접근 가능
+- **자격증명 비노출**: URL에 서명만 포함, 실제 Access Key는 포함되지 않음
+
+URL이 유출되더라도 지정된 시간이 지나면 무용지물이 되고, 지정된 작업만 수행할 수 있기 때문에 직접 자격증명을 노출하는 것보다 훨씬 안전하다.

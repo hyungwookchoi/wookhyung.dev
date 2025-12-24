@@ -1,8 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useCallback, useState } from 'react';
 
 import { useLocale } from '@/i18n/context';
 
@@ -90,12 +89,6 @@ export function RandaoVisualization() {
     })),
   );
   const [finalRandom, setFinalRandom] = useState<string>('');
-  const hasAutoStarted = useRef(false);
-
-  const { ref, inView } = useInView({
-    threshold: 0.3,
-    triggerOnce: true,
-  });
 
   const runSimulation = useCallback(async () => {
     // Reset
@@ -162,14 +155,6 @@ export function RandaoVisualization() {
     );
   }, []);
 
-  // 뷰포트 진입 시 자동 시작
-  useEffect(() => {
-    if (inView && !hasAutoStarted.current) {
-      hasAutoStarted.current = true;
-      runSimulation();
-    }
-  }, [inView, runSimulation]);
-
   const getPhaseColor = (targetPhase: string) => {
     const phases = ['commit', 'reveal', 'mix', 'done'];
     const currentIndex = phases.indexOf(phase);
@@ -184,7 +169,7 @@ export function RandaoVisualization() {
   };
 
   return (
-    <div ref={ref} className="not-prose my-8 relative">
+    <div className="not-prose my-8 relative">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-purple-400" />
@@ -376,14 +361,14 @@ export function RandaoVisualization() {
         </AnimatePresence>
 
         {/* Controls */}
-        {phase === 'done' && (
+        {(phase === 'idle' || phase === 'done') && (
           <div className="flex items-center justify-center pt-2">
             <button
               onClick={runSimulation}
               className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
                        bg-purple-500 text-background hover:bg-purple-400 transition-colors"
             >
-              {t.replay}
+              {phase === 'idle' ? t.run : t.replay}
             </button>
           </div>
         )}

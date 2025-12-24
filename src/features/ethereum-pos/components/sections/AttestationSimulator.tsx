@@ -1,8 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useCallback, useState } from 'react';
 
 import { useLocale } from '@/i18n/context';
 
@@ -84,12 +83,6 @@ export function AttestationSimulator() {
     'idle' | 'shuffled' | 'proposed' | 'attesting' | 'justified'
   >('idle');
   const [attestationCount, setAttestationCount] = useState(0);
-  const hasAutoStarted = useRef(false);
-
-  const { ref, inView } = useInView({
-    threshold: 0.3,
-    triggerOnce: true,
-  });
 
   const shuffleCommittee = useCallback(() => {
     const shuffled = [...Array(TOTAL_VALIDATORS).keys()].sort(
@@ -194,15 +187,7 @@ export function AttestationSimulator() {
     setPhase('justified');
   }, []);
 
-  // 뷰포트 진입 시 자동 시작
-  useEffect(() => {
-    if (inView && !hasAutoStarted.current) {
-      hasAutoStarted.current = true;
-      runFullSimulation();
-    }
-  }, [inView, runFullSimulation]);
-
-  const handleReplay = useCallback(() => {
+  const handleStart = useCallback(() => {
     reset();
     setTimeout(() => {
       runFullSimulation();
@@ -213,7 +198,7 @@ export function AttestationSimulator() {
   const proposer = validators.find((v) => v.isProposer);
 
   return (
-    <div ref={ref} className="not-prose my-8 relative">
+    <div className="not-prose my-8 relative">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-amber-400" />
@@ -447,14 +432,14 @@ export function AttestationSimulator() {
         </AnimatePresence>
 
         {/* Controls */}
-        {phase === 'justified' && (
+        {(phase === 'idle' || phase === 'justified') && (
           <div className="flex items-center justify-center pt-2">
             <button
-              onClick={handleReplay}
+              onClick={handleStart}
               className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider
                        bg-amber-500 text-background hover:bg-amber-400 transition-colors"
             >
-              {t.replay}
+              {phase === 'idle' ? t.shuffleCommittee : t.replay}
             </button>
           </div>
         )}

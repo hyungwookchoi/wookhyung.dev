@@ -21,6 +21,7 @@ import {
   MultipartProcessDemo,
   MultipartUploadSimulator,
   MultipartVerifier,
+  PresignedUrlFlowDemo,
 } from '@/features/s3-multipart';
 import { isValidLocale, Locale } from '@/i18n/config';
 import { LocaleProvider } from '@/i18n/context';
@@ -159,6 +160,7 @@ export default async function Page({ params }: Props) {
                 ByteInterpretationDemo,
                 MultipartVerifier,
                 FileProvider,
+                PresignedUrlFlowDemo,
               }}
             />
           </LocaleProvider>

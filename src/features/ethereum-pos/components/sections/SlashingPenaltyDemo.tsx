@@ -1,8 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useCallback, useState } from 'react';
 
 import { useLocale } from '@/i18n/context';
 
@@ -89,12 +88,6 @@ export function SlashingPenaltyDemo() {
   const [slashedCount, setSlashedCount] = useState(1);
   const [isEjected, setIsEjected] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const hasAutoStarted = useRef(false);
-
-  const { ref, inView } = useInView({
-    threshold: 0.3,
-    triggerOnce: true,
-  });
 
   const EJECTION_THRESHOLD = 16;
   const INITIAL_BALANCE = 32;
@@ -185,24 +178,11 @@ export function SlashingPenaltyDemo() {
     setIsComplete(false);
   }, []);
 
-  // 뷰포트 진입 시 자동 시작 (inactivity 시나리오만)
-  useEffect(() => {
-    if (inView && !hasAutoStarted.current && scenario === 'inactivity') {
-      hasAutoStarted.current = true;
-      simulateInactivity();
-    }
-  }, [inView, scenario, simulateInactivity]);
-
-  // 시나리오 변경 시 리셋
-  useEffect(() => {
-    handleReset();
-  }, [scenario, handleReset]);
-
   const balancePercentage = (balance / INITIAL_BALANCE) * 100;
   const ejectionPercentage = (EJECTION_THRESHOLD / INITIAL_BALANCE) * 100;
 
   return (
-    <div ref={ref} className="not-prose my-8 relative">
+    <div className="not-prose my-8 relative">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-6 bg-red-400" />
@@ -445,15 +425,15 @@ export function SlashingPenaltyDemo() {
         </AnimatePresence>
 
         {/* Controls */}
-        {/* inactivity: 완료 후 다시 보기 버튼만 표시 */}
-        {scenario === 'inactivity' && isComplete && (
+        {/* inactivity: 시작 전 또는 완료 후 버튼 표시 */}
+        {scenario === 'inactivity' && !isSimulating && (
           <div className="flex items-center justify-center pt-2">
             <button
               onClick={simulateInactivity}
               className="px-4 py-2 font-mono text-[10px] uppercase tracking-wider transition-colors
                        bg-amber-500 hover:bg-amber-400 text-background"
             >
-              {t.replay}
+              {isComplete ? t.replay : t.simulate}
             </button>
           </div>
         )}
