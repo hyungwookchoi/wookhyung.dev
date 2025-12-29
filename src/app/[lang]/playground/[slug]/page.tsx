@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { AsciiVideoConverter } from '@/features/ascii-video';
+import { BlockchainPlayground } from '@/features/blockchain-viz';
 import { isValidLocale } from '@/i18n/config';
 import { LocaleProvider } from '@/i18n/context';
 import { siteConfig } from '@/shared/config/site';
@@ -17,6 +18,7 @@ interface Props {
 // Playground slug to component mapping
 const PLAYGROUND_COMPONENTS: Record<string, React.ComponentType> = {
   'ascii-video': AsciiVideoConverter,
+  'blockchain-viz': BlockchainPlayground,
 };
 
 export async function generateStaticParams() {

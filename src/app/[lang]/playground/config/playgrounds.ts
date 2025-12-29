@@ -21,10 +21,23 @@ export const PLAYGROUNDS: Playground[] = [
       en: 'ASCII Video Converter',
     },
     description: {
-      ko: '동영상을 ASCII 아트로 변환하는 인터랙티브 도구',
-      en: 'Convert your video to ASCII art in real-time',
+      ko: '동영상을 실시간으로 ASCII 아트로 변환해보세요',
+      en: 'Transform video into ASCII art in real-time',
     },
     category: 'Media',
     thumbnail: '/images/video-to-ascii-thumbnail.png',
+  },
+  {
+    slug: 'blockchain-viz',
+    title: {
+      ko: '블록체인 이해하기',
+      en: 'Understanding Blockchain',
+    },
+    description: {
+      ko: '직접 블록을 만들고 연결하며 블록체인의 핵심 원리를 배워보세요',
+      en: 'Create and connect blocks yourself to learn the core principles of blockchain',
+    },
+    category: 'Crypto',
+    thumbnail: '/images/blockchain-core-principles.png',
   },
 ];
