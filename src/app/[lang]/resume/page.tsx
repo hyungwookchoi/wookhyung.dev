@@ -1,21 +1,23 @@
-import { isValidLocale } from '@/i18n/config';
+'use client';
 
-interface Props {
-  params: Promise<{ lang: string }>;
+interface GooglePDFViewerProps {
+  fileUrl: string;
 }
 
-export default async function ResumePage({ params }: Props) {
-  const { lang } = await params;
-
-  if (!isValidLocale(lang)) {
-    return null;
-  }
+function GooglePDFViewer({ fileUrl }: GooglePDFViewerProps) {
+  const viewerUrl = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(fileUrl)}`;
 
   return (
     <iframe
-      src="/resume.pdf"
+      src={viewerUrl}
       className="w-full h-screen border-0"
-      title="Resume"
+      title="PDF Viewer"
     />
   );
+}
+
+export default function ResumePage() {
+  const fileUrl = `${window.location.origin}/resume.pdf`;
+
+  return <GooglePDFViewer fileUrl={fileUrl} />;
 }
