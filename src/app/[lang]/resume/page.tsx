@@ -12,10 +12,10 @@ export default async function ResumePage({ params }: Props) {
   }
 
   return (
-    <embed
+    <iframe
       src="/resume.pdf"
-      type="application/pdf"
-      className="w-full h-screen"
+      className="w-full h-screen border-0"
+      title="Resume"
     />
   );
 }
