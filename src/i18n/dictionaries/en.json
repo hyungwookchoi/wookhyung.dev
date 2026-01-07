@@ -56,6 +56,9 @@
     "description": "Interactive demos based on blog posts.",
     "empty": "No playgrounds available yet."
   },
+  "resume": {
+    "title": "Resume"
+  },
   "preference": {
     "title": "Preference",
     "music": "Music",

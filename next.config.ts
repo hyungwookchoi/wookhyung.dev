@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async rewrites() {
+    return [
+      {
+        source: '/:lang*/resume.pdf',
+        destination: '/resume.pdf',
+      },
+    ];
+  },
   webpack: (config) => {
     // @ts-expect-error
     const fileLoaderRule = config.module.rules.find((rule) =>

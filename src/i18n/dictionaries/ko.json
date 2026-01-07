@@ -56,6 +56,9 @@
     "description": "포스팅 내용을 바탕으로 만든 인터랙티브 데모 모음입니다.",
     "empty": "아직 등록된 플레이그라운드가 없습니다."
   },
+  "resume": {
+    "title": "이력서"
+  },
   "preference": {
     "title": "Preference",
     "music": "Music",

@@ -6,10 +6,9 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import serialize from 'serialize-javascript';
 
-import { isValidLocale, type Locale, locales } from '@/i18n/config';
+import { isValidLocale, locales } from '@/i18n/config';
 import { getDictionary } from '@/i18n/get-dictionary';
 import { siteConfig } from '@/shared/config/site';
-import { Header } from '@/shared/ui/header';
 import { openGraph, twitter } from '@/shared/util/seo';
 
 import { Providers } from '../providers';
@@ -95,23 +94,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   return (
     <html lang={lang} suppressHydrationWarning>
       <body className="min-h-dvh flex flex-col bg-background font-mono text-foreground relative">
-        {/* Noise texture overlay */}
-        <div
-          className="fixed inset-0 pointer-events-none opacity-[0.015] z-50"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          }}
-        />
-        <Providers>
-          <div className="max-w-3xl mx-auto w-full">
-            <Header lang={lang as Locale} dict={dict} />
-          </div>
-          <main className="flex-1 flex flex-col py-6 px-4 max-w-3xl mx-auto w-full">
-            {children}
-          </main>
-          <Analytics />
-          <GoogleAnalytics gaId="G-F7VQE719RE" />
-        </Providers>
+        <Providers>{children}</Providers>
+        <Analytics />
+        <GoogleAnalytics gaId="G-F7VQE719RE" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: serialize(jsonLd) }}
