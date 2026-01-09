@@ -8,7 +8,7 @@
     "dev": "Dev",
     "tech": "Tech",
     "feed": "Feed",
-    "playground": "Playground",
+    "vibe": "Vibe",
     "personal": "Personal",
     "notes": "Notes",
     "preference": "Preference",
@@ -51,10 +51,10 @@
   "feed": {
     "title": "Feed (Beta)"
   },
-  "playground": {
-    "title": "Playground",
-    "description": "Interactive demos based on blog posts.",
-    "empty": "No playgrounds available yet."
+  "vibe": {
+    "title": "Vibe",
+    "description": "A collection of vibe coding projects built quickly.",
+    "empty": "No vibe projects available yet."
   },
   "resume": {
     "title": "Resume"

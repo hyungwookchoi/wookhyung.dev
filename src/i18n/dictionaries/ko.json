@@ -8,7 +8,7 @@
     "dev": "Dev",
     "tech": "Tech",
     "feed": "Feed",
-    "playground": "Playground",
+    "vibe": "Vibe",
     "personal": "Personal",
     "notes": "Notes",
     "preference": "Preference",
@@ -51,10 +51,10 @@
   "feed": {
     "title": "Feed (Beta)"
   },
-  "playground": {
-    "title": "Playground",
-    "description": "포스팅 내용을 바탕으로 만든 인터랙티브 데모 모음입니다.",
-    "empty": "아직 등록된 플레이그라운드가 없습니다."
+  "vibe": {
+    "title": "Vibe",
+    "description": "빠르게 만들어보는 바이브 코딩 프로젝트 모음입니다.",
+    "empty": "아직 등록된 바이브 프로젝트가 없습니다."
   },
   "resume": {
     "title": "이력서"

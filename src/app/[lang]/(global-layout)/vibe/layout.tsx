@@ -1,4 +1,4 @@
-export default function PlaygroundLayout({
+export default function VibeLayout({
   children,
 }: {
   children: React.ReactNode;

@@ -9,14 +9,14 @@ import { siteConfig } from '@/shared/config/site';
 import { BackButton } from '@/shared/ui/back-button';
 import { openGraph, twitter } from '@/shared/util/seo';
 
-import { PLAYGROUNDS } from '../config/playgrounds';
+import { VIBES } from '../config/vibes';
 
 interface Props {
   params: Promise<{ lang: string; slug: string }>;
 }
 
-// Playground slug to component mapping
-const PLAYGROUND_COMPONENTS: Record<string, React.ComponentType> = {
+// Vibe slug to component mapping
+const VIBE_COMPONENTS: Record<string, React.ComponentType> = {
   'ascii-video': AsciiVideoConverter,
   'blockchain-viz': BlockchainPlayground,
 };
@@ -24,7 +24,7 @@ const PLAYGROUND_COMPONENTS: Record<string, React.ComponentType> = {
 export async function generateStaticParams() {
   const locales = ['ko', 'en'];
   return locales.flatMap((lang) =>
-    PLAYGROUNDS.map((p) => ({
+    VIBES.map((p) => ({
       lang,
       slug: p.slug,
     })),
@@ -38,22 +38,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {};
   }
 
-  const playground = PLAYGROUNDS.find((p) => p.slug === slug);
-  if (!playground) {
+  const vibe = VIBES.find((p) => p.slug === slug);
+  if (!vibe) {
     return {};
   }
 
-  const title = playground.title[lang];
-  const description = playground.description[lang];
+  const title = vibe.title[lang];
+  const description = vibe.description[lang];
 
   return {
     title,
     description,
     alternates: {
-      canonical: `${siteConfig.url}/${lang}/playground/${slug}`,
+      canonical: `${siteConfig.url}/${lang}/vibe/${slug}`,
       languages: {
-        ko: `${siteConfig.url}/ko/playground/${slug}`,
-        en: `${siteConfig.url}/en/playground/${slug}`,
+        ko: `${siteConfig.url}/ko/vibe/${slug}`,
+        en: `${siteConfig.url}/en/vibe/${slug}`,
       },
     },
     openGraph: openGraph({
@@ -68,20 +68,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function PlaygroundDetailPage({ params }: Props) {
+export default async function VibeDetailPage({ params }: Props) {
   const { lang, slug } = await params;
 
   if (!isValidLocale(lang)) {
     notFound();
   }
 
-  const playground = PLAYGROUNDS.find((p) => p.slug === slug);
-  if (!playground) {
+  const vibe = VIBES.find((p) => p.slug === slug);
+  if (!vibe) {
     notFound();
   }
 
-  const PlaygroundComponent = PLAYGROUND_COMPONENTS[slug];
-  if (!PlaygroundComponent) {
+  const VibeComponent = VIBE_COMPONENTS[slug];
+  if (!VibeComponent) {
     notFound();
   }
 
@@ -89,7 +89,7 @@ export default async function PlaygroundDetailPage({ params }: Props) {
     <LocaleProvider locale={lang}>
       <div>
         <BackButton lang={lang} />
-        <PlaygroundComponent />
+        <VibeComponent />
       </div>
     </LocaleProvider>
   );

@@ -8,9 +8,9 @@ import Link from 'next/link';
 import type { Locale } from '@/i18n/config';
 import { cn } from '@/shared/lib/tailwind-merge';
 
-import { PLAYGROUNDS } from '../config/playgrounds';
+import { VIBES } from '../config/vibes';
 
-interface PlaygroundListProps {
+interface VibeListProps {
   lang: Locale;
   emptyMessage: string;
 }
@@ -23,8 +23,8 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
 };
 
-export function PlaygroundList({ lang, emptyMessage }: PlaygroundListProps) {
-  if (PLAYGROUNDS.length === 0) {
+export function VibeList({ lang, emptyMessage }: VibeListProps) {
+  if (VIBES.length === 0) {
     return (
       <motion.div
         className="py-12 text-center text-muted-foreground text-sm"
@@ -38,9 +38,9 @@ export function PlaygroundList({ lang, emptyMessage }: PlaygroundListProps) {
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      {PLAYGROUNDS.map((playground, index) => (
+      {VIBES.map((vibe, index) => (
         <motion.div
-          key={playground.slug}
+          key={vibe.slug}
           variants={fadeInUp}
           initial="initial"
           animate="animate"
@@ -50,18 +50,18 @@ export function PlaygroundList({ lang, emptyMessage }: PlaygroundListProps) {
           }}
         >
           <Link
-            href={`/${lang}/playground/${playground.slug}`}
+            href={`/${lang}/vibe/${vibe.slug}`}
             className={cn(
               'group flex flex-col overflow-hidden',
               'border border-border bg-card',
               'hover:border-primary/50 hover:bg-muted/50 transition-all duration-200',
             )}
           >
-            {playground.thumbnail && (
+            {vibe.thumbnail && (
               <div className="relative aspect-video w-full overflow-hidden bg-muted">
                 <Image
-                  src={playground.thumbnail}
-                  alt={playground.title[lang]}
+                  src={vibe.thumbnail}
+                  alt={vibe.title[lang]}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
@@ -71,16 +71,16 @@ export function PlaygroundList({ lang, emptyMessage }: PlaygroundListProps) {
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <span className="text-[10px] uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5">
-                    {playground.category}
+                    {vibe.category}
                   </span>
                   <h2 className="mt-2 text-base font-medium text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                    {playground.title[lang]}
+                    {vibe.title[lang]}
                   </h2>
                 </div>
                 <ArrowUpRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2">
-                {playground.description[lang]}
+                {vibe.description[lang]}
               </p>
             </div>
           </Link>

@@ -1,4 +1,4 @@
-export interface Playground {
+export interface Vibe {
   slug: string;
   title: {
     ko: string;
@@ -13,7 +13,7 @@ export interface Playground {
   relatedPost?: string;
 }
 
-export const PLAYGROUNDS: Playground[] = [
+export const VIBES: Vibe[] = [
   {
     slug: 'ascii-video',
     title: {

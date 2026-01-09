@@ -6,7 +6,7 @@ import { siteConfig } from '@/shared/config/site';
 import { PageTitle } from '@/shared/ui/page-title';
 import { openGraph, twitter } from '@/shared/util/seo';
 
-import { PlaygroundList } from './ui/playground-list';
+import { VibeList } from './ui/vibe-list';
 
 interface Props {
   params: Promise<{ lang: string }>;
@@ -22,28 +22,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const dict = await getDictionary(lang);
 
   return {
-    title: dict.playground.title,
-    description: dict.playground.description,
+    title: dict.vibe.title,
+    description: dict.vibe.description,
     alternates: {
-      canonical: `${siteConfig.url}/${lang}/playground`,
+      canonical: `${siteConfig.url}/${lang}/vibe`,
       languages: {
-        ko: `${siteConfig.url}/ko/playground`,
-        en: `${siteConfig.url}/en/playground`,
+        ko: `${siteConfig.url}/ko/vibe`,
+        en: `${siteConfig.url}/en/vibe`,
       },
     },
     openGraph: openGraph({
-      title: `${dict.playground.title} | ${siteConfig.siteName}`,
-      description: dict.playground.description,
+      title: `${dict.vibe.title} | ${siteConfig.siteName}`,
+      description: dict.vibe.description,
       locale: lang === 'ko' ? 'ko_KR' : 'en_US',
     }),
     twitter: twitter({
-      title: `${dict.playground.title} | ${siteConfig.siteName}`,
-      description: dict.playground.description,
+      title: `${dict.vibe.title} | ${siteConfig.siteName}`,
+      description: dict.vibe.description,
     }),
   };
 }
 
-export default async function PlaygroundPage({ params }: Props) {
+export default async function VibePage({ params }: Props) {
   const { lang } = await params;
 
   if (!isValidLocale(lang)) {
@@ -54,8 +54,8 @@ export default async function PlaygroundPage({ params }: Props) {
 
   return (
     <div>
-      <PageTitle title={dict.playground.title} />
-      <PlaygroundList lang={lang} emptyMessage={dict.playground.empty} />
+      <PageTitle title={dict.vibe.title} />
+      <VibeList lang={lang} emptyMessage={dict.vibe.empty} />
     </div>
   );
 }
