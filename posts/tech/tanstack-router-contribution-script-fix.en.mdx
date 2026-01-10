@@ -1,6 +1,6 @@
 ---
-title: "Why React Doesn't Execute `<script>` Tags (feat. TanStack Router Open Source Contribution)"
-summary: "Understanding React's script tag execution constraints and implementing a solution that works even in SSR environments through TanStack Router open source contribution"
+title: 'TanStack Router Contribution: Solving React Script Execution Issues'
+summary: 'A deep dive into why React blocks <script> tags and the process of implementing an SSR-compatible solution through an open-source contribution to TanStack Router.'
 date: '2026-01-10'
 tags: ['React', 'SSR', 'TanStack Router', 'Open Source']
 ---
@@ -17,11 +17,11 @@ export const Route = createFileRoute('/')({
       {
         src: 'https://accounts.google.com/gsi/client',
         async: true,
-        defer: true
+        defer: true,
       },
     ],
   }),
-})
+});
 ```
 
 I expected it to work naturally, but the login button never appeared. What was more confusing was the browser's developer tools response.
@@ -209,6 +209,7 @@ if (attrs?.src && typeof attrs.src === 'string') {
 ```
 
 **Key Points**:
+
 - **`querySelectorAll('script[src]')`**: Search only scripts with src attribute for performance optimization
 - **URL normalization**: Convert `./script.js`, `/script.js`, etc. to absolute URLs for accurate comparison
 - **try-catch handling**: Safe handling even if URL parsing fails
@@ -223,8 +224,7 @@ if (typeof children === 'string') {
     typeof attrs?.type === 'string' ? attrs.type : 'text/javascript';
 
   // Normalize nonce attribute
-  const nonceAttr =
-    typeof attrs?.nonce === 'string' ? attrs.nonce : undefined;
+  const nonceAttr = typeof attrs?.nonce === 'string' ? attrs.nonce : undefined;
 
   // Search only inline scripts without src
   const existingScript = Array.from(
@@ -237,9 +237,7 @@ if (typeof children === 'string') {
 
     // Compare textContent, type, and nonce
     return (
-      el.textContent === children &&
-      sType === typeAttr &&
-      sNonce === nonceAttr
+      el.textContent === children && sType === typeAttr && sNonce === nonceAttr
     );
   });
 
@@ -250,6 +248,7 @@ if (typeof children === 'string') {
 ```
 
 **Key Points**:
+
 - **`querySelectorAll('script:not([src])')`**: Search only inline scripts
 - **Multi-dimensional comparison**: Compare not just script content (`textContent`) but also `type` and `nonce` attributes
 - **Accurate duplicate detection**: Even identical content is treated separately if type or nonce differs

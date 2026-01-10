@@ -1,6 +1,6 @@
 ---
-title: 'React는 왜 `<script>` 태그를 실행하지 않을까? (feat. TanStack Router 오픈소스 기여)'
-summary: 'React의 script 태그 실행 제약을 이해하고, TanStack Router 오픈소스 기여를 통해 SSR 환경까지 고려한 해결책을 구현한 과정'
+title: 'TanStack Router 오픈소스 기여기: React 스크립트 실행 문제 해결'
+summary: 'React가 <script> 태그를 차단하는 내부 원리를 파헤치고, TanStack Router 오픈소스 기여를 통해 SSR 환경까지 고려한 해결책을 구현한 과정'
 date: '2026-01-10'
 tags: ['React', 'SSR', 'TanStack Router', 'Open Source']
 ---
@@ -209,6 +209,7 @@ if (attrs?.src && typeof attrs.src === 'string') {
 ```
 
 **핵심 포인트**:
+
 - **`querySelectorAll('script[src]')`**: src 속성이 있는 스크립트만 검색하여 성능 최적화
 - **URL 정규화**: `./script.js`, `/script.js` 등을 절대 URL로 변환하여 정확한 비교
 - **try-catch 처리**: URL 파싱 실패 시에도 안전하게 처리
@@ -223,8 +224,7 @@ if (typeof children === 'string') {
     typeof attrs?.type === 'string' ? attrs.type : 'text/javascript';
 
   // nonce 속성 정규화
-  const nonceAttr =
-    typeof attrs?.nonce === 'string' ? attrs.nonce : undefined;
+  const nonceAttr = typeof attrs?.nonce === 'string' ? attrs.nonce : undefined;
 
   // src가 없는 인라인 스크립트만 검색
   const existingScript = Array.from(
@@ -237,9 +237,7 @@ if (typeof children === 'string') {
 
     // textContent, type, nonce를 모두 비교
     return (
-      el.textContent === children &&
-      sType === typeAttr &&
-      sNonce === nonceAttr
+      el.textContent === children && sType === typeAttr && sNonce === nonceAttr
     );
   });
 
@@ -250,6 +248,7 @@ if (typeof children === 'string') {
 ```
 
 **핵심 포인트**:
+
 - **`querySelectorAll('script:not([src])')`**: 인라인 스크립트만 검색
 - **다차원 비교**: 스크립트 내용(`textContent`)뿐만 아니라 `type`, `nonce` 속성까지 비교
 - **정확한 중복 감지**: 동일한 내용이라도 type이나 nonce가 다르면 별개로 처리
