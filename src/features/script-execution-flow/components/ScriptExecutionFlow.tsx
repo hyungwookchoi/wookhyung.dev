@@ -9,32 +9,18 @@ import { FLOW_STEPS, getTranslations } from '../constants/translations';
 import type { FlowStepType } from '../types';
 import { FlowStep } from './FlowStep';
 
-console.log('[ScriptExecutionFlow] Component file loaded');
-
 export function ScriptExecutionFlow() {
-  console.log('[ScriptExecutionFlow] Component rendering');
-
   const locale = useLocale();
-  console.log('[ScriptExecutionFlow] locale from useLocale:', locale);
 
   const t = getTranslations(locale);
-  console.log('[ScriptExecutionFlow] translations:', t);
 
   const [activeStep, setActiveStep] = useState<FlowStepType | null>('ssr');
 
-  // Debug mount/unmount
-  useEffect(() => {
-    console.log('[ScriptExecutionFlow] Component mounted with locale:', locale);
-    return () => {
-      console.log('[ScriptExecutionFlow] Component unmounting');
-    };
-  }, [locale]);
   const [completedSteps, setCompletedSteps] = useState<Set<FlowStepType>>(
     new Set(),
   );
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Auto-play functionality
   useEffect(() => {
     if (!isPlaying) return;
 
