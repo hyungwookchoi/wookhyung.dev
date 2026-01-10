@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 interface GooglePDFViewerProps {
   fileUrl: string;
 }
@@ -17,7 +19,15 @@ function GooglePDFViewer({ fileUrl }: GooglePDFViewerProps) {
 }
 
 export default function ResumePage() {
-  const fileUrl = `${window.location.origin}/resume.pdf`;
+  const [fileUrl, setFileUrl] = useState('');
+
+  useEffect(() => {
+    setFileUrl(`${window.location.origin}/resume.pdf`);
+  }, []);
+
+  if (!fileUrl) {
+    return null; // or a loading spinner
+  }
 
   return <GooglePDFViewer fileUrl={fileUrl} />;
 }
