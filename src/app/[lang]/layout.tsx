@@ -94,7 +94,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   return (
     <html lang={lang} suppressHydrationWarning>
       <body className="min-h-dvh flex flex-col bg-background font-mono text-foreground relative">
-        <Providers>{children}</Providers>
+        <Providers locale={lang}>{children}</Providers>
         <Analytics />
         <GoogleAnalytics gaId="G-F7VQE719RE" />
         <script

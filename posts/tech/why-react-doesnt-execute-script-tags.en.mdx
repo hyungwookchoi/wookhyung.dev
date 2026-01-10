@@ -1,0 +1,333 @@
+---
+title: "Why React Doesn't Execute `<script>` Tags (feat. TanStack Router Open Source Contribution)"
+summary: "Understanding React's script tag execution constraints and implementing a solution that works even in SSR environments through TanStack Router open source contribution"
+date: '2026-01-10'
+tags: ['React', 'SSR', 'TanStack Router', 'Open Source']
+---
+
+## Introduction: Scripts That Appear But Don't Work
+
+While developing a company project using TanStack Router, I needed to implement [Google Sign-In (GSI)](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid?hl=ko#load_the_client_library) functionality. I used TanStack Router's `head` option to load Google's JavaScript library.
+
+```javascript
+// Code that didn't work as intended
+export const Route = createFileRoute('/')({
+  head: () => ({
+    scripts: [
+      {
+        src: 'https://accounts.google.com/gsi/client',
+        async: true,
+        defer: true
+      },
+    ],
+  }),
+})
+```
+
+I expected it to work naturally, but the login button never appeared. What was more confusing was the browser's developer tools response.
+
+- **Elements tab**: The `<script>` tag clearly existed in the HTML source
+- **Network tab**: No network requests were made at all
+
+The tag was rendered in the DOM but not executed - a perfect 'Silent Failure' state without even an error log.
+
+This article delves deep into the cause and documents the process of creating a fundamental solution through open source contribution.
+
+---
+
+## 1. Narrowing Down the Problem
+
+The first task was to distinguish "**Is this my code's problem, or a library limitation?**"
+
+### Verification Process
+
+**Hypothesis**: TanStack Router might be missing the execution logic when rendering script tags defined in `head`.
+
+**Experiment**: I tested by hardcoding a `<script>` tag directly in the `index.html` file instead of in a React component.
+
+**Result**: The script written directly in `index.html` loaded and executed normally.
+
+### Conclusion
+
+The problem was "**a constraint that occurs when dynamically rendering `<script>` tags inside React components**". It wasn't just a TanStack Router issue, but related to React's fundamental behavior.
+
+---
+
+## 2. Why Does React Block Scripts?
+
+### React's Security Policy
+
+To put it simply, **React doesn't execute `<script>` tags in components for security reasons.**
+
+More precisely, it doesn't ignore the tags. It adds them to the DOM but completely blocks their execution.
+
+### Technical Mechanism
+
+React intentionally inserts `<script>` tags into the DOM in a way that prevents execution:
+
+1. **Indirect creation using `innerHTML`**: React doesn't directly call `document.createElement('script')`, but creates script tags through `innerHTML`.
+
+2. **'parser-inserted' flag**: Scripts created this way have the 'parser-inserted' flag set by the browser.
+
+3. **Execution blocked**: According to the [HTML specification](https://html.spec.whatwg.org/multipage/scripting.html#script-processing-model), scripts with the parser-inserted flag are blocked from executing.
+
+This is an **intentional design to prevent XSS (Cross-Site Scripting) attacks**. When user input or external data is rendered as components, it prevents malicious scripts from executing at the source.
+
+You can clearly see this mechanism by looking directly at React's source code:
+https://github.com/facebook/react/blob/e41fd1fc0605dde41cff53e01039633c8e852b6d/packages/react-dom/src/client/ReactDOMComponent.js#L390-L408
+
+```javascript
+if (type === 'script') {
+  // Create the script via .innerHTML so its "parser-inserted" flag is
+  // set to true and it does not execute
+  const div = ownerDocument.createElement('div');
+  if (__DEV__) {
+    if (enableTrustedTypesIntegration && !didWarnScriptTags) {
+      console.error(
+        'Encountered a script tag while rendering React component. ' +
+          'Scripts inside React components are never executed when rendering ' +
+          'on the client. Consider using template tag instead ' +
+          '(https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template).',
+      );
+      didWarnScriptTags = true;
+    }
+  }
+  div.innerHTML = '<script><' + '/script>'; // eslint-disable-line
+  // This is guaranteed to yield a script element.
+  const firstChild = ((div.firstChild: any): HTMLScriptElement);
+  domElement = div.removeChild(firstChild);
+}
+```
+
+As the comment explicitly states, React intentionally uses `innerHTML` to set the 'parser-inserted' flag and prevent script execution.
+
+---
+
+## 3. First Solution: Dynamic Script Injection
+
+### Solution Direction
+
+If React blocks scripts at the rendering stage, we can **dynamically inject scripts right after the DOM is mounted (Side Effect)**.
+
+In typical React development, this is implemented with the `useEffect` hook:
+https://stackoverflow.com/questions/34424845/adding-script-tag-to-react-jsx
+
+```javascript
+// Common solution in React
+useEffect(() => {
+  const script = document.createElement('script');
+  script.src = 'https://accounts.google.com/gsi/client';
+  script.async = true;
+  script.defer = true;
+  document.head.appendChild(script);
+
+  // Cleanup: Remove script on component unmount
+  return () => {
+    document.head.removeChild(script);
+  };
+}, []);
+```
+
+### Beginning of Open Source Contribution
+
+Checking the TanStack Router issue ([#3687](https://github.com/TanStack/router/issues/3687)), I found many developers were experiencing the same problem.
+
+I decided to **integrate this logic into TanStack Router so developers could load scripts with just the `head` option without a separate `useEffect`**.
+
+### Multi-Framework Support
+
+TanStack Router supports not only React but also various frameworks like Solid. I wrote universal logic that injects scripts into `document.head` according to each framework's lifecycle.
+
+**PR #4323**: [fix(react-router, solid-router): make head function scripts load properly](https://github.com/TanStack/router/pull/4323)
+
+- Dynamic script injection using each framework's effect hooks
+- Multi-framework support for React, Solid, etc.
+
+---
+
+## 4. Second Problem: Duplicate Execution in SSR Environment
+
+### Discovery of a New Issue
+
+After the feature was deployed, a new problem ([#4585](https://github.com/TanStack/router/issues/4585)) was reported in SSR (Server-Side Rendering) environments.
+
+The core issue was **scripts executing twice**.
+
+### The SSR and Hydration Dilemma
+
+In SSR environments, scripts are duplicated in the following scenario:
+
+<ScriptExecutionFlow />
+
+1. **Server Rendering**: HTML generated on the server includes the `<script src="...">` tag and is sent to the browser.
+2. **Browser Parsing**: The browser parses the HTML, finds the `<script>` tag, loads and **executes** the script (first execution).
+3. **Hydration & Dynamic Injection**: After React hydration completes, the `useEffect` logic added in PR #4323 runs, creating the same script with `document.createElement('script')` and **re-executing it** (second execution).
+
+This caused serious side effects like **Google Analytics counting data twice or external widgets rendering in duplicate**.
+
+### Solution: Sophisticated Duplicate Prevention System
+
+Simply checking with `document.querySelector` wasn't enough. The actual implementation ([**PR #5095**: fix(router): prevent script tag duplication in SSR and client-side navigation](https://github.com/TanStack/router/pull/5095)) included the following sophisticated logic:
+
+#### 1. **Server Environment Check**
+
+```javascript
+const router = useRouter();
+
+// No duplicate checking in server environment
+if (!router.isServer) {
+  return null;
+}
+```
+
+During SSR, the DOM doesn't exist, so duplicate checks are only performed in the client environment.
+
+#### 2. **External Script Duplicate Check (src attribute)**
+
+```javascript
+// If src attribute exists
+if (attrs?.src && typeof attrs.src === 'string') {
+  // URL normalization function
+  const normSrc = (() => {
+    try {
+      const base = document.baseURI || window.location.href;
+      return new URL(attrs.src, base).href;
+    } catch {
+      return attrs.src; // Return original if URL parsing fails
+    }
+  })();
+
+  // Search only scripts with src attribute
+  const existingScript = Array.from(
+    document.querySelectorAll('script[src]'),
+  ).find((el) => (el as HTMLScriptElement).src === normSrc);
+
+  if (existingScript) {
+    return; // Don't render anything if already exists
+  }
+}
+```
+
+**Key Points**:
+- **`querySelectorAll('script[src]')`**: Search only scripts with src attribute for performance optimization
+- **URL normalization**: Convert `./script.js`, `/script.js`, etc. to absolute URLs for accurate comparison
+- **try-catch handling**: Safe handling even if URL parsing fails
+
+#### 3. **Inline Script Duplicate Check**
+
+```javascript
+// For inline scripts (children is string)
+if (typeof children === 'string') {
+  // Normalize type attribute
+  const typeAttr =
+    typeof attrs?.type === 'string' ? attrs.type : 'text/javascript';
+
+  // Normalize nonce attribute
+  const nonceAttr =
+    typeof attrs?.nonce === 'string' ? attrs.nonce : undefined;
+
+  // Search only inline scripts without src
+  const existingScript = Array.from(
+    document.querySelectorAll('script:not([src])'),
+  ).find((el) => {
+    if (!(el instanceof HTMLScriptElement)) return false;
+
+    const sType = el.getAttribute('type') ?? 'text/javascript';
+    const sNonce = el.getAttribute('nonce') ?? undefined;
+
+    // Compare textContent, type, and nonce
+    return (
+      el.textContent === children &&
+      sType === typeAttr &&
+      sNonce === nonceAttr
+    );
+  });
+
+  if (existingScript) {
+    return; // Don't render anything if already exists
+  }
+}
+```
+
+**Key Points**:
+- **`querySelectorAll('script:not([src])')`**: Search only inline scripts
+- **Multi-dimensional comparison**: Compare not just script content (`textContent`) but also `type` and `nonce` attributes
+- **Accurate duplicate detection**: Even identical content is treated separately if type or nonce differs
+
+#### 4. **Cleanup Logic: Cleanup on Route Change**
+
+```javascript
+React.useEffect(() => {
+  // Create script after duplicate check
+  const script = document.createElement('script');
+  // ... script configuration
+  document.head.appendChild(script);
+
+  // Cleanup: Remove script on component unmount
+  return () => {
+    document.head.removeChild(script);
+  };
+}, []);
+```
+
+**Memory leak prevention**: Remove scripts needed only for specific pages when leaving routes to prevent unnecessary script accumulation
+
+#### 5. **Comprehensive Test Coverage**
+
+The PR included E2E tests for the following scenarios:
+
+- Script duplicate prevention in SSR environment
+- Duplicate prevention during client-side navigation
+- Stability across multiple route transitions
+- Inline script duplicate prevention
+
+---
+
+## 5. Results of Contribution and Lessons Learned
+
+### Impact on Open Source
+
+Both PRs were merged and **included starting from TanStack Router v1.131.46**.
+
+Checking related issues, I found that **at least 10+ developers** were struggling with the same problem. Now they can load scripts with just the `head` option without separate workarounds.
+
+### Lessons Learned
+
+#### 1. Framework Design Philosophy
+
+I experienced firsthand through code that React **places security (Safety) as a higher priority than developer experience (DX)**.
+
+Even constraints that seem inconvenient at first glance were intentional designs to protect the security of millions of users.
+
+#### 2. Responsibility as an Engineer
+
+The weight of "code that runs on my local environment" versus "library code that must run in diverse environments worldwide" was different.
+
+I learned the importance of **robust implementation considering all edge cases**, especially SSR, hydration, and various framework environments.
+
+#### 3. Attitude of Questioning
+
+Rather than simply "if it doesn't work, make it work":
+
+- "**Why doesn't it work?**" → Identify root cause
+- "**How can we solve it?**" → Set the right direction
+- "**Is there a better way?**" → Continuous improvement
+
+By repeating these questions, I moved beyond simple bug fixes to a deep understanding of the framework.
+
+---
+
+## Conclusion
+
+The journey that started with one small bug led to understanding React's security policy, experiencing the complexity of SSR environments, and helping numerous developers through open source contribution.
+
+Going forward, when facing problems, I want to grow as **an engineer who constantly asks "Why"** rather than just solving them.
+
+---
+
+**Related Links**:
+
+- [TanStack Router Issue #3687](https://github.com/TanStack/router/issues/3687)
+- [PR #4323: fix(react-router, solid-router): make head function scripts load properly](https://github.com/TanStack/router/pull/4323)
+- [TanStack Router Issue #4585](https://github.com/TanStack/router/issues/4585)
+- [PR #5095: fix(router): prevent script tag duplication in SSR and client-side navigation](https://github.com/TanStack/router/pull/5095)

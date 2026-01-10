@@ -1,30 +1,9 @@
 import { format } from 'date-fns';
 import { enUS, ko } from 'date-fns/locale';
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { getMDXComponent } from 'next-contentlayer2/hooks';
 import serialize from 'serialize-javascript';
 
-import {
-  AttestationSimulator,
-  EthereumPosPlayground,
-  RandaoVisualization,
-  RewardCalculator,
-  SlashingPenaltyDemo,
-  SlotEpochVisualizer,
-} from '@/features/ethereum-pos';
-import {
-  ByteInterpretationDemo,
-  ETagVisualization,
-  FileProvider,
-  HexDumpExplorer,
-  MultipartProcessDemo,
-  MultipartUploadSimulator,
-  MultipartVerifier,
-  PresignedUrlFlowDemo,
-} from '@/features/s3-multipart';
 import { isValidLocale, Locale } from '@/i18n/config';
-import { LocaleProvider } from '@/i18n/context';
 import { siteConfig } from '@/shared/config/site';
 import { BackButton } from '@/shared/ui/back-button';
 import { WithClaudeBadge } from '@/shared/ui/with-claude-badge';
@@ -32,6 +11,7 @@ import { getTechPostBySlugAndLocale, techPosts } from '@/shared/util/post';
 import { openGraph, twitter } from '@/shared/util/seo';
 
 import { Comments } from './ui/comments';
+import { MDXContent } from './ui/mdx-content';
 import ProgressBar from './ui/progress-bar';
 import ScrollToTop from './ui/scroll-to-top';
 
@@ -115,7 +95,6 @@ export default async function Page({ params }: Props) {
     inLanguage: lang === 'ko' ? 'ko-KR' : 'en-US',
   };
 
-  const Content = getMDXComponent(post.body.code);
   const dateLocale = lang === 'ko' ? ko : enUS;
   const dateFormat = lang === 'ko' ? 'yyyy년 M월 d일' : 'MMM d, yyyy';
 
@@ -141,29 +120,7 @@ export default async function Page({ params }: Props) {
             {post.withClaude && <WithClaudeBadge />}
           </div>
           <hr className="border-border" />
-          <LocaleProvider locale={lang as Locale}>
-            <Content
-              components={{
-                Image,
-                // Ethereum PoS components
-                EthereumPosPlayground,
-                SlotEpochVisualizer,
-                RandaoVisualization,
-                AttestationSimulator,
-                RewardCalculator,
-                SlashingPenaltyDemo,
-                // S3 Multipart components
-                MultipartUploadSimulator,
-                MultipartProcessDemo,
-                ETagVisualization,
-                HexDumpExplorer,
-                ByteInterpretationDemo,
-                MultipartVerifier,
-                FileProvider,
-                PresignedUrlFlowDemo,
-              }}
-            />
-          </LocaleProvider>
+          <MDXContent code={post.body.code} />
         </article>
         <Comments />
         <ScrollToTop />
