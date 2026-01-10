@@ -12,7 +12,7 @@ function GooglePDFViewer({ fileUrl }: GooglePDFViewerProps) {
   return (
     <iframe
       src={viewerUrl}
-      className="w-full h-screen border-0"
+      className="w-full h-dvh border-0"
       title="PDF Viewer"
     />
   );
