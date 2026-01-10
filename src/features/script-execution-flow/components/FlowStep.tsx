@@ -1,4 +1,4 @@
-import { AnimatePresence,motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 
 import type { FlowStep as FlowStepType } from '../types';
 import { ScriptTag } from './ScriptTag';
