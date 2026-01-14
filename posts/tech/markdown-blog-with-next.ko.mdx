@@ -1,0 +1,414 @@
+---
+title: 'Next.js로 마크다운 블로그 만들기'
+date: '2022-10-25'
+tags: ['next.js']
+---
+
+> 발표 스터디 6주차 주제로 선정한, **`Next.js로 마크다운 블로그 만들기`** 에 대한 정리 글입니다.
+
+### Intro
+
+최근 Next.js를 공부하면서 연습 삼아 개발 블로그를 만들어보고 있습니다. 지금 작성하고 있는 벨로그나 티스토리, 네이버 블로그 등의 대형 서비스들이 있지만 원하는 기능을 만들 수도 없고, 디자인 커스터마이징이 힘듭니다. 그래서 `Jekyll` 같은 `정적 사이트 생성기(Static Site Generator, SSG)` 를 이용한 블로그들이 많이 늘어나고 있는 것 같습니다.
+
+Jekyll을 사용하여 만드는 것도 좋지만, Ruby 기반으로 만들어졌기 때문에 Ruby를 모르는 사람 입장에서는 프로젝트의 처음부터 코드를 작성할 수 없습니다. 그래서 만들어진 코드 베이스를 가져와서 이용하는 경우가 많은데, 이 경우에도 수정이 필요한 경우 타인의 소스코드를 읽어야 하므로 불편한 점이 있습니다.
+
+그래서 `Next.js` 로 블로그를 만들기로 결정했습니다. 대부분 프론트엔드 개발자의 경우, 자바스크립트나 리액트를 사용해 본 경험이 있기 때문에 코드를 밑바닥부터 짜도 그렇게 어렵지 않습니다. 특히나 블로그의 경우, 백엔드가 필요하지도 않고 복잡한 비즈니스 로직을 구현할 필요도 없습니다. 개인적으로도 Next.js로 직접 개발해봤을 때, 그렇게 어려운 과정은 없어서 한 번쯤 경험해보는 것도 좋다고 생각하여 이번 포스팅을 통해 개발 과정을 공유하려고 합니다.
+
+---
+
+## ⚙️ 블로그 만들기 시작!
+
+최소한의 기능을 구현하기 위해 다음과 같은 라이브러리, 프레임워크를 사용하였습니다.
+
+> - Next.js(SSG)
+
+- 마크다운을 JS로 변환해주는 도구인 `remark` (마크다운 Parser), `remark-html` (remark로 파싱한 데이터를 html로 변환해줍니다.)
+- 각 마크다운의 meta data: `gray-matter`
+  >
+
+### 1️⃣ create-next-app
+
+https://nextjs.org/docs/getting-started
+
+`yarn create next-app --typescript` 명령어를 통해서 next app을 만들어줍니다.
+
+시작하기 전에 알아야 될 부분은, Next.js는 기본적으로 `pre-render` 를 합니다.
+
+> By default, Next.js pre-renders every page. This means that Next.js generates HTML for each page in advance, instead of having it all done by client-side JavaScript. Pre-rendering can result in better performance and SEO.
+
+<span style="color:CornflowerBlue"></span>
+
+pre-render에는 **<span style="color:LightCoral">SSG(Static Site Generation)</span>**와 **<span style="color:CornflowerBlue">SSR(Server Side Rendering)</span>**, 2가지 방식이 있는데 둘의 차이점은 SSG는 **<span style="color:LightCoral">빌드 시에</span>** 데이터를 가져와서 HTML 파일을 미리 만들어두고 SSR은 **<span style="color:CornflowerBlue">서버에 요청이 있을 때,</span>** 데이터를 가져오고 HTML 파일을 만들어서 반환합니다.
+
+개인 블로그의 경우에는 SSR보다 SSG가 더 적합한데, 빌드 시에 모든 파일을 미리 만들어두어도 데이터가 바뀔 일이 없기 때문입니다. Next.js에서는 SSG를 `getStaticProps` 메서드를 이용해서 손쉽게 할 수 있습니다.
+
+---
+
+### 2️⃣ 메인 페이지 만들기 (getStaticProps)
+
+> The data required to render the page is available at build time ahead of a user’s request.
+
+`getStaticProps` 메서드를 이용하면, 사용자 요청에 앞서 빌드 타임에 필요한 데이터를 받아와서 페이지를 미리 렌더링 할 수 있습니다.
+
+```tsx
+// posts will be populated at build time by getStaticProps()
+function Blog({ posts }) {
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li>{post.title}</li>
+      ))}
+    </ul>
+  );
+}
+
+// This function gets called at build time on server-side.
+// It won't be called on client-side, so you can even do
+// direct database queries.
+export async function getStaticProps() {
+  // Call an external API endpoint to get posts.
+  // You can use any data fetching library
+  const res = await fetch('https://.../posts');
+  const posts = await res.json();
+
+  // By returning { props: { posts } }, the Blog component
+  // will receive `posts` as a prop at build time
+  return {
+    props: {
+      posts,
+    },
+  };
+}
+
+export default Blog;
+```
+
+<br />
+공식 문서의 예제 코드를 참고해서, 블로그의 메인 페이지에 들어갈 코드를
+작성했습니다.
+
+```tsx
+const Home: NextPage<{ posts: PostType[] }> = ({ posts }) => {
+  return (
+    <ul>
+      {posts.map((post, index) => (
+        <li key={index}>
+          {post.title} - {post.author}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+export async function getStaticProps() {
+  // 게시물 데이터들을 가져옵니다.
+  // 로컬에 있는 마크다운 파일을 가져오는 getAllPosts 과정은 이후에 설명하겠습니다.
+  const posts = getAllPosts(['slug', 'title', 'date']);
+
+  // getStaticProps에서 반환하는 객체는 페이지 컴포넌트의 props로 넘어갑니다.
+  return {
+    props: {
+      posts,
+    },
+  };
+}
+
+export default Home;
+```
+
+![](https://velog.velcdn.com/images/ctdlog/post/fd9d1a9e-8329-4500-81f2-0476492467e9/image.png)
+
+---
+
+### 3️⃣ 상세 페이지 만들기 (getStaticPaths)
+
+`getStaticProps` 를 통해 빌드 타임에 데이터를 가져와서 메인페이지에 게시물의 제목을 보여주고 있습니다.
+
+> 여기서 게시물의 제목을 클릭하면 상세 페이지로 이동했으면 하는데, 어떻게 구현할 수 있을까요?
+
+Next.js에서 동적 라우팅(ex. `posts/[title]`)을 지원하지만, 빌드 타임에 `getStaticProps` 함수가 실행되면서 데이터를 가져오기 때문에 어떤 query를 넘겨줘야 할 지 알 수 없습니다. 따라서, 각 페이지를 미리 렌더링할 수 없는 문제가 생깁니다.
+
+이런 상황에서 `getStaticPaths` 는 Dynamic Routes를 위해 `getStaticProps` 와 같이 사용할 수 있습니다. `getStaticPaths` 는 지정한 모든 경로를 정적으로 미리 렌더링합니다.
+
+> If a page has Dynamic Routes and uses getStaticProps, it needs to define a list of paths to be statically generated.
+
+참고로, Dynamic Routes + getStaticProps를 사용하는 경우에 getStaticPaths 함수를 사용하여 렌더링 경로를 설정하지 않으면 오류가 발생합니다.
+
+![](https://velog.velcdn.com/images/ctdlog/post/127abf19-1841-465f-bb50-56dc0d6c1338/image.png)
+
+#### 아래는 공식 문서의 예제 코드입니다.
+
+```tsx
+// pages/posts/[id].js
+
+// Generates `/posts/1` and `/posts/2`
+export async function getStaticPaths() {
+  return {
+    paths: [{ params: { id: '1' } }, { params: { id: '2' } }],
+    fallback: false, // can also be true or 'blocking'
+  };
+}
+
+// `getStaticPaths` requires using `getStaticProps`
+export async function getStaticProps(context) {
+  return {
+    // Passed to the page component as props
+    props: { post: {} },
+  };
+}
+
+export default function Post({ post }) {
+  // Render post...
+}
+```
+
+#### 마찬가지로 공식문서의 코드를 참고해서 상세 페이지를 만들어보겠습니다.
+
+```tsx
+const Post = ({ post }: Props) => {
+	// Render post..
+};
+
+// getStaticPaths에서 반환한 params를 인자로 받습니다.
+export async function getStaticProps({ params }: Params) {
+  // slug를 통해서 특정 게시물의 마크다운 파일을 찾아서 가져와서 페이지 컴포넌트에 넘겨줍니다.
+  // 이 과정에서, 마크다운 파일을 자바스크립트 객체로 변환하고, HTML로 변환해야 합니다.
+  const post = getPostBySlug(...);
+  const content = await markdownToHtml(...);
+
+  // 게시물 정보와 컨텐츠를 페이지 컴포넌트(Post)로 반환합니다.
+  return {
+    props: {
+      post: {
+        ...post,
+        content,
+      },
+    },
+  };
+}
+
+export async function getStaticPaths() {
+  // 모든 게시물 데이터를 가져옵니다.
+  const posts = getAllPosts(['slug']);
+
+  return {
+    // map을 통해 게시물들을 순회하며 각각의 경로를 만들어줍니다.
+    // ex. posts/title1, posts/title2, ...
+    // 반환한 객체는 getStaticProps의 인자로 넘어갑니다.
+    paths: posts.map((post) => {
+      return {
+        params: {
+          slug: post.slug,
+        },
+      };
+    }),
+    fallback: false,
+  };
+}
+
+export default Post;
+```
+
+---
+
+### 4️⃣ getAllPosts, markdownToHTML
+
+이제 메인 페이지와 상세 페이지에 데이터를 보여주기 위한 준비는 모두 끝났습니다.
+
+> 이제 데이터를 잘 가져오기만 하면 되는데 로컬에 있는 마크다운 파일을 어떻게 가져오고, 마크다운을 어떻게 HTML로 변환해야 될까요?
+
+https://github.com/vercel/next.js/tree/canary/examples/blog-starter
+
+대부분의 오픈소스 프로젝트들의 깃허브를 들어가보면, sample이나 examples 폴더를 찾아볼 수 있는데 거기서 다양한 프로젝트의 예제 코드를 찾아볼 수 있습니다. next.js의 깃허브에서 examples 폴더에 들어가보면, blog-starter 예제 코드가 있습니다.
+
+#### 먼저, 어떻게 로컬에 있는 마크다운 파일을 가져올 수 있는지 알아보겠습니다.
+
+```ts
+// blog-starter/lib/api.ts
+import fs from 'fs';
+import { join } from 'path';
+import matter from 'gray-matter';
+
+const postsDirectory = join(process.cwd(), '__posts');
+
+export function getPostSlugs() {
+  // fs 모듈을 통해서 파일 디렉토리를 읽고 __posts 안에 있는 파일들(마크다운)을 가져옵니다.
+  return fs.readdirSync(postsDirectory);
+}
+
+// 가져온 마크다운 파일을 객체로 변환해서 반환합니다.
+export function getPostBySlug(slug: string, fields: string[] = []) {
+  const realSlug = slug.replace(/\.md$/, '');
+  const fullPath = join(postsDirectory, `${realSlug}.md`);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+  // 여기서 matter는 마크다운 파일의 front-matter를 파싱해주는 역할을 합니다.
+  // matter에 대해서는 아래에서 추가로 설명하겠습니다.
+  const { data, content } = matter(fileContents);
+
+  type Items = {
+    [key: string]: string;
+  };
+
+  const items: Items = {};
+
+  // Ensure only the minimal needed data is exposed
+  fields.forEach((field) => {
+    if (field === 'slug') {
+      items[field] = realSlug;
+    }
+    if (field === 'content') {
+      items[field] = content;
+    }
+
+    if (typeof data[field] !== 'undefined') {
+      items[field] = data[field];
+    }
+  });
+
+  return items;
+}
+
+export function getAllPosts(fields: string[] = []) {
+  // 마크다운 파일들을 모두 가져오고,
+  const slugs = getPostSlugs();
+  const posts = slugs
+    // 객체로 파싱한 뒤에,
+    .map((slug) => getPostBySlug(slug, fields))
+    // 날짜 순으로 정렬해서 반환해줍니다.
+    .sort((post1, post2) => (post1.date > post2.date ? -1 : 1));
+  return posts;
+}
+```
+
+이렇게 모든 게시물들을 객체로 변환해서 가져올 수 있었습니다.
+
+`gray-matter` 가 하는 역할에 대해서 조금 부연 설명을 하자면,
+
+```
+---
+title: Hello
+slug: home
+---
+<h1>Hello world!</h1>
+
+```
+
+여기서 `---` 사이에 있는 부분이 마크다운 파일의 `front-matter` 라고 할 수 있는데, `front-matter` 에서 게시물에 대한 메타 데이터를 설정합니다.
+
+https://hexo.io/ko/docs/front-matter.html
+
+gray-matter 라이브러리는 이 front-matter 구문을 분석해서 객체로 파싱해줍니다.
+
+```json
+{
+  "content": "<h1>Hello world!</h1>",
+  "data": {
+    "title": "Hello",
+    "slug": "home"
+  }
+}
+```
+
+자바스크립트 객체로 변환하는 과정을 거쳤기 때문에, 이제 꺼내서 쓰기만 하면 됩니다.
+
+하지만, 이번 블로그에서는 마크다운 문법을 지원하기 위해서 content 안에 있는 값을 실제 HTML로 변경해주어야 합니다.
+
+> content: `"### H3"` -> content: `<h3>H3</h3>`
+
+#### 즉, 마크다운을 HTML로 변환해주는 작업을 추가하면 됩니다.
+
+```ts
+// blog-starter/lib/markdownToHtml.ts
+import { remark } from 'remark';
+import html from 'remark-html';
+
+export default async function markdownToHtml(markdown: string) {
+  const result = await remark().use(html).process(markdown);
+  return result.toString();
+}
+```
+
+이 과정은 `remark` 라이브러리를 통해 처리 했습니다. remark 외에도 unfied나 rehype 같은 라이브러리도 많이 사용하는 것 같습니다.
+
+https://www.npmjs.com/package/remark
+
+물론, 라이브러리를 사용하지 않고 싶다면 직접 front-matter를 객체로 파싱하는 코드를 짜거나 마크다운을 HTML로 변환하는 코드를 짜는 방법도 있습니다.
+
+~~하지만, 저는 정신 건강을 위해....~~
+
+#### 어쨌든, 최종적으로 상세 페이지를 완성했습니다.
+
+```tsx
+import type { PostType } from '../interfaces/post';
+import { getAllPosts, getPostBySlug } from '../lib/api';
+import markdownToHtml from '../lib/markdownToHtml';
+
+const Post = ({ post }: { post: PostType }) => {
+  return (
+    <>
+      <div>{post.title}</div>
+      <div dangerouslySetInnerHTML={{ __html: post.content }} />
+    </>
+  );
+};
+
+export async function getStaticProps({
+  params,
+}: {
+  params: {
+    slug: string;
+  };
+}) {
+  const post = getPostBySlug(params.slug, [
+    'title',
+    'slug',
+    'description',
+    'date',
+    'lastmod',
+    'weight',
+    'content',
+    'fileName',
+  ]);
+  const content = await markdownToHtml(post.content || '');
+
+  return {
+    props: {
+      post: {
+        ...post,
+        content,
+      },
+    },
+  };
+}
+
+export async function getStaticPaths() {
+  const posts = getAllPosts(['slug']);
+
+  return {
+    paths: posts.map((post) => {
+      return {
+        params: {
+          slug: post.slug,
+        },
+      };
+    }),
+    fallback: false,
+  };
+}
+
+export default Post;
+```
+
+![](https://velog.velcdn.com/images/ctdlog/post/3748b43f-32e9-4a3d-9cb0-2b839a00ab9b/image.gif)
+
+---
+
+### 🧐 Outro
+
+이렇게 마크다운 블로그 하나를 완성해봤습니다. CSS가 적용되어 있지 않아서 엄청 구려보이지만.. 어쨌든 마크다운 파일을 읽어와서 변환하고 화면에 정상적으로 보여집니다. Next.js를 이용해서 SSG(Static Site Generation) 블로그를 쉽게 만들 수 있으니까 스스로 정리도 할 겸, 공유도 할 겸 포스팅을 작성해봤습니다. 처음부터 공유할 목적으로 글을 작성한거라 이 포스팅에 쓰여진 과정을 처음부터 다시 해봤고, 만들어진 결과물은 깃허브를 통해서 공유하겠습니다.
+
+다음으로 추천하는 작업은 Code Highlighting 입니다. 개발 블로그라면 코드로 설명하는 경우가 많은데, 이번 포스팅에는 Code Highlighting 기능이 포함되어 있지 않습니다. 포함해서 넣을까 생각했는데, 직접 기능을 추가해봤으면 해서 넣지 않았습니다. 참고로, `highlight.js` 나 `prism.js` 라이브러리를 사용하면 쉽게 구현할 수 있습니다.
+
+이외에도 당연히 배포까지 해보는 것이 좋고 검색이나 필터, 페이지네이션, Google Analytics 등 많은 기능을 추가로 만들어보는 것도 좋은 경험이 될거라고 생각합니다. 무엇보다 원하는 디자인을 입힐 수 있어서 보기가 좋습니다. 다들 개인 블로그 하나씩 구현해보길 희망하며 포스팅을 마칩니다. 감사합니다.
+
+https://github.com/ctdlog/blog-starter-kit
