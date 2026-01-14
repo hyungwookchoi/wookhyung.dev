@@ -18,11 +18,6 @@ export const TechPost = defineDocumentType(() => ({
       description: 'date of the post',
       required: true,
     },
-    summary: {
-      type: 'string',
-      description: 'summary of the post',
-      required: true,
-    },
     tags: {
       type: 'list',
       of: { type: 'string' },
@@ -83,11 +78,6 @@ export const NotesPost = defineDocumentType(() => ({
     date: {
       type: 'date',
       description: 'date of the post',
-      required: true,
-    },
-    summary: {
-      type: 'string',
-      description: 'summary of the post',
       required: true,
     },
     tags: {

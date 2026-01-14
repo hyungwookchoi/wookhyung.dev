@@ -17,18 +17,18 @@ export async function GET() {
     if (post.category === 'tech') {
       feed.item({
         title: post.title,
-        description: post.summary,
         url: `${siteConfig.url}/tech/${post.slug}`,
         date: post.date,
+        description: 'No description',
       });
     }
 
     if (post.category === 'notes') {
       feed.item({
         title: post.title,
-        description: post.summary,
         url: `${siteConfig.url}/notes/${post.slug}`,
         date: post.date,
+        description: 'No description',
       });
     }
   }

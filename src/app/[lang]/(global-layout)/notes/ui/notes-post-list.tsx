@@ -12,7 +12,6 @@ interface Post {
   slug: string;
   title: string;
   date: string;
-  summary?: string;
 }
 
 interface NotesPostListProps {
@@ -83,11 +82,6 @@ export function NotesPostList({
               <h2 className="font-normal text-foreground group-hover:text-primary transition-colors">
                 {post.title}
               </h2>
-              {post.summary && (
-                <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
-                  {post.summary}
-                </p>
-              )}
             </div>
             <ArrowUpRightIcon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-1" />
           </Link>

@@ -234,11 +234,6 @@ export function HomeContent({ lang, dict }: HomeContentProps) {
                   <h3 className="text-sm sm:text-base font-normal text-foreground group-hover:text-primary transition-colors line-clamp-2 sm:line-clamp-1">
                     {post.title}
                   </h3>
-                  {post.summary && (
-                    <p className="hidden sm:block mt-1 text-sm text-muted-foreground line-clamp-1">
-                      {post.summary}
-                    </p>
-                  )}
                 </div>
                 <ArrowUpRightIcon className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-0.5 sm:mt-1" />
               </Link>

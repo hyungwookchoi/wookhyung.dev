@@ -442,16 +442,22 @@ pre[class*='language-'] > code[class*='language-'] {
     & :where(code):not(pre code) {
       color: var(--primary);
     }
-    & p, & li {
-      color: var(--muted-foreground);
+    & p,
+    & li {
+      color: var(--foreground);
     }
     & strong {
       color: var(--foreground);
       opacity: 0.9;
     }
     & blockquote {
-      border-color: var(--border);
-      color: var(--muted-foreground);
+      border-left-width: 3px;
+      border-left-color: var(--primary);
+      background-color: var(--muted);
+      padding: 0.5rem 1.5rem;
+      font-style: italic;
+      color: var(--foreground);
+      opacity: 0.8;
     }
     & hr {
       border-color: var(--border);

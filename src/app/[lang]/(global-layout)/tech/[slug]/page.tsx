@@ -45,7 +45,6 @@ export const generateMetadata = async ({ params }: Props) => {
 
   return {
     title: post.title,
-    description: post.summary,
     alternates: {
       canonical: `${siteConfig.url}/${lang}/tech/${slug}`,
       languages: {
@@ -80,7 +79,6 @@ export default async function Page({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
-    description: post.summary,
     url: `${siteConfig.url}/${lang}/tech/${slug}`,
     datePublished: post.date,
     dateModified: post.date,
@@ -105,11 +103,6 @@ export default async function Page({ params }: Props) {
         <BackButton className="self-start" lang={lang} />
         <article className="py-6 prose prose-invert max-w-none break-words">
           <h1 className="text-foreground">{post.title}</h1>
-          {post.summary && (
-            <p className="text-lg mt-0 text-muted-foreground font-light">
-              {post.summary}
-            </p>
-          )}
           <div className="flex items-center gap-3 mt-2 mb-4 not-prose">
             <time
               dateTime={post.date}
