@@ -20,11 +20,9 @@ Jekyll을 사용하여 만드는 것도 좋지만, Ruby 기반으로 만들어�
 
 최소한의 기능을 구현하기 위해 다음과 같은 라이브러리, 프레임워크를 사용하였습니다.
 
-> - Next.js(SSG)
-
+- Next.js(SSG)
 - 마크다운을 JS로 변환해주는 도구인 `remark` (마크다운 Parser), `remark-html` (remark로 파싱한 데이터를 html로 변환해줍니다.)
 - 각 마크다운의 meta data: `gray-matter`
-  >
 
 ### 1️⃣ create-next-app
 
@@ -36,9 +34,9 @@ https://nextjs.org/docs/getting-started
 
 > By default, Next.js pre-renders every page. This means that Next.js generates HTML for each page in advance, instead of having it all done by client-side JavaScript. Pre-rendering can result in better performance and SEO.
 
-<span style="color:CornflowerBlue"></span>
+<span style={{ color: 'CornflowerBlue' }}></span>
 
-pre-render에는 **<span style="color:LightCoral">SSG(Static Site Generation)</span>**와 **<span style="color:CornflowerBlue">SSR(Server Side Rendering)</span>**, 2가지 방식이 있는데 둘의 차이점은 SSG는 **<span style="color:LightCoral">빌드 시에</span>** 데이터를 가져와서 HTML 파일을 미리 만들어두고 SSR은 **<span style="color:CornflowerBlue">서버에 요청이 있을 때,</span>** 데이터를 가져오고 HTML 파일을 만들어서 반환합니다.
+pre-render에는 **<span style={{color: 'LightCoral'}}>SSG(Static Site Generation)</span>**와 **<span style={{color: 'CornflowerBlue'}}>SSR(Server Side Rendering)</span>**, 2가지 방식이 있는데 둘의 차이점은 SSG는 **<span style={{color: 'LightCoral'}}>빌드 시에</span>** 데이터를 가져와서 HTML 파일을 미리 만들어두고 SSR은 **<span style={{color: 'CornflowerBlue'}}>서버에 요청이 있을 때,</span>** 데이터를 가져오고 HTML 파일을 만들어서 반환합니다.
 
 개인 블로그의 경우에는 SSR보다 SSG가 더 적합한데, 빌드 시에 모든 파일을 미리 만들어두어도 데이터가 바뀔 일이 없기 때문입니다. Next.js에서는 SSG를 `getStaticProps` 메서드를 이용해서 손쉽게 할 수 있습니다.
 
@@ -411,4 +409,4 @@ export default Post;
 
 이외에도 당연히 배포까지 해보는 것이 좋고 검색이나 필터, 페이지네이션, Google Analytics 등 많은 기능을 추가로 만들어보는 것도 좋은 경험이 될거라고 생각합니다. 무엇보다 원하는 디자인을 입힐 수 있어서 보기가 좋습니다. 다들 개인 블로그 하나씩 구현해보길 희망하며 포스팅을 마칩니다. 감사합니다.
 
-https://github.com/ctdlog/blog-starter-kit
+https://github.com/hyungwookchoi/blog-starter-kit
