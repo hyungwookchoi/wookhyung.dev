@@ -1,16 +1,15 @@
 ---
-title: 'TanStack Router 오픈소스 기여기: React 스크립트 실행 문제 해결'
-summary: 'React가 <script> 태그를 차단하는 내부 원리를 파헤치고, TanStack Router 오픈소스 기여를 통해 SSR 환경까지 고려한 해결책을 구현한 과정'
+title: '오픈 소스 기여하기: TanStack Router(#4323, #5095)'
+summary: 'innerHTML과 parser-inserted 플래그로 script를 차단하는 React, TanStack Router에서의 실행 문제 해결까지'
 date: '2026-01-10'
 tags: ['React', 'SSR', 'TanStack Router', 'Open Source']
 ---
 
-## 들어가며: 보이지만 작동하지 않는 스크립트
+## 👋 시작하기에 앞서서
 
-사내 프로젝트에서 TanStack Router를 도입해 개발하던 중, [구글 로그인(GSI)](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid?hl=ko#load_the_client_library) 기능을 구현하게 되었다. 구글의 자바스크립트 라이브러리를 로드하기 위해 TanStack Router의 `head` 옵션을 사용했다.
+사내 프로젝트에서 구글 로그인을 구현하게 되었다. [구글 GSI 문서](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid?hl=ko#load_the_client_library)에 따르면 자바스크립트 라이브러리를 로드해야 했고, TanStack Router의 `head` 옵션을 사용하면 되겠다고 생각했다.
 
 ```javascript
-// 의도한 대로 동작하지 않았던 코드
 export const Route = createFileRoute('/')(({
   head: () => ({{
     scripts: [
@@ -24,157 +23,126 @@ export const Route = createFileRoute('/')(({
 }})
 ```
 
-당연히 동작할 것이라 예상했지만, 로그인 버튼은 나타나지 않았다. 더 당황스러웠던 것은 브라우저 개발자 도구의 반응이었다.
+당연히 동작할 것으로 예상했지만, 로그인 버튼이 나타나지 않았다. 더 당황스러웠던 것은 개발자 도구의 반응이었다.
 
-- **Elements 탭**: `<script>` 태그가 HTML 소스에 명확히 존재
-- **Network 탭**: 아무런 네트워크 요청도 발생하지 않음
+- Elements 탭: `<script>` 태그가 정상적으로 존재
+- Network 탭: 네트워크 요청이 발생하지 않음
 
-태그는 DOM에 렌더링되었지만 실행되지 않는, 에러 로그조차 없는 완벽한 'Silent Failure(조용한 실패)' 상태였다.
-
-이 글은 그 원인을 깊이 파헤치고, 오픈소스 기여를 통해 근본적인 해결책을 만든 과정을 담았다.
+에러 로그도 없이 조용히 실패하는 상황이었다.
 
 ---
 
-## 1. 문제의 범위 좁히기
+## 🤔 일단 범위부터 좁혀보자
 
-가장 먼저 해야 할 일은 "**내 코드의 문제인가, 라이브러리의 한계인가?**"를 구분하는 것이었다.
+"내 코드의 문제인가, 라이브러리의 문제인가?"부터 확인해야 했다.
 
-### 검증 과정
+가장 단순한 방법으로 `index.html`에 직접 스크립트 태그를 작성해봤다.
 
-**가설**: TanStack Router가 `head`에 정의된 스크립트 태그를 렌더링할 때 실행 로직이 누락되었을 것이다.
+```html
+<!-- index.html -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+```
 
-**실험**: React 컴포넌트가 아닌 `index.html` 파일에 `<script>` 태그를 직접 하드코딩하여 테스트했다.
+이 경우에는 정상적으로 작동했다. 결론은 명확했다.
 
-**결과**: `index.html`에 직접 작성한 스크립트는 정상적으로 로드되고 실행되었다.
-
-### 결론
-
-문제는 "**React 컴포넌트 내부에서 동적으로 `<script>` 태그를 렌더링할 때 발생하는 제약**"이었다. TanStack Router만의 문제가 아니라, React의 근본적인 동작 방식과 관련이 있었다.
+**React 컴포넌트에서 동적으로 스크립트 태그를 렌더링할 때 발생하는 제약이 있다.**
 
 ---
 
-## 2. 왜 React는 스크립트를 막을까?
+## 🔍 React는 왜 스크립트를 차단할까?
 
-### React의 보안 정책
+결론부터 말하면, **React는 보안상의 이유로 컴포넌트 내 `<script>` 태그를 실행하지 않는다.**
 
-결론부터 말하자면, **React는 보안상의 이유로 컴포넌트 내의 `<script>` 태그를 실행하지 않는다.**
+정확히는 DOM에는 추가하되 실행을 원천 차단하는 방식이다.
 
-정확히 말하면, 태그를 무시하는 것이 아니다. DOM에는 추가하되 실행을 원천 차단하는 방식이다.
+React는 `<script>` 태그를 생성할 때 직접 `document.createElement('script')`를 호출하지 않고, `innerHTML`을 사용하여 간접적으로 생성한다.
 
-### 기술적 메커니즘
+이렇게 생성된 스크립트는 브라우저에 의해 'parser-inserted' 플래그가 설정되며, [HTML 표준](https://html.spec.whatwg.org/multipage/scripting.html#script-processing-model)에 따라 이 플래그가 있는 스크립트는 실행이 차단된다.
 
-React는 `<script>` 태그를 렌더링할 때, 의도적으로 실행되지 않는 방식으로 DOM에 삽입한다:
+이는 **XSS 공격을 방지하기 위한 의도적인 설계**다. 사용자 입력이나 외부 데이터가 컴포넌트로 렌더링될 때, 악의적인 스크립트가 실행되는 것을 원천 차단한다.
 
-1. **`innerHTML`을 이용한 간접 생성**: React는 직접 `document.createElement('script')`를 호출하지 않고, `innerHTML`을 통해 스크립트 태그를 생성한다.
-
-2. **'parser-inserted' 플래그**: 이렇게 생성된 스크립트는 브라우저에 의해 'parser-inserted(파서 삽입됨)' 플래그가 설정된다.
-
-3. **실행 차단**: [HTML 표준 명세](https://html.spec.whatwg.org/multipage/scripting.html#script-processing-model)에 따라, parser-inserted 플래그가 설정된 스크립트는 실행이 차단된다.
-
-이는 **XSS(Cross-Site Scripting) 공격을 방지하기 위한 의도된 설계**다. 사용자 입력이나 외부 데이터가 컴포넌트로 렌더링될 때, 악의적인 스크립트가 실행되는 것을 원천 차단한다.
-
-React 소스코드를 직접 살펴보면 이 메커니즘을 명확히 확인할 수 있다:
+실제 React 소스코드를 살펴보면 이 메커니즘을 명확히 확인할 수 있다:
 https://github.com/facebook/react/blob/e41fd1fc0605dde41cff53e01039633c8e852b6d/packages/react-dom/src/client/ReactDOMComponent.js#L390-L408
 
 ```javascript
 if (type === 'script') {
-  // Create the script via .innerHTML so its "parser-inserted" flag is
-  // set to true and it does not execute
+  // innerHTML을 사용하여 의도적으로 parser-inserted 플래그를 설정하고
+  // 스크립트가 실행되지 않도록 한다
   const div = ownerDocument.createElement('div');
-  if (__DEV__) {
-    if (enableTrustedTypesIntegration && !didWarnScriptTags) {
-      console.error(
-        'Encountered a script tag while rendering React component. ' +
-          'Scripts inside React components are never executed when rendering ' +
-          'on the client. Consider using template tag instead ' +
-          '(https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template).',
-      );
-      didWarnScriptTags = true;
-    }
-  }
-  div.innerHTML = '<script><' + '/script>'; // eslint-disable-line
-  // This is guaranteed to yield a script element.
+  div.innerHTML = '<script><' + '/script>';
   const firstChild = ((div.firstChild: any): HTMLScriptElement);
   domElement = div.removeChild(firstChild);
 }
 ```
 
-주석에서도 명시하듯이, React는 의도적으로 `innerHTML`을 사용하여 'parser-inserted' 플래그를 설정하고 스크립트가 실행되지 않도록 한다.
+주석에도 명시되어 있듯이, React는 의도적으로 `innerHTML`을 사용하여 'parser-inserted' 플래그를 설정하고 스크립트 실행을 차단한다.
 
 ---
 
-## 3. 첫 번째 해결책: 동적 스크립트 주입
+## 💡 첫 번째 해결: 동적 스크립트 주입
 
-### 해결 방향
+React가 렌더링 단계에서 스크립트를 차단한다면, **DOM이 마운트된 이후(Side Effect)에 스크립트를 동적으로 주입**하면 된다.
 
-React가 렌더링 단계에서 스크립트를 차단한다면, **DOM이 마운트된 직후(Side Effect)에 스크립트를 동적으로 주입**하면 된다.
-
-일반적인 React 개발에서는 `useEffect` 훅으로 이를 구현한다:
+일반적인 React에서는 `useEffect` 훅으로 이를 구현한다:
 https://stackoverflow.com/questions/34424845/adding-script-tag-to-react-jsx
 
 ```javascript
-// 일반적인 React에서의 해결 방법
 useEffect(() => {
   const script = document.createElement('script');
   script.src = 'https://accounts.google.com/gsi/client';
   script.async = true;
-  script.defer = true;
   document.head.appendChild(script);
 
-  // Cleanup: 컴포넌트 언마운트 시 스크립트 제거
+  // 컴포넌트 언마운트 시 스크립트 제거
   return () => {
     document.head.removeChild(script);
   };
 }, []);
 ```
 
-### 오픈소스 기여의 시작
+TanStack Router [이슈 탭](https://github.com/TanStack/router/issues/3687)을 확인해보니, 이미 많은 개발자가 같은 문제를 겪고 있었다.
 
-TanStack Router 이슈([#3687](https://github.com/TanStack/router/issues/3687))를 확인해보니, 이미 많은 개발자가 같은 문제를 겪고 있었다.
+**문제는 TanStack Router의 `head` 옵션이 script 태그를 그대로 렌더링하고 있었다는 것이다.** CSR 환경을 고려하여 `head` 옵션 내부에서 script 태그를 직접 렌더링하는 대신, `useEffect`를 사용해 동적으로 삽입하도록 구현을 변경해야 했다.
 
-나는 이 로직을 **TanStack Router 내부에 통합하여, 개발자가 별도의 `useEffect` 없이도 `head` 옵션만으로 스크립트를 로드**할 수 있도록 만들기로 했다.
+### 오픈소스 기여 시작
 
-### 멀티 프레임워크 지원
+TanStack Router는 React뿐만 아니라 Solid 등 다양한 프레임워크를 지원한다. 각 프레임워크의 라이프사이클에 맞춰 스크립트를 주입하는 범용 로직을 작성했다.
 
-TanStack Router는 React뿐만 아니라 Solid 등 다양한 프레임워크를 지원한다. 각 프레임워크의 라이프사이클에 맞춰 `document.head`에 스크립트를 주입하는 범용 로직을 작성했다.
+[**PR #4323**](https://github.com/TanStack/router/pull/4323)에 작업 내용을 제출했다.
 
-**PR #4323**: [fix(react-router, solid-router): make head function scripts load properly](https://github.com/TanStack/router/pull/4323)
-
-- 각 프레임워크의 이펙트 훅을 활용한 동적 스크립트 주입
-- React, Solid 등 멀티 프레임워크 지원
+처음 진행하는 오픈소스 기여였기 때문에 테스트 코드 작성이나 가이드라인 준수에 미숙했지만, maintainer와 소통하며 개선해나갔다.
 
 ---
 
-## 4. 두 번째 문제: SSR 환경에서의 중복 실행
+## 🚨 두 번째 문제: SSR 환경에서의 중복 실행
 
-### 새로운 이슈의 발견
+머지된 후 얼마 지나지 않아 [새로운 이슈](https://github.com/TanStack/router/issues/4585)가 보고되었다.
 
-기능이 배포된 후, SSR(Server-Side Rendering) 환경에서 새로운 문제([#4585](https://github.com/TanStack/router/issues/4585))가 보고되었다.
+**SSR 환경에서 스크립트가 중복 실행되는 문제였다.**
 
-핵심은 **스크립트가 중복 실행**되는 것이었다.
-
-### SSR과 하이드레이션의 딜레마
+### 왜 두 번 실행되는가?
 
 SSR 환경에서는 다음과 같은 시나리오로 스크립트가 중복 실행된다:
 
-<ScriptExecutionFlow />
+1. 서버에서 생성된 HTML에 `<script>` 태그가 포함되어 브라우저로 전송
+2. 브라우저가 HTML을 파싱하면서 스크립트를 실행 (**첫 번째 실행**)
+3. React 하이드레이션 완료 후 `useEffect` 로직이 실행
+4. `document.createElement('script')`로 동일한 스크립트를 다시 생성하여 실행 (**두 번째 실행**)
 
-1. **서버 렌더링**: 서버에서 생성된 HTML에 `<script src="...">` 태그가 포함되어 브라우저로 전송된다.
-2. **브라우저 파싱**: 브라우저가 HTML을 파싱하면서 `<script>` 태그를 발견하고 스크립트를 로드하여 **실행한다** (첫 번째 실행).
-3. **하이드레이션 & 동적 주입**: React 하이드레이션 완료 후, PR #4323에서 추가한 `useEffect` 로직이 실행되어 `document.createElement('script')`로 동일한 스크립트를 다시 생성하고 **재실행한다** (두 번째 실행).
+이는 Google Analytics가 데이터를 중복 집계하거나, 외부 위젯이 중복으로 렌더링되는 심각한 사이드 이펙트를 발생시켰다.
 
-이는 **Google Analytics가 데이터를 두 번 집계하거나, 외부 위젯이 중복으로 렌더링되는** 심각한 사이드 이펙트를 초래했다.
+### 정교한 중복 방지 로직
 
-### 해결책: 정교한 중복 방지 시스템
+단순히 `querySelector`로 확인하는 것만으로는 불충분했다.
 
-단순히 `document.querySelector`로 확인하는 것만으로는 부족했다. 실제 구현([**PR #5095**: fix(router): prevent script tag duplication in SSR and client-side navigation](https://github.com/TanStack/router/pull/5095))에서는 다음과 같은 정교한 로직을 구현했다:
+[**PR #5095**](https://github.com/TanStack/router/pull/5095)에서 구현한 로직을 살펴보자.
 
-#### 1. **서버 환경 체크**
+#### 1. 서버 환경 체크
 
 ```javascript
 const router = useRouter();
 
-// 서버 환경에서는 중복 검사를 하지 않음
+// 서버 환경에서는 DOM이 존재하지 않으므로 중복 검사를 수행하지 않음
 if (!router.isServer) {
   return null;
 }
@@ -182,42 +150,40 @@ if (!router.isServer) {
 
 SSR 중에는 DOM이 존재하지 않으므로, 클라이언트 환경에서만 중복 검사를 수행한다.
 
-#### 2. **외부 스크립트 중복 검사 (src 속성)**
+#### 2. 외부 스크립트 중복 검사
 
 ```javascript
-// src 속성이 있는 경우
 if (attrs?.src && typeof attrs.src === 'string') {
-  // URL 정규화 함수
+  // URL 정규화 (상대 경로 → 절대 경로)
   const normSrc = (() => {
     try {
       const base = document.baseURI || window.location.href;
       return new URL(attrs.src, base).href;
     } catch {
-      return attrs.src; // URL 파싱 실패 시 원본 반환
+      return attrs.src; // 파싱 실패 시 원본 반환
     }
   })();
 
-  // src 속성이 있는 스크립트만 검색
+  // src 속성이 있는 스크립트만 검색 (성능 최적화)
   const existingScript = Array.from(
     document.querySelectorAll('script[src]'),
   ).find((el) => (el as HTMLScriptElement).src === normSrc);
 
   if (existingScript) {
-    return; // 이미 존재하면 아무것도 렌더링하지 않음
+    return; // 이미 존재하면 렌더링하지 않음
   }
 }
 ```
 
-**핵심 포인트**:
+핵심 포인트:
 
-- **`querySelectorAll('script[src]')`**: src 속성이 있는 스크립트만 검색하여 성능 최적화
-- **URL 정규화**: `./script.js`, `/script.js` 등을 절대 URL로 변환하여 정확한 비교
-- **try-catch 처리**: URL 파싱 실패 시에도 안전하게 처리
+- `querySelectorAll('script[src]')`: src 속성이 있는 스크립트만 검색하여 성능 최적화
+- URL 정규화: `./script.js`, `/script.js` 등을 절대 URL로 변환하여 정확한 비교
+- try-catch 처리: URL 파싱 실패 시에도 안전하게 처리
 
-#### 3. **인라인 스크립트 중복 검사**
+#### 3. 인라인 스크립트 중복 검사
 
 ```javascript
-// 인라인 스크립트인 경우 (children이 string)
 if (typeof children === 'string') {
   // type 속성 정규화
   const typeAttr =
@@ -226,7 +192,7 @@ if (typeof children === 'string') {
   // nonce 속성 정규화
   const nonceAttr = typeof attrs?.nonce === 'string' ? attrs.nonce : undefined;
 
-  // src가 없는 인라인 스크립트만 검색
+  // 인라인 스크립트만 검색
   const existingScript = Array.from(
     document.querySelectorAll('script:not([src])'),
   ).find((el) => {
@@ -242,85 +208,66 @@ if (typeof children === 'string') {
   });
 
   if (existingScript) {
-    return; // 이미 존재하면 아무것도 렌더링하지 않음
+    return; // 이미 존재하면 렌더링하지 않음
   }
 }
 ```
 
-**핵심 포인트**:
+인라인 스크립트는 내용뿐만 아니라 `type`, `nonce` 속성까지 비교한다. 동일한 내용이라도 type이나 nonce가 다르면 별개의 스크립트로 처리한다.
 
-- **`querySelectorAll('script:not([src])')`**: 인라인 스크립트만 검색
-- **다차원 비교**: 스크립트 내용(`textContent`)뿐만 아니라 `type`, `nonce` 속성까지 비교
-- **정확한 중복 감지**: 동일한 내용이라도 type이나 nonce가 다르면 별개로 처리
-
-#### 4. **Cleanup 로직: 라우트 변경 시 정리**
+#### 4. Cleanup 로직
 
 ```javascript
 React.useEffect(() => {
-  // 중복 검사 후 스크립트 생성
   const script = document.createElement('script');
   // ... 스크립트 설정
   document.head.appendChild(script);
 
-  // Cleanup: 컴포넌트 언마운트 시 스크립트 제거
+  // 라우트 변경 시 스크립트 제거
   return () => {
     document.head.removeChild(script);
   };
 }, []);
 ```
 
-**메모리 누수 방지**: 라우트를 떠날 때 해당 페이지에서만 필요한 스크립트를 제거하여 불필요한 스크립트 누적을 방지
+라우트 이동 시 해당 페이지에서만 필요한 스크립트를 정리하여 메모리 누수를 방지한다.
 
-#### 5. **포괄적인 테스트 커버리지**
+#### 5. 테스트 추가
 
-PR에는 다음 시나리오에 대한 E2E 테스트가 포함되었다:
+PR에는 다음 시나리오에 대한 E2E 테스트를 포함시켰다:
 
 - SSR 환경에서의 스크립트 중복 방지
-- 클라이언트 측 네비게이션 시 중복 방지
-- 다중 라우트 이동에서의 안정성
+- 클라이언트 네비게이션 시 중복 방지
+- 다중 라우트 이동 시 안정성
 - 인라인 스크립트 중복 방지
 
 ---
 
-## 5. 기여의 결과와 배운 점
-
-### 오픈소스에 미친 영향
+## ✨ 끝내며
 
 이 두 PR은 모두 머지되어 **TanStack Router v1.131.46부터 포함**되었다.
 
-관련 이슈들을 확인한 결과, **최소 10명 이상의 개발자**가 같은 문제로 어려움을 겪고 있었다. 이제 그들은 별도의 workaround 없이 `head` 옵션만으로 스크립트를 로드할 수 있게 되었다.
+이슈를 확인한 결과 최소 10명 이상의 개발자가 같은 문제로 어려움을 겪고 있었는데, 이제 별도의 workaround 없이 `head` 옵션만으로 스크립트를 사용할 수 있게 되었다.
 
-### 얻은 교훈
+이 과정에서 배운 점들:
 
-#### 1. 프레임워크의 설계 철학
+**1. React의 설계 철학**
 
-React가 **개발자의 편의성(DX)보다 보안(Safety)을 더 높은 가치로 둔다**는 점을 코드로 체감했다.
+React가 개발자 편의성보다 보안을 우선시한다는 것을 코드를 통해 체감했다. 불편해 보이는 제약도 수백만 사용자의 보안을 위한 의도적인 설계였다.
 
-일견 불편해 보이는 제약도, 수백만 사용자의 보안을 지키기 위한 의도적인 설계였다.
+**2. 라이브러리 코드의 책임**
 
-#### 2. 엔지니어로서의 책임
+개인 로컬 환경에서 작동하는 코드와 전 세계 다양한 환경에서 작동해야 하는 라이브러리 코드는 완전히 다르다. SSR, 하이드레이션, 다양한 프레임워크 환경 등 엣지 케이스를 모두 고려해야 했다.
 
-"내 로컬 환경에서 돌아가는 코드"와 "전 세계의 다양한 환경에서 돌아가야 하는 라이브러리 코드"의 무게는 달랐다.
+**3. "Why"를 질문하는 태도**
 
-특히 SSR, 하이드레이션, 다양한 프레임워크 환경 등 **엣지 케이스를 모두 고려한 견고한 구현**의 중요성을 배웠다.
+- "왜 작동하지 않을까?" → 근본 원인 파악
+- "어떻게 해결할 수 있을까?" → 올바른 방향 설정
+- "더 나은 방법은 없을까?" → 지속적인 개선
 
-#### 3. 질문하는 태도
+이런 질문을 반복하면서 단순한 버그 수정을 넘어 프레임워크를 깊이 이해할 수 있었다.
 
-단순히 "안 되면 되게 하라"가 아니라:
-
-- "**왜 안 될까?**" → 근본 원인 파악
-- "**어떻게 해결할까?**" → 올바른 방향 설정
-- "**더 나은 방법은 없을까?**" → 지속적인 개선
-
-이런 질문을 반복하며 단순한 버그 수정을 넘어, 프레임워크의 깊은 이해로 나아갈 수 있었다.
-
----
-
-## 마치며
-
-하나의 작은 버그에서 시작한 여정은, React의 보안 정책을 이해하고, SSR 환경의 복잡성을 체감하며, 오픈소스 기여를 통해 수많은 개발자에게 도움을 주는 결과로 이어졌다.
-
-앞으로도 문제를 마주했을 때, 단순히 해결하는 것에 그치지 않고 **"Why"를 끊임없이 질문하는 엔지니어**로 성장하고 싶다.
+하나의 작은 버그에서 시작했지만, React 내부 메커니즘을 파헤치고 오픈소스에 기여하면서 많은 개발자들에게 도움을 줄 수 있었다. 앞으로도 문제를 마주했을 때 "Why"를 끊임없이 질문하는 엔지니어로 성장하고 싶다.
 
 ---
 
