@@ -56,7 +56,7 @@ export function FeedList({ items }: FeedListProps) {
         <button
           onClick={() => setSelectedAuthor(null)}
           className={cn(
-            'px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all duration-200 border',
+            'px-3 py-1.5 text-[10px] sm:text-xs font-medium uppercase tracking-wider transition-all duration-200 border',
             !selectedAuthor
               ? 'bg-primary text-primary-foreground border-primary'
               : 'bg-transparent text-muted-foreground border-border hover:text-foreground hover:border-muted-foreground',
@@ -74,7 +74,7 @@ export function FeedList({ items }: FeedListProps) {
               key={author}
               onClick={() => setSelectedAuthor(isSelected ? null : author)}
               className={cn(
-                'px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all duration-200 border',
+                'px-3 py-1.5 text-[10px] sm:text-xs font-medium uppercase tracking-wider transition-all duration-200 border',
                 isSelected
                   ? 'bg-primary text-primary-foreground border-primary'
                   : 'bg-transparent text-muted-foreground border-border hover:text-primary hover:border-primary/50',
@@ -126,11 +126,11 @@ export function FeedList({ items }: FeedListProps) {
                       })}
                     </time>
                   </div>
-                  <h2 className="text-sm sm:text-base font-normal text-foreground group-hover:text-primary transition-colors line-clamp-2 sm:line-clamp-1">
+                  <h2 className="text-xs sm:text-sm font-normal text-foreground group-hover:text-primary transition-colors line-clamp-2 sm:line-clamp-1">
                     {item.title}
                   </h2>
                 </div>
-                <ArrowUpRightIcon className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-0.5 sm:mt-1" />
+                <ArrowUpRightIcon className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-0.5 sm:mt-1" />
               </a>
             </motion.div>
           ))}
@@ -139,7 +139,7 @@ export function FeedList({ items }: FeedListProps) {
         {/* Empty State */}
         {filteredItems.length === 0 && (
           <motion.div
-            className="py-12 text-center text-muted-foreground font-mono text-sm"
+            className="py-12 text-center text-muted-foreground font-mono text-xs sm:text-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >

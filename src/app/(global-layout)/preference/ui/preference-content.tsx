@@ -43,15 +43,15 @@ export function PreferenceContent({
           delay: INITIAL_DELAY + STAGGER_DELAY * sectionIndex++,
         }}
       >
-        <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+        <h2 className="text-xs sm:text-sm font-normal text-foreground mb-3 sm:mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
           <span className="w-2 h-2 bg-primary" />
           Music
         </h2>
         <div className="mb-6">
-          <h3 className="text-[10px] font-normal text-muted-foreground uppercase tracking-[0.15em] mb-3">
+          <h3 className="text-[9px] sm:text-[10px] font-normal text-muted-foreground uppercase tracking-[0.15em] mb-3">
             Concert
           </h3>
-          <ul className="space-y-2">
+          <ul className="space-y-2 text-xs sm:text-sm">
             {concerts.map((concert) => (
               <li key={concert.title}>
                 <a
@@ -77,7 +77,7 @@ export function PreferenceContent({
           delay: INITIAL_DELAY + STAGGER_DELAY * sectionIndex++,
         }}
       >
-        <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+        <h2 className="text-xs sm:text-sm font-normal text-foreground mb-3 sm:mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
           <span className="w-2 h-2 bg-primary" />
           Book
         </h2>
@@ -85,10 +85,10 @@ export function PreferenceContent({
           .sort(([a], [b]) => Number(b) - Number(a))
           .map(([year, books]) => (
             <div key={year} className="mb-6">
-              <h3 className="text-[10px] font-normal text-muted-foreground uppercase tracking-[0.15em] mb-3">
+              <h3 className="text-[9px] sm:text-[10px] font-normal text-muted-foreground uppercase tracking-[0.15em] mb-3">
                 {year}
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-2 text-xs sm:text-sm">
                 {books.map((book) => (
                   <li key={book.title}>
                     <a
@@ -118,7 +118,7 @@ export function PreferenceContent({
           delay: INITIAL_DELAY + STAGGER_DELAY * sectionIndex++,
         }}
       >
-        <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+        <h2 className="text-xs sm:text-sm font-normal text-foreground mb-3 sm:mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
           <span className="w-2 h-2 bg-primary" />
           Movie
         </h2>
@@ -126,10 +126,10 @@ export function PreferenceContent({
           .sort(([a], [b]) => Number(b) - Number(a))
           .map(([year, movieList]) => (
             <div key={year} className="mb-6">
-              <h3 className="text-[10px] font-normal text-muted-foreground uppercase tracking-[0.15em] mb-3">
+              <h3 className="text-[9px] sm:text-[10px] font-normal text-muted-foreground uppercase tracking-[0.15em] mb-3">
                 {year}
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-2 text-xs sm:text-sm">
                 {movieList.map((movie) => (
                   <li key={movie.title} className="text-muted-foreground">
                     {movie.title}{' '}
@@ -152,11 +152,11 @@ export function PreferenceContent({
           delay: INITIAL_DELAY + STAGGER_DELAY * sectionIndex++,
         }}
       >
-        <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+        <h2 className="text-xs sm:text-sm font-normal text-foreground mb-3 sm:mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
           <span className="w-2 h-2 bg-primary" />
           Interest
         </h2>
-        <ul className="space-y-2">
+        <ul className="space-y-2 text-xs sm:text-sm">
           {interests.map((interest) => (
             <li key={interest.title} className="text-muted-foreground">
               {interest.title}

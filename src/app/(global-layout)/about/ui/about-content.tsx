@@ -101,46 +101,48 @@ export function AboutContent() {
         </div>
 
         <div className="space-y-2 mb-6">
-          <h1 className="text-3xl font-light text-foreground">최형욱</h1>
-          <p className="text-sm text-muted-foreground uppercase tracking-[0.15em]">
+          <h1 className="text-2xl sm:text-3xl font-light text-foreground">
+            최형욱
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground uppercase tracking-[0.15em]">
             WOOKHYUNG
           </p>
         </div>
 
-        <div className="flex space-x-3">
+        <div className="flex space-x-2 sm:space-x-3">
           <a
             href={siteConfig.social.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center w-11 h-11 bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+            className="flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
             aria-label="GitHub"
           >
-            <GithubIcon className="w-5 h-5" />
+            <GithubIcon className="w-4 h-4 sm:w-5 sm:h-5" />
           </a>
           <a
             href={siteConfig.social.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center w-11 h-11 bg-muted border border-border text-muted-foreground hover:text-primary transition-colors"
+            className="flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 bg-muted border border-border text-muted-foreground hover:text-primary transition-colors"
             aria-label="LinkedIn"
           >
-            <LinkedinIcon className="w-5 h-5" />
+            <LinkedinIcon className="w-4 h-4 sm:w-5 sm:h-5" />
           </a>
           <a
             href={`mailto:${siteConfig.social.email}`}
-            className="flex items-center justify-center w-11 h-11 bg-muted border border-border text-muted-foreground hover:text-primary transition-colors"
+            className="flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 bg-muted border border-border text-muted-foreground hover:text-primary transition-colors"
             aria-label="Email"
           >
-            <EmailIcon className="w-5 h-5" />
+            <EmailIcon className="w-4 h-4 sm:w-5 sm:h-5" />
           </a>
           <a
             href={siteConfig.feeds.rss}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center w-11 h-11 bg-muted border border-border text-muted-foreground hover:text-primary transition-colors"
+            className="flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 bg-muted border border-border text-muted-foreground hover:text-primary transition-colors"
             aria-label="RSS"
           >
-            <RssIcon className="w-5 h-5" />
+            <RssIcon className="w-4 h-4 sm:w-5 sm:h-5" />
           </a>
         </div>
       </motion.div>
@@ -155,11 +157,11 @@ export function AboutContent() {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+          <h2 className="text-xs sm:text-sm font-normal text-foreground mb-3 sm:mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
             <span className="w-2 h-2 bg-primary" />
             Experience
           </h2>
-          <ul className="space-y-2 text-muted-foreground">
+          <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
             <li>프론트엔드 개발자 (22.12 - 현재)</li>
           </ul>
         </motion.section>
@@ -173,11 +175,11 @@ export function AboutContent() {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+          <h2 className="text-xs sm:text-sm font-normal text-foreground mb-3 sm:mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
             <span className="w-2 h-2 bg-primary" />
             Tech Stack
           </h2>
-          <ul className="space-y-2 text-muted-foreground">
+          <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
             <li>TypeScript, React, TanStack Router(Start), Next.js</li>
           </ul>
         </motion.section>
@@ -191,11 +193,11 @@ export function AboutContent() {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+          <h2 className="text-xs sm:text-sm font-normal text-foreground mb-3 sm:mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
             <span className="w-2 h-2 bg-primary" />
             Open Source Contribution
           </h2>
-          <h3 className="text-[10px] font-normal text-muted-foreground uppercase tracking-[0.15em] mb-3">
+          <h3 className="text-[9px] sm:text-[10px] font-normal text-muted-foreground uppercase tracking-[0.15em] mb-3">
             <a
               href="https://github.com/TanStack/router"
               target="_blank"
@@ -211,7 +213,7 @@ export function AboutContent() {
                 <div className="flex items-center gap-2">
                   <div
                     className={cn(
-                      'flex items-center gap-1 text-primary-foreground px-2 py-0.5 text-xs',
+                      'flex items-center gap-1 text-primary-foreground px-2 py-0.5 text-[10px] sm:text-xs',
                       {
                         'bg-primary': status === 'merged',
                         'bg-muted-foreground': status === 'open',
@@ -230,7 +232,7 @@ export function AboutContent() {
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-muted-foreground hover:text-primary transition-colors line-clamp-1"
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors line-clamp-1"
                   >
                     {title}
                   </a>
@@ -249,13 +251,16 @@ export function AboutContent() {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+          <h2 className="text-xs sm:text-sm font-normal text-foreground mb-3 sm:mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
             <span className="w-2 h-2 bg-primary" />
             Project
           </h2>
           <ul className="space-y-2">
             {projects.map(({ title, link, description }) => (
-              <li key={title} className="text-muted-foreground">
+              <li
+                key={title}
+                className="text-xs sm:text-sm text-muted-foreground"
+              >
                 <a
                   href={link}
                   target="_blank"
@@ -282,11 +287,11 @@ export function AboutContent() {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+          <h2 className="text-xs sm:text-sm font-normal text-foreground mb-3 sm:mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
             <span className="w-2 h-2 bg-primary" />
             Education
           </h2>
-          <ul className="space-y-2 text-muted-foreground">
+          <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
             <li>방송통신대학교 컴퓨터과학과 (25.09 - 현재)</li>
           </ul>
         </motion.section>
@@ -300,11 +305,11 @@ export function AboutContent() {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+          <h2 className="text-xs sm:text-sm font-normal text-foreground mb-3 sm:mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
             <span className="w-2 h-2 bg-primary" />
             Contact
           </h2>
-          <ul className="space-y-2">
+          <ul className="space-y-2 text-xs sm:text-sm">
             <li>
               <a
                 href={siteConfig.social.github}
@@ -345,11 +350,11 @@ export function AboutContent() {
             delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
           }}
         >
-          <h2 className="text-sm font-normal text-foreground mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
+          <h2 className="text-xs sm:text-sm font-normal text-foreground mb-3 sm:mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
             <span className="w-2 h-2 bg-primary" />
             What I&apos;m interested in recently...
           </h2>
-          <ul className="space-y-2">
+          <ul className="space-y-2 text-xs sm:text-sm">
             <li>
               <a
                 href="https://www.anthropic.com/claude-code"
@@ -384,14 +389,14 @@ export function AboutContent() {
             )}
           >
             <div>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-[0.15em] mb-1">
+              <p className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-[0.15em] mb-1">
                 더 알아보기
               </p>
-              <p className="font-normal text-foreground group-hover:text-primary transition-colors">
+              <p className="text-xs sm:text-sm font-normal text-foreground group-hover:text-primary transition-colors">
                 음악, 책, 영화, 관심사
               </p>
             </div>
-            <ArrowRightIcon className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+            <ArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
           </Link>
         </motion.div>
       </div>
