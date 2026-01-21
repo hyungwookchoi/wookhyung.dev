@@ -59,7 +59,7 @@ function PostList({
           <Link
             href={`/${type}/${post.slug}`}
             className={cn(
-              'group flex items-center justify-between gap-4',
+              'group flex items-center justify-between gap-8',
               'py-2',
               'hover:text-primary transition-colors',
               'border-b border-border/50 last:border-0',
