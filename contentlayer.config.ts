@@ -38,25 +38,13 @@ export const TechPost = defineDocumentType(() => ({
     url: {
       type: 'string',
       resolve: (post) => {
-        const filename = post._raw.flattenedPath.replace('tech/', '');
-        const slug = filename.replace(/\.(ko|en)$/, '');
+        const slug = post._raw.flattenedPath.replace('tech/', '');
         return `/tech/${slug}`;
       },
     },
     slug: {
       type: 'string',
-      resolve: (post) => {
-        const filename = post._raw.flattenedPath.replace('tech/', '');
-        return filename.replace(/\.(ko|en)$/, '');
-      },
-    },
-    locale: {
-      type: 'string',
-      resolve: (post) => {
-        const filename = post._raw.flattenedPath.replace('tech/', '');
-        const match = filename.match(/\.(ko|en)$/);
-        return match ? match[1] : 'ko';
-      },
+      resolve: (post) => post._raw.flattenedPath.replace('tech/', ''),
     },
     category: {
       type: 'string',
@@ -100,25 +88,13 @@ export const NotesPost = defineDocumentType(() => ({
     url: {
       type: 'string',
       resolve: (post) => {
-        const filename = post._raw.flattenedPath.replace('notes/', '');
-        const slug = filename.replace(/\.(ko|en)$/, '');
+        const slug = post._raw.flattenedPath.replace('notes/', '');
         return `/notes/${slug}`;
       },
     },
     slug: {
       type: 'string',
-      resolve: (post) => {
-        const filename = post._raw.flattenedPath.replace('notes/', '');
-        return filename.replace(/\.(ko|en)$/, '');
-      },
-    },
-    locale: {
-      type: 'string',
-      resolve: (post) => {
-        const filename = post._raw.flattenedPath.replace('notes/', '');
-        const match = filename.match(/\.(ko|en)$/);
-        return match ? match[1] : 'ko';
-      },
+      resolve: (post) => post._raw.flattenedPath.replace('notes/', ''),
     },
     category: {
       type: 'string',

@@ -3,13 +3,23 @@
 import { motion } from 'motion/react';
 import { useCallback, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
-import { getTranslations } from '../../constants/translations';
+const t = {
+  title: 'ETag 계산 과정',
+  subtitle: 'S3가 멀티파트 업로드의 ETag를 계산하는 방법',
+  partLabel: 'Part',
+  partHash: 'MD5 해시',
+  concatenate: '해시 연결',
+  finalHash: '최종 MD5',
+  finalEtag: '최종 ETag',
+  partCount: '파트 수',
+  note: '멀티파트 업로드의 ETag는 각 파트 MD5의 연결값을 다시 MD5한 후, -N (파트 수)을 붙입니다',
+  step1: '각 파트의 MD5 해시 계산',
+  step2: 'MD5 해시들을 바이너리로 연결',
+  step3: '연결된 값의 MD5 계산',
+  step4: '파트 수(-N) 접미사 추가',
+} as const;
 
 export function ETagVisualization() {
-  const locale = useLocale();
-  const t = getTranslations(locale).etagDemo;
   const [step, setStep] = useState(0);
 
   const mockParts = [
@@ -275,13 +285,7 @@ export function ETagVisualization() {
               className="px-6 py-2 bg-amber-500 text-background font-mono text-sm uppercase tracking-wider
                        hover:bg-amber-400 transition-colors"
             >
-              {step === 0
-                ? locale === 'ko'
-                  ? '시작'
-                  : 'Start'
-                : locale === 'ko'
-                  ? '다시 보기'
-                  : 'Replay'}
+              {step === 0 ? '시작' : '다시 보기'}
             </button>
           </div>
         )}

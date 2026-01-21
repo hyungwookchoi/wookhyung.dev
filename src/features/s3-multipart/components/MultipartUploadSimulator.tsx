@@ -3,17 +3,52 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
-import { getTranslations } from '../constants/translations';
 import { useFileProcessor } from '../hooks/useFileProcessor';
 import { FileDropzone } from './FileDropzone';
 import { HashComparison } from './HashComparison';
 import { PartCard } from './PartCard';
 
+const t = {
+  title: 'S3 멀티파트 업로드 시뮬레이터',
+  subtitle: '파일을 바이트 레벨에서 분할하고 다시 합치는 과정을 체험해보세요',
+  dropzone: {
+    placeholder: '파일을 드래그하거나 클릭하여 선택',
+    size: '크기',
+    type: '타입',
+    unknown: 'unknown',
+  },
+  controls: {
+    partCount: '파트 개수',
+    splitFile: '파일 분할',
+    processing: '처리 중...',
+  },
+  hash: {
+    originalTitle: '원본 파일 해시',
+    reconstructedTitle: '복원된 파일 해시',
+    sha256: 'SHA-256',
+  },
+  parts: {
+    title: '분할된 파트',
+    count: '개',
+    partNumber: 'Part',
+    byteRange: 'Byte Range',
+    etag: 'ETag',
+    hexDump: 'Hex Dump (처음 32 bytes)',
+  },
+  merge: {
+    button: 'Complete Multipart Upload (파트 합치기)',
+    merging: '병합 중...',
+  },
+  result: {
+    successTitle: '무결성 검증 성공!',
+    successMessage: '원본과 복원된 파일이 완전히 동일합니다.',
+    failTitle: '무결성 검증 실패!',
+    failMessage: '파일이 손상되었습니다.',
+    download: '복원된 파일 다운로드',
+  },
+} as const;
+
 export function MultipartUploadSimulator() {
-  const locale = useLocale();
-  const t = getTranslations(locale);
   const [partCount, setPartCount] = useState(3);
 
   const {
@@ -225,7 +260,7 @@ export function MultipartUploadSimulator() {
                 {t.parts.title}
               </h3>
               <span className="text-[10px] font-mono text-muted-foreground/60 uppercase tracking-wider">
-                [{parts.length} {locale === 'ko' ? '파트' : 'parts'}]
+                [{parts.length} 파트]
               </span>
             </div>
 

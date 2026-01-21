@@ -3,15 +3,23 @@
 import { motion } from 'motion/react';
 import { useMemo, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
-import { getTranslations } from '../../constants/translations';
-
 type InterpretationMode = 'ascii' | 'rgb' | 'integer' | 'float';
 
+const t = {
+  title: '바이트 해석기',
+  subtitle: '같은 바이트가 어떻게 다르게 해석되는지 확인해보세요',
+  inputBytes: '바이트 입력',
+  interpretation: '해석 결과',
+  asAscii: 'ASCII 텍스트',
+  asRgb: 'RGB 색상',
+  asInteger: '정수 (빅엔디안)',
+  asFloat: '부동소수점',
+  editHint: '바이트를 클릭하여 수정',
+  colorPreview: '색상 미리보기',
+  invalidBytes: '유효하지 않은 바이트',
+} as const;
+
 export function ByteInterpretationDemo() {
-  const locale = useLocale();
-  const t = getTranslations(locale).byteInterpreter;
   const [bytes, setBytes] = useState<number[]>([0x48, 0x65, 0x6c, 0x6c, 0x6f]);
   const [mode, setMode] = useState<InterpretationMode>('ascii');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);

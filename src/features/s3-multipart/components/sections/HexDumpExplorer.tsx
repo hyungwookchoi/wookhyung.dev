@@ -3,9 +3,6 @@
 import { motion } from 'motion/react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
-import { getTranslations } from '../../constants/translations';
 import { useOptionalSharedFile } from '../../contexts/FileContext';
 import { formatBytes } from '../../utils/bytes';
 
@@ -13,9 +10,24 @@ const BYTES_PER_ROW = 16;
 const INITIAL_ROWS = 8;
 const LOAD_MORE_ROWS = 8;
 
+const t = {
+  title: 'Hex 덤프 탐색기',
+  subtitle: '파일의 실제 바이트를 확인해보세요',
+  selectFile: '파일을 선택하면 바이트를 탐색할 수 있습니다',
+  offset: '오프셋',
+  hexValues: 'Hex',
+  ascii: 'ASCII',
+  decimal: '10진수',
+  binary: '2진수',
+  showingBytes: '표시 중',
+  of: '/',
+  bytes: 'bytes',
+  loadMore: '더 보기',
+  noFile: '파일 없음',
+  dropHere: '파일을 여기에 드롭하세요',
+} as const;
+
 export function HexDumpExplorer() {
-  const locale = useLocale();
-  const t = getTranslations(locale).hexExplorer;
   const sharedFile = useOptionalSharedFile();
 
   const [localFile, setLocalFile] = useState<File | null>(null);
@@ -186,14 +198,14 @@ export function HexDumpExplorer() {
                 }}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
-                {locale === 'ko' ? '다른 파일' : 'Change'}
+                다른 파일
               </button>
             </div>
 
             {/* Hex dump table */}
             {isLoading ? (
               <div className="p-8 text-center text-muted-foreground">
-                {locale === 'ko' ? '로딩 중...' : 'Loading...'}
+                로딩 중...
               </div>
             ) : (
               <div className="overflow-x-auto">

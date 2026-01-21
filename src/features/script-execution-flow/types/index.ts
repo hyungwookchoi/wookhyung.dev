@@ -8,14 +8,8 @@ export type ScriptStatus =
 
 export interface FlowStep {
   id: FlowStepType;
-  title: {
-    ko: string;
-    en: string;
-  };
-  description: {
-    ko: string[];
-    en: string[];
-  };
+  title: string;
+  description: string[];
   scriptStatus: ScriptStatus[];
   highlight?: boolean;
 }

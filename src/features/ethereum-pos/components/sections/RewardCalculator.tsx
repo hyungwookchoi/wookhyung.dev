@@ -11,8 +11,6 @@ import {
   YAxis,
 } from 'recharts';
 
-import { useLocale } from '@/i18n/context';
-
 const translations = {
   ko: {
     title: '스테이킹 수익률 계산기',
@@ -57,8 +55,7 @@ const translations = {
 };
 
 export function RewardCalculator() {
-  const locale = useLocale();
-  const t = translations[locale];
+  const t = translations['ko'];
 
   const [totalStakedM, setTotalStakedM] = useState(30); // in millions
   const [yourStake, setYourStake] = useState(32); // in ETH

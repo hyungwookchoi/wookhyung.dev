@@ -3,15 +3,29 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
-import { getTranslations } from '../../constants/translations';
-
 type Stage = 0 | 1 | 2 | 3 | 4;
 
+const t = {
+  title: 'Presigned URL 업로드 플로우',
+  subtitle: '프론트엔드에서 S3에 직접 업로드하는 과정',
+  frontend: '프론트엔드',
+  backend: '백엔드',
+  stage1: 'URL 요청',
+  stage2: 'URL 생성',
+  stage3: 'S3 업로드',
+  stage4: '완료',
+  clickToStart: '클릭하여 시작',
+  responseUrl: 'Presigned URL 응답',
+  directUpload: '백엔드를 거치지 않고 S3에 직접 업로드',
+  uploadComplete: '업로드 완료!',
+  benefit1Title: '트래픽 절감',
+  benefit1Desc: '파일이 백엔드를 거치지 않음',
+  benefit2Title: '서버 부하 감소',
+  benefit2Desc: '백엔드는 URL 생성만 담당',
+  restart: '다시 보기',
+} as const;
+
 export function PresignedUrlFlowDemo() {
-  const locale = useLocale();
-  const t = getTranslations(locale).presignedDemo;
   const [stage, setStage] = useState<Stage>(0);
 
   const runFullSimulation = useCallback(async () => {

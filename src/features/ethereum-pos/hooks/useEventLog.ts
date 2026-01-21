@@ -4,11 +4,7 @@ import type { EventLog, EventType } from '../types/slot';
 
 interface UseEventLogReturn {
   logs: EventLog[];
-  addLog: (
-    type: EventType,
-    message: { ko: string; en: string },
-    data?: EventLog['data'],
-  ) => void;
+  addLog: (type: EventType, message: string, data?: EventLog['data']) => void;
   clearLogs: () => void;
 }
 
@@ -16,11 +12,7 @@ export function useEventLog(maxEntries: number = 50): UseEventLogReturn {
   const [logs, setLogs] = useState<EventLog[]>([]);
 
   const addLog = useCallback(
-    (
-      type: EventType,
-      message: { ko: string; en: string },
-      data?: EventLog['data'],
-    ) => {
+    (type: EventType, message: string, data?: EventLog['data']) => {
       const newLog: EventLog = {
         id: crypto.randomUUID(),
         timestamp: Date.now(),

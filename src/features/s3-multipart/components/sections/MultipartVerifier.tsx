@@ -3,9 +3,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useRef, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
-import { getTranslations } from '../../constants/translations';
 import { useOptionalSharedFile } from '../../contexts/FileContext';
 import { calculateHash, formatBytes } from '../../utils/bytes';
 
@@ -26,9 +23,33 @@ interface VerificationResult {
   totalSize: number;
 }
 
+const t = {
+  title: '파일 무결성 검증',
+  subtitle: '파일을 분할하고 합쳐서 무결성을 검증해보세요',
+  selectFile: '파일 선택',
+  partCount: '파트 수',
+  splitAndMerge: '분할 & 합치기',
+  verifying: '검증 중...',
+  originalHash: '원본 해시',
+  reconstructedHash: '복원 해시',
+  match: '일치',
+  mismatch: '불일치',
+  downloadFile: '파일 다운로드',
+  splitDetails: '분할 상세',
+  mergeDetails: '복원 상세',
+  byteRange: '바이트 범위',
+  partSize: '크기',
+  partHash: 'MD5',
+  splitPhase: '분할',
+  mergePhase: '복원',
+  originalFile: '원본 파일',
+  reconstructedFile: '복원된 파일',
+  totalBytes: '총 바이트',
+  partsCreated: '파트 생성됨',
+  partsMerged: '파트 병합됨',
+} as const;
+
 export function MultipartVerifier() {
-  const locale = useLocale();
-  const t = getTranslations(locale).verifier;
   const sharedFile = useOptionalSharedFile();
 
   const [localFile, setLocalFile] = useState<File | null>(null);

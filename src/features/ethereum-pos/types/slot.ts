@@ -28,10 +28,7 @@ export interface EventLog {
   id: string;
   timestamp: number;
   type: EventType;
-  message: {
-    ko: string;
-    en: string;
-  };
+  message: string;
   data?: {
     slot?: number;
     epoch?: number;

@@ -14,8 +14,22 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/:lang*/resume.pdf',
+        source: '/resume.pdf',
         destination: '/resume.pdf',
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: '/ko/:path*',
+        destination: '/:path*',
+        permanent: true,
+      },
+      {
+        source: '/en/:path*',
+        destination: '/:path*',
+        permanent: true,
       },
     ];
   },

@@ -3,8 +3,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
 import type { EventLog } from '../types/slot';
 
 interface EventLogPanelProps {
@@ -61,7 +59,6 @@ function getEventIcon(type: EventLog['type']): string {
 }
 
 export function EventLogPanel({ logs, onClear }: EventLogPanelProps) {
-  const locale = useLocale();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // 새 로그가 추가될 때 스크롤
@@ -97,7 +94,7 @@ export function EventLogPanel({ logs, onClear }: EventLogPanelProps) {
         {logs.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <span className="font-mono text-[10px] text-muted-foreground/40">
-              {locale === 'ko' ? '이벤트 대기 중...' : 'Waiting for events...'}
+              이벤트 대기 중...
             </span>
           </div>
         ) : (
@@ -122,7 +119,7 @@ export function EventLogPanel({ logs, onClear }: EventLogPanelProps) {
                 <span
                   className={`font-mono text-[10px] ${getEventColor(log.type)}`}
                 >
-                  {log.message[locale]}
+                  {log.message}
                 </span>
               </motion.div>
             ))}
@@ -133,7 +130,7 @@ export function EventLogPanel({ logs, onClear }: EventLogPanelProps) {
       {/* 푸터 */}
       <div className="px-3 py-1.5 border-t border-border bg-muted/80">
         <span className="font-mono text-[9px] text-muted-foreground/60">
-          {logs.length} {locale === 'ko' ? '개 이벤트' : 'events'}
+          {logs.length} 개 이벤트
         </span>
       </div>
     </div>

@@ -3,15 +3,12 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
 interface RandaoDisplayProps {
   seed: string;
   isUpdating: boolean;
 }
 
 export function RandaoDisplay({ seed, isUpdating }: RandaoDisplayProps) {
-  const locale = useLocale();
   const [displaySeed, setDisplaySeed] = useState(seed);
   const [isScrambling, setIsScrambling] = useState(false);
 
@@ -94,7 +91,7 @@ export function RandaoDisplay({ seed, isUpdating }: RandaoDisplayProps) {
               exit={{ opacity: 0, x: -10 }}
               className="font-mono text-[9px] text-purple-400 uppercase tracking-wider"
             >
-              {locale === 'ko' ? '새 시드 생성 중...' : 'Generating...'}
+              새 시드 생성 중...
             </motion.span>
           )}
         </AnimatePresence>
@@ -129,9 +126,7 @@ export function RandaoDisplay({ seed, isUpdating }: RandaoDisplayProps) {
 
       {/* 설명 */}
       <p className="font-mono text-[9px] text-muted-foreground/60 leading-relaxed">
-        {locale === 'ko'
-          ? '각 에포크마다 검증인들의 입력으로 새로운 시드가 생성됩니다.'
-          : 'A new seed is generated each epoch from validator inputs.'}
+        각 에포크마다 검증인들의 입력으로 새로운 시드가 생성됩니다.
       </p>
     </div>
   );

@@ -3,10 +3,7 @@
 import { motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
 import { STAKING_RANGE } from '../constants/ethereum';
-import { getTranslations } from '../constants/translations';
 import { useEventLog } from '../hooks/useEventLog';
 import { useRewardCalculation } from '../hooks/useRewardCalculation';
 import { useSlotTimer } from '../hooks/useSlotTimer';
@@ -19,9 +16,39 @@ import { SimulationControls } from './SimulationControls';
 import { SlotEpochGrid } from './SlotEpochGrid';
 import { StakingSlider } from './StakingSlider';
 
+const t = {
+  playground: {
+    subtitle:
+      '전체 예치량을 조절하여 네트워크 보안과 수익률의 변화를 확인하세요',
+  },
+  metrics: {
+    apr: '연간 수익률',
+    haltCost: '네트워크 정지 비용',
+    manipulateCost: '기록 조작 비용',
+  },
+  simulation: {
+    description: '공격 시나리오와 페널티를 시뮬레이션합니다',
+    attack: {
+      title: '33% Attack Scenario',
+      description:
+        '공격자가 예치된 ETH의 33% 이상을 확보하면 최종화를 방해하여',
+      highlight: '네트워크를 정지',
+      suffix: '시킬 수 있습니다.',
+      networkHalted: 'NETWORK HALTED',
+    },
+    offline: {
+      title: 'Offline Penalty',
+      description:
+        '검증인이 오프라인 상태가 되면 얻을 수 있었던 보상과 거의 같은 비율로 페널티를 받습니다.',
+      highlight: '비활성 누출 페널티',
+      suffix: '가 적용됩니다.',
+      validatorBalance: 'Validator Balance',
+      ejectionWarning: '잔고가 16 ETH 미만이 되면 강제 퇴장됩니다',
+    },
+  },
+} as const;
+
 export function EthereumPosPlayground() {
-  const locale = useLocale();
-  const t = getTranslations(locale);
   const [stakedAmount, setStakedAmount] = useState<number>(
     STAKING_RANGE.default,
   );
@@ -39,10 +66,10 @@ export function EthereumPosPlayground() {
     if (slotTimer.currentSlot !== prevSlotRef.current) {
       // 새 슬롯이 제안될 때마다 로그 추가 (매 슬롯은 너무 많으므로 8번째마다)
       if (slotTimer.currentSlot % 8 === 0 || slotTimer.currentSlot === 31) {
-        addLog('slot_proposed', {
-          ko: `슬롯 ${slotTimer.currentSlot + 1}: 블록 제안됨`,
-          en: `Slot ${slotTimer.currentSlot + 1}: Block Proposed`,
-        });
+        addLog(
+          'slot_proposed',
+          `슬롯 ${slotTimer.currentSlot + 1}: 블록 제안됨`,
+        );
       }
       prevSlotRef.current = slotTimer.currentSlot;
     }
@@ -56,10 +83,10 @@ export function EthereumPosPlayground() {
     ) {
       // 체크포인트 생성
       if (slotTimer.transition.isCheckpointing) {
-        addLog('epoch_checkpoint', {
-          ko: `에포크 ${slotTimer.currentEpoch}: 체크포인트 생성`,
-          en: `Epoch ${slotTimer.currentEpoch}: Checkpoint Created`,
-        });
+        addLog(
+          'epoch_checkpoint',
+          `에포크 ${slotTimer.currentEpoch}: 체크포인트 생성`,
+        );
       }
       prevEpochRef.current = slotTimer.currentEpoch;
     }
@@ -68,26 +95,23 @@ export function EthereumPosPlayground() {
   // Justified 이벤트
   useEffect(() => {
     if (slotTimer.transition.isJustifying && slotTimer.previousEpoch >= 0) {
-      addLog('epoch_justified', {
-        ko: `에포크 ${slotTimer.previousEpoch}: 정당화 완료`,
-        en: `Epoch ${slotTimer.previousEpoch}: Justified`,
-      });
+      addLog(
+        'epoch_justified',
+        `에포크 ${slotTimer.previousEpoch}: 정당화 완료`,
+      );
     }
   }, [slotTimer.transition.isJustifying, slotTimer.previousEpoch, addLog]);
 
   // Finalized 이벤트
   useEffect(() => {
     if (slotTimer.transition.isFinalizing && slotTimer.previousEpoch >= 0) {
-      addLog('epoch_finalized', {
-        ko: `에포크 ${slotTimer.previousEpoch}: 최종 확정!`,
-        en: `Epoch ${slotTimer.previousEpoch}: Finalized!`,
-      });
+      addLog(
+        'epoch_finalized',
+        `에포크 ${slotTimer.previousEpoch}: 최종 확정!`,
+      );
 
       // RANDAO 업데이트 로그
-      addLog('randao_updated', {
-        ko: '새 에포크 시드 생성됨',
-        en: 'New Epoch Seed Generated',
-      });
+      addLog('randao_updated', '새 에포크 시드 생성됨');
     }
   }, [slotTimer.transition.isFinalizing, slotTimer.previousEpoch, addLog]);
 
@@ -99,10 +123,7 @@ export function EthereumPosPlayground() {
       !rewards.isSettling
     ) {
       rewards.settleReward().then((reward) => {
-        addLog('reward_distributed', {
-          ko: `보상 분배: +${reward.toFixed(6)} ETH`,
-          en: `Rewards: +${reward.toFixed(6)} ETH`,
-        });
+        addLog('reward_distributed', `보상 분배: +${reward.toFixed(6)} ETH`);
       });
     }
   }, [
@@ -216,9 +237,8 @@ export function EthereumPosPlayground() {
         {/* Footer */}
         <footer className="pt-4 border-t border-border/50">
           <p className="font-mono text-[10px] text-muted-foreground tracking-wide">
-            ETH = $2,500 USD &nbsp;·&nbsp; APR = 166 / √n &nbsp;·&nbsp;{' '}
-            {locale === 'ko' ? '누적 보상' : 'Rewards'}:{' '}
-            {rewards.cumulativeRewardFormatted}
+            ETH = $2,500 USD &nbsp;·&nbsp; APR = 166 / √n &nbsp;·&nbsp; 누적
+            보상: {rewards.cumulativeRewardFormatted}
           </p>
         </footer>
       </div>

@@ -8,7 +8,6 @@ interface FlowStepProps {
   isActive: boolean;
   isCompleted: boolean;
   onClick: () => void;
-  locale: 'ko' | 'en';
   scriptLabels: Record<string, string>;
   stepStatus: {
     complete: string;
@@ -34,7 +33,6 @@ export function FlowStep({
   isActive,
   isCompleted,
   onClick,
-  locale,
   scriptLabels,
   stepStatus,
   sectionHeaders,
@@ -175,7 +173,7 @@ export function FlowStep({
                 ${isActive ? 'text-foreground' : 'text-foreground/80 group-hover:text-foreground'}
               `}
               >
-                {step.title[locale]}
+                {step.title}
               </h3>
 
               {/* Status badge */}
@@ -263,7 +261,7 @@ export function FlowStep({
                       </span>
                     </div>
 
-                    {step.description[locale].map((desc, idx) => (
+                    {step.description.map((desc, idx) => (
                       <motion.div
                         key={idx}
                         initial={{ opacity: 0, x: -10 }}

@@ -3,8 +3,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
 interface RewardSettlementProps {
   isSettling: boolean;
   epochReward: number;
@@ -18,7 +16,6 @@ export function RewardSettlement({
   cumulativeReward,
   currentEpoch,
 }: RewardSettlementProps) {
-  const locale = useLocale();
   const [showReward, setShowReward] = useState(false);
   const [displayReward, setDisplayReward] = useState(0);
 
@@ -85,9 +82,7 @@ export function RewardSettlement({
 
               <div className="flex-1">
                 <span className="font-mono text-sm text-foreground">
-                  {locale === 'ko'
-                    ? '검증인 수익 정산 중...'
-                    : 'Calculating validator rewards...'}
+                  검증인 수익 정산 중...
                 </span>
                 <motion.div
                   className="mt-2 h-1 bg-border overflow-hidden rounded-full"
@@ -118,9 +113,7 @@ export function RewardSettlement({
                 </motion.div>
                 <div>
                   <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
-                    {locale === 'ko'
-                      ? `에포크 ${currentEpoch - 1} 정산 완료`
-                      : `Epoch ${currentEpoch - 1} Settlement`}
+                    에포크 {currentEpoch - 1} 정산 완료
                   </div>
                   <motion.div
                     initial={{ opacity: 0, y: 5 }}
@@ -134,7 +127,7 @@ export function RewardSettlement({
 
               <div className="text-right">
                 <div className="font-mono text-[9px] text-muted-foreground/60 uppercase">
-                  {locale === 'ko' ? '누적 보상' : 'Cumulative'}
+                  누적 보상
                 </div>
                 <div className="font-mono text-sm text-muted-foreground">
                   {cumulativeReward.toFixed(6)} ETH

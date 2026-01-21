@@ -3,8 +3,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
 const translations = {
   ko: {
     title: 'RANDAO 메커니즘',
@@ -73,8 +71,7 @@ function xorHex(a: string, b: string): string {
 }
 
 export function RandaoVisualization() {
-  const locale = useLocale();
-  const t = translations[locale];
+  const t = translations['ko'];
 
   const [phase, setPhase] = useState<
     'idle' | 'commit' | 'reveal' | 'mix' | 'done'

@@ -3,8 +3,6 @@
 import { motion } from 'motion/react';
 import { useCallback, useEffect, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
 const translations = {
   ko: {
     title: '슬롯 & 에포크 시각화',
@@ -45,8 +43,7 @@ const translations = {
 };
 
 export function SlotEpochVisualizer() {
-  const locale = useLocale();
-  const t = translations[locale];
+  const t = translations['ko'];
 
   const [currentSlot, setCurrentSlot] = useState(0);
   const [progress, setProgress] = useState(0);

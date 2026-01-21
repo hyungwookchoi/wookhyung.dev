@@ -3,8 +3,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
 const translations = {
   ko: {
     title: '위원회 & 증명 시뮬레이터',
@@ -64,8 +62,7 @@ interface Validator {
 }
 
 export function AttestationSimulator() {
-  const locale = useLocale();
-  const t = translations[locale];
+  const t = translations['ko'];
 
   const TOTAL_VALIDATORS = 16;
   const COMMITTEE_SIZE = 8;

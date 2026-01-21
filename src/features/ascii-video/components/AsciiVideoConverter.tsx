@@ -3,9 +3,6 @@
 import { motion } from 'motion/react';
 import { useCallback, useRef, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
-import { getTranslations } from '../constants/translations';
 import { useAsciiRenderer } from '../hooks/useAsciiRenderer';
 import { useImageAsciiRenderer } from '../hooks/useImageAsciiRenderer';
 import { useVideoProcessor } from '../hooks/useVideoProcessor';
@@ -19,10 +16,39 @@ const DEFAULT_VIDEO_URL = '/videos/reze-dance.mp4';
 
 type TabType = 'video' | 'image';
 
-export function AsciiVideoConverter() {
-  const locale = useLocale();
-  const t = getTranslations(locale);
+const t = {
+  title: 'ASCII 컨버터',
+  subtitle: 'media_to_ascii --realtime --color',
+  tabs: {
+    video: 'VIDEO',
+    image: 'IMAGE',
+  },
+  dropzone: {
+    placeholder: 'INPUT_FILE을 드래그하거나 클릭하여 선택...',
+    dragActive: 'DROP_TARGET_READY',
+    size: 'SIZE',
+    type: 'TYPE',
+    unknown: 'UNKNOWN',
+  },
+  imageDropzone: {
+    placeholder: 'IMAGE_FILE을 드래그하거나 클릭하여 선택...',
+    dragActive: 'DROP_TARGET_READY',
+  },
+  controls: {
+    play: 'PLAY',
+    pause: 'STOP',
+    reset: 'INIT',
+    record: 'REC',
+    stopRecord: 'END',
+    recording: 'RECORDING...',
+  },
+  imageControls: {
+    download: 'DOWNLOAD',
+    reset: 'RESET',
+  },
+} as const;
 
+export function AsciiVideoConverter() {
   const [activeTab, setActiveTab] = useState<TabType>('video');
   const asciiCanvasRef = useRef<AsciiCanvasHandle>(null);
   const imageAsciiCanvasRef = useRef<AsciiCanvasHandle>(null);

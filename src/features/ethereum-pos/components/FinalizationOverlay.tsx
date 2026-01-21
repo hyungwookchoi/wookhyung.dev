@@ -2,8 +2,6 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 
-import { useLocale } from '@/i18n/context';
-
 import type { EpochTransitionState } from '../types/slot';
 
 interface FinalizationOverlayProps {
@@ -17,8 +15,6 @@ export function FinalizationOverlay({
   currentEpoch,
   previousEpoch,
 }: FinalizationOverlayProps) {
-  const locale = useLocale();
-
   const isActive =
     transition.isCheckpointing ||
     transition.isJustifying ||
@@ -26,19 +22,13 @@ export function FinalizationOverlay({
 
   const getMessage = () => {
     if (transition.isCheckpointing) {
-      return locale === 'ko'
-        ? `에포크 ${currentEpoch} 체크포인트 생성 중...`
-        : `Creating Epoch ${currentEpoch} Checkpoint...`;
+      return `에포크 ${currentEpoch} 체크포인트 생성 중...`;
     }
     if (transition.isJustifying) {
-      return locale === 'ko'
-        ? `에포크 ${previousEpoch} 정당화 완료`
-        : `Epoch ${previousEpoch} Justified`;
+      return `에포크 ${previousEpoch} 정당화 완료`;
     }
     if (transition.isFinalizing) {
-      return locale === 'ko'
-        ? `에포크 ${previousEpoch} 최종 확정!`
-        : `Epoch ${previousEpoch} Finalized!`;
+      return `에포크 ${previousEpoch} 최종 확정!`;
     }
     return '';
   };

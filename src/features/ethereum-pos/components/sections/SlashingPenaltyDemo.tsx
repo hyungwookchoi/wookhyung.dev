@@ -3,8 +3,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
 const translations = {
   ko: {
     title: '페널티 & 슬래싱 시뮬레이터',
@@ -78,8 +76,7 @@ const translations = {
 type ScenarioType = 'inactivity' | 'slashing';
 
 export function SlashingPenaltyDemo() {
-  const locale = useLocale();
-  const t = translations[locale];
+  const t = translations['ko'];
 
   const [scenario, setScenario] = useState<ScenarioType>('inactivity');
   const [balance, setBalance] = useState(32);

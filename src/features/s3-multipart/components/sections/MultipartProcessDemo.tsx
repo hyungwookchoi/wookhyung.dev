@@ -3,15 +3,31 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useState } from 'react';
 
-import { useLocale } from '@/i18n/context';
-
-import { getTranslations } from '../../constants/translations';
-
 type Stage = 0 | 1 | 2 | 3;
 
+const t = {
+  title: '멀티파트 업로드 프로세스',
+  subtitle: '3단계로 이루어진 업로드 과정을 살펴보세요',
+  stage1Title: '1. 초기화',
+  stage1Desc: 'CreateMultipartUpload 호출',
+  stage1Detail: 'S3에서 Upload ID를 발급받습니다',
+  stage2Title: '2. 파트 업로드',
+  stage2Desc: 'UploadPart × N번',
+  stage2Detail: '각 파트를 개별적으로 업로드합니다',
+  stage3Title: '3. 완료',
+  stage3Desc: 'CompleteMultipartUpload',
+  stage3Detail: '모든 파트를 하나의 객체로 결합합니다',
+  clickToStart: '클릭하여 시작',
+  nextStage: '다음 단계',
+  restart: '다시 시작',
+  file: '파일',
+  uploadId: 'Upload ID',
+  partLabel: 'Part',
+  etagLabel: 'ETag',
+  finalObject: '최종 객체',
+} as const;
+
 export function MultipartProcessDemo() {
-  const locale = useLocale();
-  const t = getTranslations(locale).processDemo;
   const [stage, setStage] = useState<Stage>(0);
 
   const mockParts = [
