@@ -2,7 +2,6 @@
 
 import type { Variants } from 'motion/react';
 import * as motion from 'motion/react-client';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -174,23 +173,8 @@ export const Header = () => {
 
   return (
     <>
-      <header className="z-50 sticky top-0 bg-background/80 px-4 py-3 backdrop-blur-md border-b border-border">
+      <header className="relative z-50 bg-background/80 px-4 py-3 backdrop-blur-md max-w-3xl mx-auto w-full">
         <nav className="flex items-center justify-between">
-          <Link
-            href="/"
-            className="text-xl font-semibold text-foreground hover:text-primary transition-colors"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <div className="w-10 h-10 overflow-hidden rounded-full bg-white">
-              <Image
-                src="/wookhyung.png"
-                alt="wookhyung"
-                width={40}
-                height={40}
-              />
-            </div>
-          </Link>
-
           <div className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => {
               const isActive = isActiveLink(item.href);
@@ -208,13 +192,16 @@ export const Header = () => {
                 </Link>
               );
             })}
+          </div>
+
+          <div className="hidden md:block">
             <ThemeToggle />
           </div>
 
           <motion.nav
             initial={false}
             animate={isMobileMenuOpen ? 'open' : 'closed'}
-            className="md:hidden"
+            className="md:hidden ml-auto"
           >
             <MenuToggle toggle={toggleMobileMenu} />
           </motion.nav>
@@ -247,7 +234,14 @@ export const Header = () => {
           />
 
           <div className="relative h-full">
-            <div className="h-14 bg-background" />
+            <div className="h-14 bg-background flex items-center justify-end px-4">
+              <motion.nav
+                initial={false}
+                animate={isMobileMenuOpen ? 'open' : 'closed'}
+              >
+                <MenuToggle toggle={toggleMobileMenu} />
+              </motion.nav>
+            </div>
 
             <motion.div className="px-6 py-4 space-y-1" variants={menuVariants}>
               {navigation.map((item) => {

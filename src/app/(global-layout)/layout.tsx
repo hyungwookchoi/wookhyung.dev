@@ -7,9 +7,7 @@ export default function GlobalLayout({
 }) {
   return (
     <>
-      <div className="max-w-3xl mx-auto w-full">
-        <Header />
-      </div>
+      <Header />
       <main className="flex-1 flex flex-col py-6 px-4 max-w-3xl mx-auto w-full">
         {children}
       </main>
