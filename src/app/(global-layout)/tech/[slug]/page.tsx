@@ -76,7 +76,7 @@ export default async function Page({ params }: Props) {
 
   return (
     <>
-      <div className="flex flex-col gap-6 pb-40">
+      <div className="flex flex-col gap-4 pb-40">
         <ProgressBar />
         <BackButton className="self-start" />
         <article className="pb-6 prose prose-sm prose-invert max-w-none wrap-break-word">
@@ -91,7 +91,6 @@ export default async function Page({ params }: Props) {
               {format(new Date(post.date), 'yyyy년 M월 d일', { locale: ko })}
             </time>
           </div>
-          <hr className="border-border border-dotted" />
           <MDXContent code={post.body.code} />
         </article>
         <Comments />
