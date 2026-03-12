@@ -1,14 +1,8 @@
 'use client';
 
-import {
-  ArrowRightIcon,
-  GitMergeIcon,
-  GitPullRequestIcon,
-  RssIcon,
-} from 'lucide-react';
+import { GitMergeIcon, GitPullRequestIcon, RssIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { siteConfig } from '@/shared/config/site';
 import { EmailIcon } from '@/shared/icon/email-icon';
@@ -367,38 +361,6 @@ export function AboutContent() {
             </li>
           </ul>
         </motion.section>
-
-        {/* Preference Link */}
-        <motion.div
-          variants={fadeInUp}
-          initial="initial"
-          animate="animate"
-          transition={{
-            duration: 0.5,
-            delay: INITIAL_DELAY + STAGGER_DELAY * ++sectionIndex,
-          }}
-        >
-          <Link
-            href={`/preference`}
-            className={cn(
-              'group flex items-center justify-between',
-              'p-5',
-              'bg-muted/50 border border-border',
-              'hover:bg-muted hover:border-muted-foreground/30',
-              'transition-all duration-200',
-            )}
-          >
-            <div>
-              <p className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-[0.15em] mb-1">
-                더 알아보기
-              </p>
-              <p className="text-xs sm:text-sm font-normal text-foreground group-hover:text-primary transition-colors">
-                음악, 책, 영화, 관심사
-              </p>
-            </div>
-            <ArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-          </Link>
-        </motion.div>
       </div>
     </div>
   );
