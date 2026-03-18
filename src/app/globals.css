@@ -430,7 +430,7 @@ pre[class*='language-'] > code[class*='language-'] {
       }
     }
     & :where(h1, h2) {
-      font-weight: 300;
+      font-weight: 600;
       letter-spacing: var(--tracking-tight);
       color: var(--foreground);
     }
