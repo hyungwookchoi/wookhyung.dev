@@ -3,12 +3,20 @@ import './globals.css';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
+import localFont from 'next/font/local';
 import serialize from 'serialize-javascript';
 
 import { siteConfig } from '@/shared/config/site';
 import { openGraph, twitter } from '@/shared/util/seo';
 
 import { Providers } from './providers';
+
+const pretendard = localFont({
+  src: '../shared/fonts/PretendardVariable.woff2',
+  variable: '--font-pretendard',
+  weight: '45 920',
+  display: 'swap',
+});
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -63,7 +71,9 @@ export default function RootLayout({ children }: LayoutProps) {
 
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body className="min-h-dvh flex flex-col bg-background font-mono text-foreground relative">
+      <body
+        className={`min-h-dvh flex flex-col bg-background font-sans text-foreground relative ${pretendard.variable}`}
+      >
         <Providers>{children}</Providers>
         <Analytics />
         <GoogleAnalytics gaId="G-F7VQE719RE" />

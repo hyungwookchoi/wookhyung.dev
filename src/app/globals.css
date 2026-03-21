@@ -329,7 +329,7 @@ pre[class*='language-'] > code[class*='language-'] {
 
 /* Light mode (default) */
 :root {
-  --radius: 0;
+  --radius: 0.5rem;
   --background: #ffffff;
   --foreground: #171717;
   --card: rgba(245, 245, 245, 0.8);
@@ -474,5 +474,5 @@ pre[class*='language-'] > code[class*='language-'] {
 }
 
 @theme inline {
-  --font-space-mono: var(--font-space-mono);
+  --font-sans: var(--font-pretendard), 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
