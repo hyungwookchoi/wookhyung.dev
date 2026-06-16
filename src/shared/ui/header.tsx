@@ -16,7 +16,6 @@ interface NavigationItem {
 
 const navigation: NavigationItem[] = [
   { name: 'Home', href: '/' },
-  { name: 'Vibe', href: '/vibe' },
   { name: 'Feed', href: '/feed' },
   { name: 'About', href: '/about' },
 ];
